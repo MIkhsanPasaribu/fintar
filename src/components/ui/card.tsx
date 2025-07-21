@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +9,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        "rounded-financial bg-white p-6 shadow-card border border-neutral-200",
+        "rounded-xl bg-white p-6 shadow-financial border border-neutral-200 hover:shadow-financial-hover transition-shadow duration-300",
         className
       )}
       {...props}
@@ -36,7 +37,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight text-neutral-900",
+      "text-lg font-semibold leading-none tracking-tight text-font-primary",
       className
     )}
     {...props}
@@ -50,7 +51,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-neutral-500", className)}
+    className={cn("text-sm text-font-secondary", className)}
     {...props}
   />
 ));

@@ -78,10 +78,20 @@ function MessageBubble({ message }: MessageBubbleProps) {
                 isUser ? "text-primary-200" : "text-neutral-500"
               }`}
             >
-              {message.timestamp.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {message.timestamp instanceof Date
+                ? message.timestamp.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : typeof message.timestamp === "string"
+                ? new Date(message.timestamp).toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : new Date().toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
             </span>
             {message.category && (
               <Badge variant="secondary" className="text-xs">

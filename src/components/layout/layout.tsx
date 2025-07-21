@@ -64,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 border-r border-neutral-200",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
@@ -99,8 +99,8 @@ export default function Layout({ children }: LayoutProps) {
                       className={cn(
                         "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors",
                         isActive
-                          ? "bg-primary-100 text-primary-700"
-                          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                          ? "bg-primary-50 text-primary-700"
+                          : "text-font-secondary hover:bg-neutral-100 hover:text-font-primary"
                       )}
                     >
                       <item.icon className="mr-3 h-5 w-5" />
@@ -113,9 +113,9 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
 
           {/* User menu */}
-          <div className="border-t border-neutral-200 p-4">
+          <div className="border-t border-neutral-200 p-4 bg-neutral-50">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-accent-400 to-accent-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-accent-400 to-accent-600 rounded-full flex items-center justify-center shadow-md">
                 <User className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">

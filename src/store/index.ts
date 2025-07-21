@@ -132,6 +132,20 @@ export const useChatStore = create<ChatState>()(
           chatSessions: state.chatSessions.slice(0, 10), // Keep only last 10 sessions
           messages: state.messages.slice(-50), // Keep only last 50 messages
         }),
+        // Convert serialized strings back to Date objects when loading from storage
+        onRehydrateStorage: () => {
+          return (state) => {
+            if (state?.messages) {
+              state.messages = state.messages.map((message) => ({
+                ...message,
+                timestamp:
+                  message.timestamp instanceof Date
+                    ? message.timestamp
+                    : new Date(message.timestamp),
+              }));
+            }
+          };
+        },
       }
     ),
     { name: "chat-store" }

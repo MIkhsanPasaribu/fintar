@@ -9,62 +9,70 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Fintar Financial Theme Colors
+        // Fintar Financial Theme Colors - Updated Palette
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-          950: "#172554",
+          50: "#e6ffff",
+          100: "#ccffff",
+          200: "#99ffff",
+          300: "#66f2f2",
+          400: "#33cccc",
+          500: "#00a8a8", // Base Turquoise
+          600: "#009999",
+          700: "#007777", // Dark
+          800: "#006666",
+          900: "#004d4d",
+          950: "#003333",
         },
         secondary: {
-          50: "#ecfdf5",
-          100: "#d1fae5",
-          200: "#a7f3d0",
-          300: "#6ee7b7",
-          400: "#34d399",
-          500: "#10b981",
-          600: "#059669",
-          700: "#047857",
-          800: "#065f46",
-          900: "#064e3b",
-          950: "#022c22",
+          50: "#eaf4ff",
+          100: "#d9efff",
+          200: "#b3d4ff",
+          300: "#80bfff", // Light
+          400: "#66aaff",
+          500: "#4c9aff", // Base Soft Blue
+          600: "#1a80ff",
+          700: "#005fcc", // Dark
+          800: "#0044cc",
+          900: "#003399",
+          950: "#001a66",
         },
         accent: {
-          50: "#fffbeb",
-          100: "#fef3c7",
-          200: "#fde68a",
-          300: "#fcd34d",
-          400: "#fbbf24",
-          500: "#f59e0b",
-          600: "#d97706",
-          700: "#b45309",
-          800: "#92400e",
-          900: "#78350f",
-          950: "#451a03",
+          50: "#f0fdfa",
+          100: "#d2f8d2",
+          200: "#a5d6a7",
+          300: "#6fd6a6", // Light
+          400: "#4dc490",
+          500: "#3cb371", // Base Smart Green
+          600: "#2e9960",
+          700: "#1e7d49", // Dark
+          800: "#196540",
+          900: "#144d30",
+          950: "#0c2b1b",
         },
         neutral: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
-          300: "#cbd5e1",
-          400: "#94a3b8",
-          500: "#64748b",
-          600: "#475569",
-          700: "#334155",
-          800: "#1e293b",
-          900: "#0f172a",
-          950: "#020617",
+          50: "#fafafa", // Light
+          100: "#f7f7f8",
+          200: "#f4f5f7", // Base Light Grey
+          300: "#e6e8ec",
+          400: "#d1d5db", // Dark
+          500: "#9ca3af",
+          600: "#6b7280", // Font Secondary Base
+          700: "#4b5563", // Font Secondary Dark
+          800: "#374151", // Font Primary Light
+          900: "#111827", // Font Primary Base
+          950: "#030712",
         },
-        success: "#10b981",
-        error: "#ef4444",
-        warning: "#f59e0b",
+        font: {
+          primary: "#111827", // Charcoal (Base)
+          primaryLight: "#374151", // Charcoal Light
+          primaryDark: "#000000", // Charcoal Dark
+          secondary: "#6B7280", // Muted Gray (Base)
+          secondaryLight: "#9CA3AF", // Muted Gray Light
+          secondaryDark: "#4B5563", // Muted Gray Dark
+        },
+        success: "#3CB371", // Smart Green
+        error: "#EF4444",
+        warning: "#F59E0B",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],

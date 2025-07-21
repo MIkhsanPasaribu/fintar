@@ -21,16 +21,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           {
             // Variants
-            "bg-primary-600 text-white hover:bg-primary-700":
+            "bg-primary-600 text-white hover:bg-primary-700 shadow-md":
               variant === "default",
-            "bg-secondary-600 text-white hover:bg-secondary-700":
+            "bg-secondary-600 text-white hover:bg-secondary-700 shadow-md":
               variant === "secondary",
-            "bg-accent-500 text-white hover:bg-accent-600":
+            "bg-accent-500 text-white hover:bg-accent-600 shadow-md":
               variant === "accent",
-            "border border-neutral-300 bg-transparent hover:bg-neutral-50":
+            "border border-neutral-300 bg-transparent hover:bg-neutral-100 text-font-primary":
               variant === "outline",
-            "hover:bg-neutral-100": variant === "ghost",
-            "bg-error text-white hover:bg-red-700": variant === "destructive",
+            "hover:bg-neutral-100 text-font-primary": variant === "ghost",
+            "bg-error text-white hover:bg-red-700 shadow-md":
+              variant === "destructive",
             // Sizes
             "h-10 px-4 py-2": size === "default",
             "h-9 rounded-md px-3": size === "sm",
