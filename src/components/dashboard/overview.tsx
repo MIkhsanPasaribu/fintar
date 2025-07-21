@@ -27,29 +27,29 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon, color }: StatCardProps) {
   const colorClasses = {
-    primary: "text-primary-300 bg-primary-500/20 border-primary-500/30",
-    secondary: "text-secondary-300 bg-secondary-500/20 border-secondary-500/30",
-    accent: "text-accent-300 bg-accent-500/20 border-accent-500/30",
-    warning: "text-orange-300 bg-orange-500/20 border-orange-500/30",
+    primary: "text-teal-light bg-teal-dark/20 border-teal-dark/30",
+    secondary: "text-teal-light bg-teal-light/20 border-teal-light/30",
+    accent: "text-orange-300 bg-orange-500/20 border-orange-500/30",
+    warning: "text-orange-300 bg-orange-600/20 border-orange-600/30",
   };
 
   return (
-    <Card className="glass-effect border-primary-500/20 card-hover">
+    <Card className="glass-effect border-primary-light/20 card-hover">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <p className="text-sm font-medium text-font-secondary">{title}</p>
-            <p className="text-2xl font-bold text-font-light">{value}</p>
+            <p className="text-2xl font-bold text-font-primary">{value}</p>
             {change !== undefined && (
               <div className="flex items-center space-x-1">
                 {change >= 0 ? (
-                  <TrendingUp className="h-4 w-4 text-success-light" />
+                  <TrendingUp className="h-4 w-4 text-teal-light" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-error-light" />
+                  <TrendingDown className="h-4 w-4 text-danger" />
                 )}
                 <span
                   className={`text-sm font-medium ${
-                    change >= 0 ? "text-success-light" : "text-error-light"
+                    change >= 0 ? "text-teal-light" : "text-danger"
                   }`}
                 >
                   {Math.abs(change).toFixed(1)}%

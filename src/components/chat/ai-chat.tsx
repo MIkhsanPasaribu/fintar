@@ -40,7 +40,7 @@ function QuickAction({ icon, label, onClick, color }: QuickActionProps) {
       variant="outline"
       size="sm"
       onClick={onClick}
-      className={`flex items-center space-x-2 ${color} hover:scale-105 transition-all glass-effect border-primary-500/30 text-font-light hover:bg-primary-500/20`}
+      className={`flex items-center space-x-2 ${color} hover:scale-105 transition-all glass-effect border-primary-light/30 text-font-primary hover:bg-primary-light/20`}
     >
       {icon}
       <span>{label}</span>
@@ -59,23 +59,23 @@ function MessageBubble({ message }: MessageBubbleProps) {
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div className={`flex items-start space-x-3 max-w-[80%]`}>
         {!isUser && (
-          <div className="w-10 h-10 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center mt-1 neon-glow">
-            <Bot className="w-5 h-5 text-primary-400" />
+          <div className="w-10 h-10 rounded-full bg-teal-dark/20 border border-teal-light/30 flex items-center justify-center mt-1 neon-glow">
+            <Bot className="w-5 h-5 text-teal-light" />
           </div>
         )}
 
         <div
           className={`p-4 rounded-2xl ${
             isUser
-              ? "bg-primary-500/90 text-white rounded-br-none glass-effect border border-primary-400/50"
-              : "glass-effect text-font-light rounded-bl-none border border-primary-500/20"
+              ? "bg-orange-500/90 text-primary-base rounded-br-none glass-effect border border-orange-500/50"
+              : "glass-effect text-font-primary rounded-bl-none border border-primary-light/20"
           }`}
         >
           <p className="text-sm leading-relaxed">{message.content}</p>
           <div className="flex justify-between items-center mt-2">
             <span
               className={`text-xs ${
-                isUser ? "text-primary-200" : "text-font-muted"
+                isUser ? "text-primary-base/80" : "text-font-muted"
               }`}
             >
               {message.timestamp instanceof Date
@@ -96,7 +96,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
             {message.category && (
               <Badge
                 variant="secondary"
-                className="text-xs bg-secondary-500/20 text-secondary-300 border-secondary-500/30"
+                className="text-xs bg-teal-light/20 text-teal-light border-teal-light/30"
               >
                 {message.category}
               </Badge>
@@ -105,8 +105,8 @@ function MessageBubble({ message }: MessageBubbleProps) {
         </div>
 
         {isUser && (
-          <div className="w-10 h-10 rounded-full bg-secondary-500/20 border border-secondary-500/30 flex items-center justify-center mt-1 neon-glow">
-            <User className="w-5 h-5 text-secondary-400" />
+          <div className="w-10 h-10 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center mt-1 neon-glow">
+            <User className="w-5 h-5 text-orange-500" />
           </div>
         )}
       </div>

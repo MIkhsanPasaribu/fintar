@@ -64,18 +64,18 @@ export default function Layout({ children }: LayoutProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 glass-effect shadow-2xl transform transition-all duration-300 ease-in-out lg:translate-x-0 border-r border-primary-500/20",
+          "fixed inset-y-0 left-0 z-50 w-64 glass-effect shadow-2xl transform transition-all duration-300 ease-in-out lg:translate-x-0 border-r border-primary-light/20",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center justify-between px-6 border-b border-primary-500/20">
+          <div className="flex h-16 items-center justify-between px-6 border-b border-primary-light/20">
             <Link
               href="/dashboard"
               className="flex items-center space-x-2 group"
             >
-              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center neon-glow group-hover:scale-110 transition-all duration-300">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-dark to-orange-500 rounded-xl flex items-center justify-center neon-glow group-hover:scale-110 transition-all duration-300">
                 <span className="text-white font-bold">F</span>
               </div>
               <span className="text-xl font-bold gradient-text">Fintar</span>

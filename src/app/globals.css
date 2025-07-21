@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
-/* Fintar Dark Theme - Custom CSS */
+/* Fintar Modern Finance Theme - MVP CSS */
 body {
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif;
-  color: #ffffff; /* Font Primary */
-  background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
+  color: #ffffff; /* Main white text */
+  background: linear-gradient(135deg, #212121 0%, #1a1a1a 50%, #121212 100%);
   min-height: 100vh;
 }
 
@@ -16,81 +16,87 @@ h3,
 h4,
 h5,
 h6 {
-  color: #f0f0f0; /* Font Light */
+  color: #ffffff; /* Main white text */
   font-weight: 600;
 }
 
 p {
-  color: #bfbfbf; /* Font Secondary */
+  color: #e0e0e0; /* Secondary text */
 }
 
 .text-muted {
-  color: #8c8c8c; /* Font Muted */
+  color: #bdbdbd; /* Tertiary/muted text */
 }
 
 a {
-  color: #16a085; /* Primary Base */
+  color: #ee9b00; /* Action accent */
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 a:hover {
-  color: #1abc9c; /* Primary Light */
-  text-shadow: 0 0 5px rgba(22, 160, 133, 0.3);
+  color: #ca6702; /* Hover/press accent */
+  text-shadow: 0 0 5px rgba(238, 155, 0, 0.3);
 }
 
-/* Dark theme scrollbar */
+/* Modern Finance Theme Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: #212121;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #16a085;
+  background: #005f73; /* Strong trust teal */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1abc9c;
+  background: #0a9396; /* Soft supportive teal */
 }
 
-/* Glass effect */
+/* Glass effect for modern finance cards */
 .glass-effect {
-  background: rgba(30, 30, 30, 0.8);
+  background: rgba(26, 26, 26, 0.9); /* Modal/surface background */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(22, 160, 133, 0.2);
+  border: 1px solid rgba(56, 60, 75, 0.3); /* Primary light border */
 }
 
-/* Neon glow effect */
+/* Neon glow effect using new palette */
 .neon-glow {
-  box-shadow: 0 0 10px rgba(22, 160, 133, 0.3), 0 0 20px rgba(22, 160, 133, 0.2),
-    0 0 30px rgba(22, 160, 133, 0.1);
+  box-shadow: 0 0 10px rgba(0, 95, 115, 0.4),
+    /* Strong trust teal */ 0 0 20px rgba(0, 95, 115, 0.3),
+    0 0 30px rgba(0, 95, 115, 0.2);
 }
 
 .neon-glow-accent {
-  box-shadow: 0 0 10px rgba(243, 156, 18, 0.3), 0 0 20px rgba(243, 156, 18, 0.2),
-    0 0 30px rgba(243, 156, 18, 0.1);
+  box-shadow: 0 0 10px rgba(238, 155, 0, 0.4),
+    /* Action accent */ 0 0 20px rgba(238, 155, 0, 0.3),
+    0 0 30px rgba(238, 155, 0, 0.2);
 }
 
-/* Card hover effects */
+/* Card hover effects using new palette */
 .card-hover {
   transition: all 0.4s ease;
 }
 
 .card-hover:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(22, 160, 133, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 95, 115, 0.3); /* Strong trust teal glow */
 }
 
-/* Button effects */
+/* Button effects using new action accent */
 .btn-primary {
-  background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
-  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    #ee9b00 0%,
+    #ca6702 100%
+  ); /* Action accent gradient */
+  color: #1c1f2b; /* Primary base text for contrast */
   border: none;
   position: relative;
   overflow: hidden;
@@ -119,20 +125,25 @@ a:hover {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(22, 160, 133, 0.4);
+  box-shadow: 0 8px 25px rgba(238, 155, 0, 0.4); /* Action accent shadow */
 }
 
-/* Text animations */
+/* Text animations using new palette */
 .typing-animation {
   overflow: hidden;
   white-space: nowrap;
-  border-right: 2px solid #16a085;
+  border-right: 2px solid #005f73; /* Strong trust teal cursor */
   animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 
-/* Gradient text effect */
+/* Gradient text effect using new palette */
 .gradient-text {
-  background: linear-gradient(135deg, #16a085 0%, #f39c12 50%, #1abc9c 100%);
+  background: linear-gradient(
+    135deg,
+    #005f73 0%,
+    /* Strong trust teal */ #ee9b00 50%,
+    /* Action accent */ #0a9396 100% /* Soft supportive teal */
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -150,27 +161,26 @@ a:hover {
   animation-delay: 2s;
 }
 
-/* Pulse glow effect */
+/* Pulse glow effect using new palette */
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes pulse-glow {
   from {
-    box-shadow: 0 0 10px rgba(22, 160, 133, 0.3);
+    box-shadow: 0 0 10px rgba(0, 95, 115, 0.3); /* Strong trust teal */
   }
   to {
-    box-shadow: 0 0 20px rgba(22, 160, 133, 0.6),
-      0 0 30px rgba(22, 160, 133, 0.4);
+    box-shadow: 0 0 20px rgba(0, 95, 115, 0.6), 0 0 30px rgba(0, 95, 115, 0.4);
   }
 }
 
-/* Loading spinner */
+/* Loading spinner using new palette */
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(22, 160, 133, 0.2);
-  border-top: 4px solid #16a085;
+  border: 4px solid rgba(0, 95, 115, 0.2); /* Strong trust teal border */
+  border-top: 4px solid #ee9b00; /* Action accent spinner */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -190,12 +200,12 @@ a:hover {
   transition: transform 0.1s ease-out;
 }
 
-/* Mouse cursor glow effect */
+/* Mouse cursor glow effect using new palette */
 .cursor-glow {
   position: absolute;
   width: 24rem;
   height: 24rem;
-  background: rgba(22, 160, 133, 0.1);
+  background: rgba(0, 95, 115, 0.1); /* Strong trust teal glow */
   border-radius: 50%;
   filter: blur(3rem);
   pointer-events: none;

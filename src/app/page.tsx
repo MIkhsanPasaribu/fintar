@@ -18,10 +18,10 @@ export default function Home() {
   }, [isAuthenticated, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-bg-dark via-bg-main to-bg-darker flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-primary-darker via-primary-dark to-bg-surface flex items-center justify-center">
       <div className="glass-effect p-8 rounded-2xl">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-500 mx-auto mb-4"></div>
-        <p className="text-font-light text-center">Memuat Fintar...</p>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-4"></div>
+        <p className="text-font-primary text-center">Memuat Fintar...</p>
       </div>
     </div>
   );

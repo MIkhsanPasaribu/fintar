@@ -30,7 +30,7 @@ import {
 
 const stats = [
   { number: "50K+", label: "Active Users", icon: Users },
-  { number: "₹10Cr+", label: "Managed Assets", icon: Wallet },
+  { number: "Rp500M+", label: "Managed Assets", icon: Wallet },
   { number: "98%", label: "Success Rate", icon: TrendingUp },
   { number: "4.9/5", label: "User Rating", icon: Star },
 ];
@@ -141,7 +141,7 @@ const faqs = [
   },
   {
     question: "Berapa biaya untuk menggunakan platform ini?",
-    answer: "Kami menawarkan paket Basic gratis dengan fitur dasar, dan paket Premium mulai dari ₹299/bulan dengan akses penuh ke semua fitur AI dan konsultasi expert.",
+    answer: "Kami menawarkan paket Basic gratis dengan fitur dasar, dan paket Premium mulai dari Rp49.000/bulan dengan akses penuh ke semua fitur AI dan konsultasi expert.",
   },
   {
     question: "Apakah bisa digunakan untuk bisnis?",
@@ -174,25 +174,25 @@ export default function DarkLandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-500 text-font-primary overflow-hidden">
+    <div className="min-h-screen bg-primary-base text-font-primary overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-500 to-secondary-700"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-darker via-primary-dark to-bg-surface"></div>
         <div 
-          className="absolute w-96 h-96 bg-primary-500/10 rounded-full blur-3xl cursor-glow"
+          className="absolute w-96 h-96 bg-teal-dark/10 rounded-full blur-3xl cursor-glow"
           data-x={mousePosition.x}
           data-y={mousePosition.y}
         ></div>
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-accent-500/10 rounded-full blur-2xl animate-float"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary-500/10 rounded-full blur-2xl animate-floating-delayed"></div>
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl animate-float"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-teal-light/10 rounded-full blur-2xl animate-floating-delayed"></div>
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-50 glass-effect border-b border-primary-500/20">
+      <nav className="relative z-50 glass-effect border-b border-primary-light/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-neon-primary">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-dark to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">F</span>
               </div>
               <span className="text-2xl font-bold gradient-text">Fintar</span>
@@ -497,7 +497,7 @@ export default function DarkLandingPage() {
                 </Badge>
                 <CardTitle className="text-font-light text-2xl mb-2">Premium</CardTitle>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-font-light">₹299</span>
+                  <span className="text-4xl font-bold text-font-light">Rp49.000</span>
                   <span className="text-font-secondary">/bulan</span>
                 </div>
                 <p className="text-font-secondary">Untuk pengguna serius yang ingin hasil optimal</p>
@@ -545,7 +545,7 @@ export default function DarkLandingPage() {
                 </Badge>
                 <CardTitle className="text-font-light text-2xl mb-2">Business</CardTitle>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold text-font-light">₹999</span>
+                  <span className="text-4xl font-bold text-font-light">Rp199.000</span>
                   <span className="text-font-secondary">/bulan</span>
                 </div>
                 <p className="text-font-secondary">Solusi lengkap untuk bisnis dan tim</p>

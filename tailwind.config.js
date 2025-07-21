@@ -9,140 +9,146 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Fintar Dark Theme Color Palette
+        // Fintar Modern Finance Theme - MVP Color Palette
         primary: {
-          50: "#E8F5F3",
-          100: "#C2E6E0",
-          200: "#9DD6CC",
-          300: "#78C6B8",
-          400: "#53B6A4",
-          500: "#16A085", // Primary Base - Teal hijau khas finansial
-          600: "#1ABC9C", // Primary Light - Versi lebih cerah untuk hover/button aktif
-          700: "#117A65", // Primary Dark - Versi lebih gelap untuk teks, ikon, border
-          800: "#0E6B58",
-          900: "#0B5C4B",
+          50: "#E8EBEE",
+          100: "#C1C7CC",
+          200: "#9AA3AA",
+          300: "#737F88",
+          400: "#4C5B66",
+          500: "#1C1F2B", // Primary Base
+          600: "#2A2E3B", // Primary Dark
+          700: "#383C4B", // Primary Light
+          800: "#14171F",
+          900: "#101217",
         },
         secondary: {
-          50: "#E8EBEE",
-          100: "#C6CDD5",
-          200: "#A4AFBC",
-          300: "#8291A3",
-          400: "#60738A",
-          500: "#34495E", // Secondary Base - Slate blue elegan
-          600: "#5D6D7E", // Secondary Light - Warna transisi untuk hover/tab aktif
-          700: "#2C3E50", // Secondary Dark - Footer/nav background, card border
-          800: "#253544",
-          900: "#1E2C38",
+          50: "#CCF2F4",
+          100: "#B3ECEF",
+          200: "#99E5EA",
+          300: "#7FDEE5",
+          400: "#66D7E0",
+          500: "#005F73", // Strong trust teal
+          600: "#0A9396", // Soft supportive teal
+          700: "#94D2BD", // Pastel companion
+          800: "#004D5C",
+          900: "#003A45",
         },
         accent: {
           50: "#FEF5E7",
-          100: "#FCE6C0",
-          200: "#F9D699",
-          300: "#F6C772",
-          400: "#F3B84B",
-          500: "#F39C12", // Accent Base - Amber gold untuk highlight
-          600: "#F4B942", // Accent Light - Badge/info positif
-          700: "#D68910", // Accent Dark - Hover/variant subtle
-          800: "#B8740E",
-          900: "#9A5F0C",
+          100: "#FDE2B3",
+          200: "#FCCE7F",
+          300: "#FBBA4B",
+          400: "#FAA617",
+          500: "#EE9B00", // Action accent (CTA buttons)
+          600: "#CA6702", // Hover/press accent
+          700: "#BB3E03", // Warning/danger
+          800: "#A65100",
+          900: "#8A4300",
         },
         neutral: {
-          50: "#F5F5F5",
-          100: "#E5E5E5",
-          200: "#2A2A2A", // Neutral Light - Card, input, elemen komponen
-          300: "#C5C5C5",
-          400: "#B5B5B5",
-          500: "#1E1E1E", // Neutral Base - Latar utama aplikasi
-          600: "#959595",
-          700: "#858585",
-          800: "#757575",
-          900: "#121212", // Neutral Dark - Nav/footer, dark overlay
+          50: "#F8F9FA",
+          100: "#E9ECEF",
+          200: "#DEE2E6",
+          300: "#CED4DA",
+          400: "#ADB5BD",
+          500: "#212121", // Background dark
+          600: "#1A1A1A", // Modal/surface
+          700: "#121212", // Header/sidebar
+          800: "#0D0D0D",
+          900: "#080808",
         },
-        "font-primary": "#FFFFFF", // Warna utama teks
-        "font-light": "#F0F0F0", // Heading dan highlight
-        "font-secondary": "#BFBFBF", // Placeholder atau teks deskriptif
-        "font-muted": "#8C8C8C", // Teks tidak aktif atau label kecil
+        // Font Colors
+        "font-primary": "#FFFFFF", // Main white text
+        "font-light": "#FFFFFF", // Main white text
+        "font-secondary": "#E0E0E0", // Secondary text
+        "font-muted": "#BDBDBD", // Tertiary/muted text
 
-        // UI Element Colors
+        // Background Colors
+        "bg-dark": "#212121",
+        "bg-main": "#1A1A1A",
+        "bg-darker": "#121212",
+
+        // UI Element Colors - Updated for New Palette
         button: {
           primary: {
-            bg: "#16A085",
-            text: "#FFFFFF",
-            hover: "#117A65",
-            disabled: "#2E4D47",
+            bg: "#EE9B00",
+            text: "#1C1F2B",
+            hover: "#CA6702",
+            disabled: "#383C4B",
           },
           secondary: {
-            bg: "#34495E",
+            bg: "#005F73",
             text: "#FFFFFF",
-            hover: "#2C3E50",
-            disabled: "#3B4D5E",
+            hover: "#0A9396",
+            disabled: "#383C4B",
           },
           accent: {
-            bg: "#F39C12",
-            text: "#1E1E1E",
-            hover: "#D68910",
+            bg: "#EE9B00",
+            text: "#1C1F2B",
+            hover: "#CA6702",
           },
           ghost: {
             bg: "transparent",
-            text: "#F0F0F0",
-            hover: "#2A2A2A",
+            text: "#FFFFFF",
+            hover: "#2A2E3B",
           },
           outline: {
-            border: "#16A085",
-            bg: "#1E1E1E",
-            text: "#16A085",
-            hoverBg: "#2A2A2A",
+            border: "#EE9B00",
+            bg: "#1A1A1A",
+            text: "#EE9B00",
+            hoverBg: "#2A2E3B",
           },
         },
         card: {
           default: {
-            bg: "#1E1E1E",
-            border: "#2A2A2A",
+            bg: "#2A2E3B",
+            border: "#383C4B",
             text: "#FFFFFF",
           },
           highlight: {
-            bg: "#2C3E50",
-            border: "#16A085",
-            text: "#F0F0F0",
+            bg: "#2A2E3B",
+            border: "#EE9B00",
+            text: "#FFFFFF",
           },
           info: {
-            bg: "#22303C",
-            border: "#1ABC9C",
-            text: "#F0F0F0",
+            bg: "#1C1F2B",
+            border: "#005F73",
+            text: "#FFFFFF",
           },
         },
         nav: {
           bg: "#121212",
-          text: "#F0F0F0",
-          hover: "#16A085",
+          text: "#FFFFFF",
+          hover: "#EE9B00",
         },
         footer: {
-          bg: "#1A1A1A",
-          text: "#BFBFBF",
-          hover: "#F39C12",
+          bg: "#121212",
+          text: "#E0E0E0",
+          hover: "#EE9B00",
         },
         modal: {
-          bg: "#1E1E1E",
-          border: "#34495E",
+          bg: "#1A1A1A",
+          border: "#383C4B",
           text: "#FFFFFF",
         },
         tooltip: {
-          bg: "#2A2A2A",
-          border: "#16A085",
+          bg: "#2A2E3B",
+          border: "#EE9B00",
           text: "#FFFFFF",
         },
         input: {
-          bg: "#1E1E1E",
-          border: "#34495E",
-          placeholder: "#8C8C8C",
+          bg: "#212121",
+          border: "#383C4B",
+          placeholder: "#BDBDBD",
           text: "#FFFFFF",
           focus: {
-            border: "#16A085",
-            ring: "#1ABC9C",
+            border: "#EE9B00",
+            ring: "#EE9B00",
           },
           error: {
-            border: "#E74C3C",
-            ring: "#C0392B",
+            border: "#BB3E03",
+            ring: "#BB3E03",
             text: "#FFBABA",
             placeholder: "#E4AFAF",
           },
