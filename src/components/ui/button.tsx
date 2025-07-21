@@ -18,18 +18,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-105",
           {
-            // Variants
-            "bg-primary-600 text-white hover:bg-primary-700 shadow-md":
+            // Primary Button - Dark Theme
+            "bg-primary-500 text-white hover:bg-primary-700 shadow-neon-primary hover:shadow-primary-glow":
               variant === "default",
-            "bg-secondary-600 text-white hover:bg-secondary-700 shadow-md":
+            // Secondary Button - Dark Theme
+            "bg-secondary-500 text-white hover:bg-secondary-700 shadow-secondary-glow":
               variant === "secondary",
-            "bg-accent-500 text-white hover:bg-accent-600 shadow-md":
+            // Accent Button - Dark Theme
+            "bg-accent-500 text-neutral-500 hover:bg-accent-700 shadow-neon-accent":
               variant === "accent",
-            "border border-neutral-300 bg-transparent hover:bg-neutral-100 text-font-primary":
+            // Outline Button - Dark Theme
+            "border-2 border-primary-500 bg-transparent hover:bg-primary-500/10 text-primary-600 hover:text-primary-500 hover:shadow-neon-primary":
               variant === "outline",
-            "hover:bg-neutral-100 text-font-primary": variant === "ghost",
+            // Ghost Button - Dark Theme
+            "hover:bg-primary-500/10 text-font-light hover:text-primary-600":
+              variant === "ghost",
+            // Destructive Button
             "bg-error text-white hover:bg-red-700 shadow-md":
               variant === "destructive",
             // Sizes

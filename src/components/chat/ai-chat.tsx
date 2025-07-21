@@ -40,7 +40,7 @@ function QuickAction({ icon, label, onClick, color }: QuickActionProps) {
       variant="outline"
       size="sm"
       onClick={onClick}
-      className={`flex items-center space-x-2 ${color} hover:scale-105 transition-all`}
+      className={`flex items-center space-x-2 ${color} hover:scale-105 transition-all glass-effect border-primary-500/30 text-font-light hover:bg-primary-500/20`}
     >
       {icon}
       <span>{label}</span>
@@ -59,23 +59,23 @@ function MessageBubble({ message }: MessageBubbleProps) {
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div className={`flex items-start space-x-3 max-w-[80%]`}>
         {!isUser && (
-          <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mt-1">
-            <Bot className="w-4 h-4 text-primary-600" />
+          <div className="w-10 h-10 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center mt-1 neon-glow">
+            <Bot className="w-5 h-5 text-primary-400" />
           </div>
         )}
 
         <div
-          className={`p-3 rounded-2xl ${
+          className={`p-4 rounded-2xl ${
             isUser
-              ? "bg-primary-500 text-white rounded-br-none"
-              : "bg-neutral-100 text-neutral-900 rounded-bl-none"
+              ? "bg-primary-500/90 text-white rounded-br-none glass-effect border border-primary-400/50"
+              : "glass-effect text-font-light rounded-bl-none border border-primary-500/20"
           }`}
         >
           <p className="text-sm leading-relaxed">{message.content}</p>
           <div className="flex justify-between items-center mt-2">
             <span
               className={`text-xs ${
-                isUser ? "text-primary-200" : "text-neutral-500"
+                isUser ? "text-primary-200" : "text-font-muted"
               }`}
             >
               {message.timestamp instanceof Date
@@ -94,7 +94,10 @@ function MessageBubble({ message }: MessageBubbleProps) {
                   })}
             </span>
             {message.category && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge
+                variant="secondary"
+                className="text-xs bg-secondary-500/20 text-secondary-300 border-secondary-500/30"
+              >
                 {message.category}
               </Badge>
             )}
@@ -102,8 +105,8 @@ function MessageBubble({ message }: MessageBubbleProps) {
         </div>
 
         {isUser && (
-          <div className="w-8 h-8 rounded-full bg-secondary-100 flex items-center justify-center mt-1">
-            <User className="w-4 h-4 text-secondary-600" />
+          <div className="w-10 h-10 rounded-full bg-secondary-500/20 border border-secondary-500/30 flex items-center justify-center mt-1 neon-glow">
+            <User className="w-5 h-5 text-secondary-400" />
           </div>
         )}
       </div>
@@ -209,16 +212,16 @@ export default function AIChatInterface() {
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-4 border-b border-primary-500/20">
         <CardTitle className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center neon-glow">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-neutral-900">
+            <h3 className="text-xl font-semibold text-font-light">
               AI Financial Advisor
             </h3>
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-font-secondary">
               Konsultasi keuangan 24/7 dengan AI
             </p>
           </div>
@@ -227,22 +230,24 @@ export default function AIChatInterface() {
 
       <CardContent className="flex-1 flex flex-col">
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto mb-4 space-y-2 max-h-[400px]">
+        <div className="flex-1 overflow-y-auto mb-4 space-y-2 max-h-[400px] scrollbar-thin scrollbar-thumb-primary-500/50 scrollbar-track-bg-darker/20">
           {messages.length === 0 && (
             <div className="text-center py-8 space-y-4">
-              <MessageCircle className="w-12 h-12 text-neutral-400 mx-auto" />
+              <div className="w-16 h-16 bg-primary-500/20 border border-primary-500/30 rounded-full flex items-center justify-center mx-auto neon-glow">
+                <MessageCircle className="w-8 h-8 text-primary-400" />
+              </div>
               <div>
-                <h4 className="font-medium text-neutral-700 mb-2">
+                <h4 className="font-medium text-font-light mb-2">
                   Selamat datang di AI Financial Advisor!
                 </h4>
-                <p className="text-sm text-neutral-600">
+                <p className="text-sm text-font-secondary">
                   Tanyakan apa saja tentang keuangan, budgeting, investasi, atau
                   strategi menabung.
                 </p>
               </div>
 
               {/* Quick Actions */}
-              <div className="flex flex-wrap justify-center gap-2 mt-4">
+              <div className="flex flex-wrap justify-center gap-2 mt-6">
                 {quickActions.map((action, index) => (
                   <QuickAction key={index} {...action} />
                 ))}
@@ -256,9 +261,9 @@ export default function AIChatInterface() {
 
           {isTyping && (
             <div className="flex justify-start">
-              <div className="flex items-center space-x-2 bg-neutral-100 p-3 rounded-2xl rounded-bl-none">
-                <Loader2 className="w-4 h-4 animate-spin text-primary-500" />
-                <span className="text-sm text-neutral-600">
+              <div className="flex items-center space-x-2 glass-effect border border-primary-500/20 p-3 rounded-2xl rounded-bl-none">
+                <Loader2 className="w-4 h-4 animate-spin text-primary-400" />
+                <span className="text-sm text-font-secondary">
                   AI sedang mengetik...
                 </span>
               </div>
@@ -269,7 +274,7 @@ export default function AIChatInterface() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t pt-4">
+        <div className="border-t border-primary-500/20 pt-4">
           <div className="flex space-x-2">
             <Input
               ref={inputRef}
@@ -288,7 +293,7 @@ export default function AIChatInterface() {
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="bg-primary-500 hover:bg-primary-600 text-white"
+              className="bg-primary-500 hover:bg-primary-700 text-white"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

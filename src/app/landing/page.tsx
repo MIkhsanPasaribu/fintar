@@ -4,970 +4,662 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,
-  MessageSquare,
-  BookOpen,
   Shield,
-  Users,
-  BarChart3,
-  Brain,
-  Smartphone,
-  Star,
-  CheckCircle,
-  ArrowRight,
   Zap,
-  Award,
-  Globe,
-  Lock,
-  Sparkles,
-  PieChart,
+  Users,
+  Brain,
+  Target,
+  ArrowRight,
+  Star,
+  BarChart3,
   Wallet,
-  DollarSign,
-  Clock,
-  ThumbsUp,
-  PiggyBank,
+  Calculator,
+  BookOpen,
+  MessageSquare,
+  Calendar,
+  ChevronRight,
+  Sparkles,
+  Banknote,
+  CreditCard,
+  LineChart,
+  Play,
 } from "lucide-react";
+
+const stats = [
+  { number: "50K+", label: "Active Users", icon: Users },
+  { number: "₹10Cr+", label: "Managed Assets", icon: Wallet },
+  { number: "98%", label: "Success Rate", icon: TrendingUp },
+  { number: "4.9/5", label: "User Rating", icon: Star },
+];
 
 const features = [
   {
-    icon: BarChart3,
-    title: "Dashboard Keuangan Personal",
-    description:
-      "Kelola pemasukan, pengeluaran, dan target finansial dengan visualisasi yang mudah dipahami",
-    color: "text-primary-600 bg-primary-50",
-    gradient: "from-primary-600 to-primary-700",
-    iconColor: "text-primary-600",
-    shadowColor: "shadow-primary-500/20",
+    icon: Brain,
+    title: "AI Financial Assistant",
+    description: "Smart AI yang memahami kebutuhan finansial personal Anda dengan analisis mendalam",
+    color: "primary",
+    animation: "slide-in-left",
+    delay: "animate-delay-500",
   },
   {
-    icon: Brain,
-    title: "AI Financial Copilot",
-    description:
-      "Konsultasi 24/7 dengan AI untuk rekomendasi budgeting, tabungan, dan investasi",
-    color: "text-blue-600 bg-blue-50",
-    gradient: "from-blue-600 to-indigo-700",
-    iconColor: "text-blue-600",
-    shadowColor: "shadow-blue-500/20",
+    icon: BarChart3,
+    title: "Real-time Analytics",
+    description: "Dashboard canggih dengan visualisasi data keuangan yang interaktif dan real-time",
+    color: "accent",
+    animation: "slide-in-up",
+    delay: "animate-delay-800",
+  },
+  {
+    icon: Shield,
+    title: "Bank-level Security",
+    description: "Keamanan tingkat perbankan dengan enkripsi end-to-end untuk melindungi data Anda",
+    color: "secondary",
+    animation: "slide-in-right",
+    delay: "animate-delay-1200",
+  },
+  {
+    icon: Target,
+    title: "Goal Planning",
+    description: "Perencanaan finansial yang disesuaikan dengan target dan timeline personal Anda",
+    color: "primary",
+    animation: "scale-in",
+    delay: "animate-delay-1400",
+  },
+  {
+    icon: Zap,
+    title: "Instant Insights",
+    description: "Dapatkan insight keuangan instan dengan prediksi berbasis machine learning",
+    color: "accent",
+    animation: "flip-in",
+    delay: "animate-delay-1000",
+  },
+  {
+    icon: Calculator,
+    title: "Smart Calculator",
+    description: "Kalkulator finansial cerdas untuk semua kebutuhan perhitungan investasi Anda",
+    color: "secondary",
+    animation: "bounce-in",
+    delay: "animate-delay-600",
+  },
+];
+
+const services = [
+  {
+    icon: MessageSquare,
+    title: "AI Consultation",
+    description: "Konsultasi dengan AI assistant 24/7",
+    features: ["Personal Finance Analysis", "Investment Recommendations", "Risk Assessment"],
   },
   {
     icon: BookOpen,
-    title: "Edukasi Literasi Keuangan",
-    description:
-      "Tingkatkan pengetahuan finansial dengan konten microlearning yang disesuaikan AI",
-    color: "text-amber-600 bg-amber-50",
-    gradient: "from-amber-500 to-amber-600",
-    iconColor: "text-amber-600",
-    shadowColor: "shadow-amber-500/20",
+    title: "Financial Education",
+    description: "Pembelajaran keuangan interaktif",
+    features: ["Beginner to Expert Courses", "Interactive Simulations", "Progress Tracking"],
   },
   {
-    icon: Users,
-    title: "Konsultasi dengan Ahli",
-    description: "Booking dan live chat dengan konsultan keuangan profesional",
-    color: "text-emerald-600 bg-emerald-50",
-    gradient: "from-emerald-500 to-emerald-700",
-    iconColor: "text-emerald-600",
-    shadowColor: "shadow-emerald-500/20",
+    icon: Calendar,
+    title: "Expert Booking",
+    description: "Sesi konsultasi dengan ahli keuangan",
+    features: ["Certified Financial Advisors", "Flexible Scheduling", "Personalized Advice"],
   },
 ];
 
 const benefits = [
-  { icon: Shield, text: "Keamanan data terjamin dengan enkripsi tingkat bank" },
-  { icon: Smartphone, text: "Akses mudah dari desktop dan mobile" },
-  { icon: TrendingUp, text: "Rekomendasi personal berbasis AI" },
-  { icon: MessageSquare, text: "Dukungan 24/7 dari AI Assistant" },
+  {
+    title: "Hemat Waktu",
+    description: "Otomatisasi pengelolaan keuangan menghemat 80% waktu Anda",
+    icon: "⏱️",
+  },
+  {
+    title: "Tingkatkan Profit",
+    description: "User rata-rata meningkatkan ROI investasi hingga 35%",
+    icon: "📈",
+  },
+  {
+    title: "Kontrol Penuh",
+    description: "Kendali total atas semua aspek keuangan dalam satu platform",
+    icon: "🎯",
+  },
+  {
+    title: "Keamanan Terjamin",
+    description: "Perlindungan data berlapis dengan standar keamanan internasional",
+    icon: "🔒",
+  },
 ];
 
-export default function LandingPage() {
+const faqs = [
+  {
+    question: "Bagaimana keamanan data finansial saya?",
+    answer: "Kami menggunakan enkripsi AES-256 dan protokol keamanan tingkat perbankan. Data Anda tersimpan aman dan tidak pernah dibagikan ke pihak ketiga tanpa persetujuan eksplisit.",
+  },
+  {
+    question: "Apakah AI dapat memberikan saran investasi yang akurat?",
+    answer: "AI kami dilatih dengan data pasar selama 10+ tahun dan memiliki akurasi prediksi 98%. Namun, kami selalu menyarankan untuk melakukan riset tambahan sebelum mengambil keputusan investasi besar.",
+  },
+  {
+    question: "Berapa biaya untuk menggunakan platform ini?",
+    answer: "Kami menawarkan paket Basic gratis dengan fitur dasar, dan paket Premium mulai dari ₹299/bulan dengan akses penuh ke semua fitur AI dan konsultasi expert.",
+  },
+  {
+    question: "Apakah bisa digunakan untuk bisnis?",
+    answer: "Ya! Fintar mendukung manajemen keuangan personal maupun bisnis. Kami memiliki fitur khusus untuk UMKM dan enterprise dengan dashboard yang dapat dikustomisasi.",
+  },
+];
+
+export default function DarkLandingPage() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeFeature, setActiveFeature] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    setIsVisible(true);
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % features.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-neutral-200">
+    <div className="min-h-screen bg-neutral-500 text-font-primary overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-500 to-secondary-700"></div>
+        <div 
+          className="absolute w-96 h-96 bg-primary-500/10 rounded-full blur-3xl cursor-glow"
+          data-x={mousePosition.x}
+          data-y={mousePosition.y}
+        ></div>
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-accent-500/10 rounded-full blur-2xl animate-float"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-secondary-500/10 rounded-full blur-2xl animate-floating-delayed"></div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="relative z-50 glass-effect border-b border-primary-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center shadow-lg shadow-primary-500/30">
-                <DollarSign className="text-white h-5 w-5" />
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-neon-primary">
+                <span className="text-white font-bold text-xl">F</span>
               </div>
-              <span className="text-2xl font-extrabold tracking-tight text-font-primary">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Fin</span>tar
-              </span>
+              <span className="text-2xl font-bold gradient-text">Fintar</span>
             </div>
             
-            {/* Navigation links - hidden on mobile */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#features" className="text-font-primary hover:text-primary-600 font-medium transition-colors">
-                Fitur
-              </Link>
-              <Link href="#pricing" className="text-font-primary hover:text-primary-600 font-medium transition-colors">
-                Harga
-              </Link>
-              <Link href="#testimonials" className="text-font-primary hover:text-primary-600 font-medium transition-colors">
-                Testimoni
-              </Link>
-              <Link href="#faq" className="text-font-primary hover:text-primary-600 font-medium transition-colors">
-                FAQ
-              </Link>
+              <Link href="#features" className="nav-link hover:text-primary-600 transition-all duration-300">Features</Link>
+              <Link href="#services" className="nav-link hover:text-primary-600 transition-all duration-300">Services</Link>
+              <Link href="#about" className="nav-link hover:text-primary-600 transition-all duration-300">About</Link>
+              <Link href="#contact" className="nav-link hover:text-primary-600 transition-all duration-300">Contact</Link>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Link href="/login">
-                <Button variant="ghost" className="font-medium hover:bg-primary-50">Masuk</Button>
+                <Button variant="ghost" className="text-font-light hover:text-primary-600 hover:bg-primary-500/10">
+                  Masuk
+                </Button>
               </Link>
-              <Link href="/register">
-                <Button className="font-medium shadow-md shadow-primary-500/20 hover:shadow-primary-500/30 transition-shadow">
-                  <span>Daftar Gratis</span>
-                  <ArrowRight className="ml-1.5 h-4 w-4" />
+              <Link href="/dashboard">
+                <Button className="bg-primary-500 hover:bg-primary-700 text-white shadow-neon-primary hover:shadow-primary-glow transform hover:scale-105 transition-all duration-300">
+                  Mulai Gratis
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-50/90 to-primary-50/90"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#0F172A_0%,_transparent_60%)] opacity-[0.04]"></div>
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 shadow-lg"></div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center space-y-10">
-            <div className="space-y-6">
-              <div className="inline-block rounded-full bg-primary-50 px-4 py-2 mb-4 border border-primary-100 shadow-sm">
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="h-4 w-4 text-primary-600" />
-                  <span className="text-sm font-medium text-primary-600">Inovasi Finansial #1 di Indonesia</span>
-                </div>
-              </div>
-              
-              <h1 className="text-4xl md:text-6xl font-extrabold text-font-primary leading-tight">
-                Wujudkan
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">
-                  {" "}
-                  Kebebasan Finansial{" "}
-                </span>
-                <br className="hidden md:block" />
-                dengan AI
-              </h1>
-              
-              <p className="text-xl text-font-secondary max-w-3xl mx-auto leading-relaxed">
-                Platform pemberdayaan finansial berbasis AI yang membantu
-                individu dan UMKM mengelola keuangan, meningkatkan literasi
-                finansial, dan meraih tujuan keuangan.
-              </p>
-            </div>
+      <section className="relative z-10 pt-20 pb-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <Badge className="mb-6 px-4 py-2 bg-primary-500/20 text-primary-600 border-primary-500/30 animate-pulse-soft">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Powered by Advanced AI Technology
+            </Badge>
+            
+            <h1 className={`text-5xl md:text-7xl font-bold mb-6 leading-tight transition-all duration-1000 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}>
+              <span className="gradient-text">Revolusi</span> Keuangan
+              <br />
+              <span className="text-font-light">Digital Indonesia</span>
+            </h1>
+            
+            <p className={`text-xl md:text-2xl text-font-secondary max-w-4xl mx-auto mb-12 leading-relaxed transition-all duration-1000 delay-300 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}>
+              Platform financial technology terdepan dengan <span className="text-primary-600 font-semibold">AI Assistant</span> yang 
+              membantu mengoptimalkan keuangan personal dan bisnis Anda secara otomatis
+            </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link href="/register">
-                <Button size="lg" className="text-lg px-8 py-4 shadow-xl shadow-primary-600/30 hover:shadow-primary-600/40 transition-all duration-300 font-medium">
-                  <span>Mulai Gratis Sekarang</span>
-                  <ArrowRight className="ml-2 h-5 w-5" />
+            <div className={`flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 transition-all duration-1000 delay-500 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}>
+              <Link href="/dashboard">
+                <Button size="lg" className="btn-primary px-8 py-4 text-lg font-semibold">
+                  <Play className="mr-3 h-5 w-5" />
+                  Mulai Sekarang Gratis
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-2 hover:bg-neutral-50 transition-all duration-300 font-medium">
-                <PieChart className="mr-2 h-5 w-5" />
-                <span>Lihat Demo</span>
-              </Button>
+              <Link href="#demo">
+                <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10">
+                  <LineChart className="mr-3 h-5 w-5" />
+                  Lihat Demo
+                </Button>
+              </Link>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-              <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                <CheckCircle className="h-5 w-5 text-primary-600" />
-                <span>✨ Gratis untuk individu</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                <Lock className="h-5 w-5 text-primary-600" />
-                <span>🔒 Data aman terlindungi</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                <Zap className="h-5 w-5 text-primary-600" />
-                <span>🚀 Setup dalam 2 menit</span>
-              </div>
-            </div>
-            
-            {/* Social proof section */}
-            <div className="mt-12 pt-6 border-t border-neutral-200">
-              <p className="text-sm text-neutral-500 mb-4">Dipercaya oleh 10,000+ pengguna</p>
-              <div className="flex flex-wrap justify-center gap-8 opacity-70">
-                {/* Mock company logos */}
-                <div className="h-8 w-24 bg-neutral-300 rounded"></div>
-                <div className="h-8 w-24 bg-neutral-300 rounded"></div>
-                <div className="h-8 w-24 bg-neutral-300 rounded"></div>
-                <div className="h-8 w-24 bg-neutral-300 rounded"></div>
-              </div>
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              {stats.map((stat, index) => (
+                <div
+                  key={index}
+                  className={`text-center animate-fade-in-scale animate-delay-${(index + 1) * 200}`}
+                >
+                  <div className="flex justify-center mb-2">
+                    <stat.icon className="h-8 w-8 text-primary-600" />
+                  </div>
+                  <div className="text-3xl font-bold text-font-light mb-1">{stat.number}</div>
+                  <div className="text-font-secondary">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-primary-600/10 rounded-full filter blur-3xl"></div>
-        <div className="absolute top-0 right-0 w-72 h-72 bg-secondary-600/10 rounded-full filter blur-3xl"></div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-gradient-to-b from-primary-50 to-white relative" id="features">
-        <div className="absolute right-0 top-0 w-72 h-72 bg-primary-200 rounded-full filter blur-3xl opacity-50"></div>
-        <div className="absolute left-0 bottom-0 w-72 h-72 bg-secondary-200 rounded-full filter blur-3xl opacity-50"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1E40AF_0%,_transparent_70%)] opacity-[0.03]"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center space-y-6 mb-20">
-            <div className="inline-block rounded-full bg-primary-50 px-4 py-2 mb-4 border border-primary-100">
-              <div className="flex items-center space-x-2">
-                <Sparkles className="h-4 w-4 text-primary-600" />
-                <span className="text-sm font-medium text-primary-600">Platform Unggulan</span>
-              </div>
-            </div>
-            
-            <h2 className="text-4xl font-extrabold text-neutral-900 tracking-tight">
-              Fitur <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Unggulan</span> untuk Masa Depan Finansial Anda
+      <section id="features" className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+              Fitur <span className="gradient-text">Revolusioner</span>
             </h2>
-            
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
-              Semua yang Anda butuhkan untuk menguasai keuangan pribadi dan
-              bisnis dalam satu platform terintegrasi dan user-friendly
+            <p className="text-xl text-font-secondary max-w-3xl mx-auto">
+              Teknologi terdepan untuk mengelola keuangan dengan lebih cerdas dan efisien
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="overflow-hidden border-none bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group shadow-lg"
+                className={`card-hover glass-effect border-primary-500/20 ${feature.animation} ${feature.delay} cursor-pointer group`}
+                onMouseEnter={() => setActiveFeature(index)}
               >
-                <div className={`h-2 w-full bg-gradient-to-r ${feature.gradient}`}></div>
-                <CardHeader className="pt-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`p-3.5 rounded-full ${feature.color} ${feature.shadowColor} shadow-lg`}>
-                      <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
-                    </div>
-                    <CardTitle className="text-xl font-bold text-neutral-900">{feature.title}</CardTitle>
+                <CardHeader>
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${
+                    feature.color === 'primary' 
+                      ? 'bg-primary-500/20 text-primary-600' 
+                      : feature.color === 'accent'
+                      ? 'bg-accent-500/20 text-accent-600'
+                      : 'bg-secondary-500/20 text-secondary-600'
+                  } ${activeFeature === index ? 'neon-glow animate-pulse-soft' : ''} group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="h-8 w-8" />
                   </div>
+                  <CardTitle className="text-font-light text-xl group-hover:text-primary-600 transition-colors duration-300">
+                    {feature.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-neutral-700 leading-relaxed">{feature.description}</p>
-                  <div className="mt-4 flex justify-end">
-                    <div className="text-primary-600 font-medium flex items-center group-hover:translate-x-1 transition-transform">
-                      <span className="mr-1">Pelajari</span> 
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </div>
+                  <p className="text-font-secondary group-hover:text-font-light transition-colors duration-300">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
-      
-      {/* Pricing Section */}
-      <section className="py-24 bg-gradient-to-br from-neutral-50 via-white to-primary-50 relative" id="pricing">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#1E40AF_0%,_transparent_60%)] opacity-[0.07]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_#0E7490_0%,_transparent_60%)] opacity-[0.07]"></div>
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(30,64,175,0.03)_0,_rgba(30,64,175,0.03)_1px,_transparent_1px,_transparent_20px)]"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center space-y-6 mb-16">
-            <div className="inline-block rounded-full bg-gradient-to-r from-blue-50 to-primary-50 px-6 py-3 mb-4 border border-blue-100 shadow-md">
-              <div className="flex items-center space-x-2">
-                <Wallet className="h-5 w-5 text-blue-600" />
-                <span className="text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-primary-600">Harga Transparan</span>
-              </div>
-            </div>
-            
-            <h2 className="text-4xl font-extrabold text-neutral-900 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-900 to-primary-700">Pilih Paket yang Tepat untuk Anda</span>
+
+      {/* Services Section */}
+      <section id="services" className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+              Layanan <span className="gradient-text">Terpadu</span>
             </h2>
-            
-            <p className="text-xl text-neutral-700 max-w-3xl mx-auto leading-relaxed">
-              Solusi fleksibel untuk setiap tahap perjalanan finansial Anda
+            <p className="text-xl text-font-secondary max-w-3xl mx-auto">
+              Solusi finansial komprehensif dalam satu platform terintegrasi
             </p>
-            
-            <div className="inline-flex mt-6 p-1 bg-white rounded-full shadow-lg border border-primary-100">
-              <button className="px-8 py-3 rounded-full bg-gradient-to-r from-primary-600 to-blue-600 text-white font-medium transition-all">Bulanan</button>
-              <button className="px-8 py-3 rounded-full text-neutral-700 font-medium hover:bg-neutral-50 transition-all">Tahunan (Hemat 20%)</button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Basic Plan */}
-            <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl border border-blue-100 overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.02] duration-300 flex flex-col">
-              <div className="p-8 relative">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full -mt-16 -mr-16 opacity-30"></div>
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 shadow-lg transform rotate-3 relative">
-                  <PieChart className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-blue-900">Gratis</h3>
-                <div className="mt-4 flex items-baseline">
-                  <span className="text-5xl font-extrabold tracking-tight text-blue-700">Rp0</span>
-                  <span className="ml-2 text-blue-500 font-medium">/bulan</span>
-                </div>
-                <p className="mt-2 text-sm text-blue-600">Untuk penggunaan personal</p>
-
-                <div className="mt-8 space-y-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <span className="text-neutral-700">Dashboard keuangan dasar</span>
+            {services.map((service, index) => (
+              <Card key={index} className="glass-effect border-primary-500/20 card-hover">
+                <CardHeader>
+                  <div className="w-16 h-16 bg-primary-500/20 rounded-2xl flex items-center justify-center mb-4">
+                    <service.icon className="h-8 w-8 text-primary-600" />
                   </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <span className="text-neutral-700">5 pertanyaan AI/bulan</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <span className="text-neutral-700">Modul edukasi dasar</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <span className="text-neutral-700">1 akun bank</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-8 mt-auto bg-gradient-to-t from-blue-50 to-white pt-6 border-t border-blue-100">
-                <Link href="/register">
-                  <Button variant="outline" className="w-full font-medium py-6 text-blue-700 border-blue-300 bg-white hover:bg-blue-50 transition-colors">
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Daftar Gratis
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            
-            {/* Premium Plan */}
-            <div className="bg-gradient-to-br from-white to-primary-50 rounded-2xl shadow-2xl border-2 border-primary-400 overflow-hidden relative transform transition-all hover:shadow-2xl hover:scale-[1.05] duration-300 flex flex-col">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg border border-primary-500">
-                Paling Populer
-              </div>
-              
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full -mt-16 -mr-16 opacity-30"></div>
-              
-              <div className="p-8 pt-12 relative">
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-6 shadow-lg transform rotate-3">
-                  <Wallet className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-primary-900">Premium</h3>
-                <div className="mt-4 flex items-baseline">
-                  <span className="text-5xl font-extrabold tracking-tight text-primary-700">Rp99.000</span>
-                  <span className="ml-2 text-primary-500 font-medium">/bulan</span>
-                </div>
-                <p className="mt-2 text-sm text-primary-600">Untuk perencanaan keuangan mendalam</p>
-
-                <div className="mt-8 space-y-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">Dashboard keuangan lengkap</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">AI tanpa batas</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">Semua modul edukasi</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">5 akun bank</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">1 konsultasi expert/bulan</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-primary-600" />
-                    </div>
-                    <span className="text-neutral-700">Pelaporan pajak pribadi</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-8 mt-auto bg-gradient-to-t from-primary-100 to-white pt-6 border-t border-primary-200">
-                <Link href="/register">
-                  <Button className="w-full font-medium py-6 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-500/30 border-0">
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Berlangganan Sekarang
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            
-            {/* Business Plan */}
-            <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-xl border border-amber-100 overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.02] duration-300 flex flex-col">
-              <div className="p-8 relative">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-100 to-amber-200 rounded-full -mt-16 -mr-16 opacity-30"></div>
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-6 shadow-lg transform rotate-3 relative">
-                  <DollarSign className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-amber-900">Bisnis</h3>
-                <div className="mt-4 flex items-baseline">
-                  <span className="text-5xl font-extrabold tracking-tight text-amber-700">Rp249.000</span>
-                  <span className="ml-2 text-amber-500 font-medium">/bulan</span>
-                </div>
-                <p className="mt-2 text-sm text-amber-600">Untuk UMKM & bisnis kecil</p>
-
-                <div className="mt-8 space-y-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">Semua fitur Premium</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">Pemisahan keuangan pribadi-bisnis</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">Analisis arus kas & profitabilitas</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">10 akun bank</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">5 pengguna</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-7 h-7 bg-amber-100 rounded-full flex items-center justify-center mr-3">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <span className="text-neutral-700">Laporan pajak bisnis</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-8 mt-auto bg-gradient-to-t from-amber-50 to-white pt-6 border-t border-amber-100">
-                <Link href="/register">
-                  <Button variant="outline" className="w-full font-medium py-6 text-amber-700 border-amber-300 bg-white hover:bg-amber-50 transition-colors">
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Coba 14 Hari Gratis
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-          
-          {/* Enterprise */}
-          <div className="mt-16 bg-gradient-to-br from-blue-900 to-primary-900 rounded-3xl p-10 shadow-2xl relative overflow-hidden border border-blue-800">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_white_0%,_transparent_60%)] opacity-[0.04]"></div>
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(255,255,255,0.05)_0,_rgba(255,255,255,0.05)_1px,_transparent_1px,_transparent_10px)]"></div>
-            
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between relative z-10">
-              <div className="space-y-4 flex items-start">
-                <div className="mr-6">
-                  <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-6 shadow-lg border border-white/20">
-                    <Globe className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-                <div>
-                  <div className="inline-flex items-center space-x-2 px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-3">
-                    <Lock className="h-3 w-3 text-blue-300" />
-                    <span className="text-xs font-medium text-blue-200">Keamanan & Kustomisasi</span>
-                  </div>
-                  <h3 className="text-2xl font-bold text-white">Solusi Enterprise</h3>
-                  <p className="text-blue-100 max-w-2xl mt-2">
-                    Untuk perusahaan besar yang membutuhkan solusi keuangan skala besar dengan keamanan tinggi, integrasi sistem, dan fitur kustomisasi sesuai kebutuhan.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-8 lg:mt-0">
-                <Button className="bg-white text-blue-900 hover:bg-white/90 py-6 px-8 font-medium shadow-xl shadow-blue-950/30">
-                  <Shield className="mr-2 h-5 w-5" />
-                  Hubungi Tim Enterprise
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-24 bg-gradient-to-b from-neutral-100 to-neutral-50" id="testimonials">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#1E40AF_0%,_transparent_60%)] opacity-[0.03]"></div>
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,_rgba(30,64,175,0.03)_0,_rgba(30,64,175,0.03)_1px,_transparent_1px,_transparent_30px)]"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center space-y-6 mb-16">
-            <div className="inline-block rounded-full bg-blue-50 px-4 py-2 mb-4 border border-blue-100">
-              <div className="flex items-center space-x-2">
-                <Star className="h-4 w-4 text-amber-500" />
-                <span className="text-sm font-medium text-blue-600">Pengalaman Pengguna</span>
-              </div>
-            </div>
-            
-            <h2 className="text-3xl font-extrabold text-neutral-900">
-              Kisah Sukses Finansial Pengguna Kami
-            </h2>
-            
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Lihat bagaimana Fintar telah membantu ribuan orang meningkatkan kesehatan finansial mereka
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            {/* Testimonial 1 */}
-            <div className="bg-gradient-to-br from-white to-primary-50 rounded-2xl shadow-xl p-8 border border-primary-100 relative group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span className="text-white text-2xl font-serif">&ldquo;</span>
-              </div>
-              <div className="flex flex-col h-full">
-                <div className="flex-1">
-                  <div className="flex space-x-1 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-5 w-5 text-amber-400 fill-amber-400" />
+                  <CardTitle className="text-font-light text-xl">{service.title}</CardTitle>
+                  <p className="text-font-secondary">{service.description}</p>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {service.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center text-font-secondary">
+                        <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                        {feature}
+                      </li>
                     ))}
-                  </div>
-                  <p className="text-neutral-700 leading-relaxed">
-                    &ldquo;Fintar membantu saya membuat budget yang realistis dan mengubah kebiasaan belanja saya. Berkat AI Financial Copilot, saya berhasil menghemat 30% penghasilan bulanan.&rdquo;
-                  </p>
-                </div>
-                <div className="mt-6 pt-6 border-t border-primary-100">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 mr-4 border-2 border-white shadow-md"></div>
-                    <div>
-                      <p className="font-medium text-neutral-900">Budi Santoso</p>
-                      <p className="text-sm text-neutral-600">Karyawan Swasta, Jakarta</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl p-8 border border-blue-100 relative group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span className="text-white text-2xl font-serif">&ldquo;</span>
-              </div>
-              <div className="flex flex-col h-full">
-                <div className="flex-1">
-                  <div className="flex space-x-1 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-5 w-5 text-amber-400 fill-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-neutral-700 leading-relaxed">
-                    &ldquo;Sebagai pemilik UMKM, modul edukasi keuangan Fintar sangat membantu saya memahami arus kas dan memisahkan keuangan pribadi dari bisnis. Hasilnya, bisnis saya bertumbuh 40% dalam 6 bulan.&rdquo;
-                  </p>
-                </div>
-                <div className="mt-6 pt-6 border-t border-blue-100">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 mr-4 border-2 border-white shadow-md"></div>
-                    <div>
-                      <p className="font-medium text-neutral-900">Siti Rahma</p>
-                      <p className="text-sm text-neutral-600">Pemilik UMKM, Bandung</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-xl p-8 border border-emerald-100 relative group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span className="text-white text-2xl font-serif">&ldquo;</span>
-              </div>
-              <div className="flex flex-col h-full">
-                <div className="flex-1">
-                  <div className="flex space-x-1 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-5 w-5 text-amber-400 fill-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-neutral-700 leading-relaxed">
-                    &ldquo;Konsultasi dengan pakar keuangan melalui Fintar membuka mata saya tentang investasi. Saya mulai dengan dana kecil dan kini berhasil membangun portofolio yang cukup untuk DP rumah dalam 2 tahun.&rdquo;
-                  </p>
-                </div>
-                <div className="mt-6 pt-6 border-t border-emerald-100">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 mr-4 border-2 border-white shadow-md"></div>
-                    <div>
-                      <p className="font-medium text-neutral-900">Ahmad Faisal</p>
-                      <p className="text-sm text-neutral-600">Profesional Muda, Surabaya</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Stats bar */}
-          <div className="mt-20 bg-gradient-to-r from-blue-900 to-primary-900 rounded-2xl shadow-2xl p-8 border border-blue-800 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_white_0%,_transparent_60%)] opacity-[0.03]"></div>
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(255,255,255,0.05)_0,_rgba(255,255,255,0.05)_1px,_transparent_1px,_transparent_10px)]"></div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center relative z-10">
-              <div className="space-y-3 p-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/15 transition-all hover:-translate-y-1 hover:shadow-lg">
-                <div className="mx-auto w-14 h-14 bg-primary-500/20 rounded-full flex items-center justify-center mb-2">
-                  <Users className="h-6 w-6 text-primary-300" />
-                </div>
-                <p className="text-4xl font-extrabold text-white">10K+</p>
-                <p className="text-primary-200 font-medium">Pengguna Aktif</p>
-              </div>
-              <div className="space-y-3 p-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/15 transition-all hover:-translate-y-1 hover:shadow-lg">
-                <div className="mx-auto w-14 h-14 bg-blue-500/20 rounded-full flex items-center justify-center mb-2">
-                  <PiggyBank className="h-6 w-6 text-blue-300" />
-                </div>
-                <p className="text-4xl font-extrabold text-white">Rp2.5M</p>
-                <p className="text-blue-200 font-medium">Dana Terhemat</p>
-              </div>
-              <div className="space-y-3 p-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/15 transition-all hover:-translate-y-1 hover:shadow-lg">
-                <div className="mx-auto w-14 h-14 bg-emerald-500/20 rounded-full flex items-center justify-center mb-2">
-                  <ThumbsUp className="h-6 w-6 text-emerald-300" />
-                </div>
-                <p className="text-4xl font-extrabold text-white">96%</p>
-                <p className="text-emerald-200 font-medium">Kepuasan Pengguna</p>
-              </div>
-              <div className="space-y-3 p-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/15 transition-all hover:-translate-y-1 hover:shadow-lg">
-                <div className="mx-auto w-14 h-14 bg-amber-500/20 rounded-full flex items-center justify-center mb-2">
-                  <Clock className="h-6 w-6 text-amber-300" />
-                </div>
-                <p className="text-4xl font-extrabold text-white">24/7</p>
-                <p className="text-amber-200 font-medium">Dukungan AI</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-24 bg-gradient-to-b from-neutral-50 to-white relative" id="faq">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_#F59E0B_0%,_transparent_70%)] opacity-[0.05]"></div>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center space-y-6 mb-16">
-            <div className="inline-block rounded-full bg-primary-50 px-4 py-2 mb-4 border border-primary-100">
-              <div className="flex items-center space-x-2">
-                <MessageSquare className="h-4 w-4 text-primary-600" />
-                <span className="text-sm font-medium text-primary-600">Tanya Jawab</span>
-              </div>
-            </div>
-            
-            <h2 className="text-3xl font-extrabold text-neutral-900">
-              Pertanyaan yang Sering Diajukan
-            </h2>
-            
-            <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
-              Jawaban untuk pertanyaan umum tentang platform finansial Fintar
-            </p>
-          </div>
-          
-          <div className="space-y-6">
-            {/* FAQ Item 1 */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-neutral-200 overflow-hidden hover:shadow-lg hover:border-primary-200 transition-all">
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-3 shadow-inner border border-primary-200">
-                    <span className="text-primary-700 font-semibold">Q</span>
-                  </div>
-                  Bagaimana cara Fintar melindungi data finansial saya?
-                </h3>
-                <div className="mt-4 pl-11">
-                  <p className="text-neutral-700">
-                    Fintar menggunakan enkripsi tingkat bank dan protokol keamanan terkini untuk melindungi data Anda. Kami tidak pernah menjual data pengguna dan mengikuti standar keamanan internasional ISO 27001 untuk memastikan informasi finansial Anda aman setiap saat.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* FAQ Item 2 */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-neutral-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all">
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 shadow-inner border border-blue-200">
-                    <span className="text-blue-700 font-semibold">Q</span>
-                  </div>
-                  Apakah saya perlu memiliki pengetahuan keuangan untuk menggunakan Fintar?
-                </h3>
-                <div className="mt-4 pl-11">
-                  <p className="text-neutral-700">
-                    Tidak sama sekali! Fintar dirancang untuk pengguna dengan segala tingkat literasi finansial. AI Financial Copilot kami akan memandu Anda dengan bahasa sederhana, dan modul edukasi kami membantu meningkatkan pemahaman keuangan Anda secara bertahap.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* FAQ Item 3 */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-neutral-200 overflow-hidden hover:shadow-lg hover:border-amber-200 transition-all">
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-3 shadow-inner border border-amber-200">
-                    <span className="text-amber-700 font-semibold">Q</span>
-                  </div>
-                  Berapa biaya berlangganan Fintar?
-                </h3>
-                <div className="mt-4 pl-11">
-                  <p className="text-neutral-700">
-                    Fintar menawarkan versi gratis dengan fitur dasar untuk individu. Untuk fitur lanjutan, kami memiliki paket Premium mulai dari Rp99.000/bulan dan paket Bisnis mulai dari Rp249.000/bulan. Semua paket mencakup akses ke AI Financial Copilot.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* FAQ Item 4 */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-neutral-200 overflow-hidden hover:shadow-lg hover:border-emerald-200 transition-all">
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3 shadow-inner border border-emerald-200">
-                    <span className="text-emerald-700 font-semibold">Q</span>
-                  </div>
-                  Bagaimana cara menghubungkan akun bank ke Fintar?
-                </h3>
-                <div className="mt-4 pl-11">
-                  <p className="text-neutral-700">
-                    Fintar terintegrasi dengan 95% bank di Indonesia melalui API aman. Cukup masuk ke dasbor Anda, pilih &ldquo;Tambah Akun&rdquo;, dan ikuti panduan untuk menghubungkan akun bank Anda. Koneksi ini hanya untuk membaca data dan Fintar tidak memiliki akses untuk melakukan transaksi dari akun Anda.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* FAQ Item 5 */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-neutral-200 overflow-hidden hover:shadow-lg hover:border-secondary-200 transition-all">
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-neutral-900 flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-secondary-100 flex items-center justify-center mr-3 shadow-inner border border-secondary-200">
-                    <span className="text-secondary-700 font-semibold">Q</span>
-                  </div>
-                  Dapatkah saya menggunakan Fintar untuk bisnis UMKM saya?
-                </h3>
-                <div className="mt-4 pl-11">
-                  <p className="text-neutral-700">
-                    Tentu! Fintar memiliki fitur khusus untuk UMKM, termasuk pemisahan keuangan pribadi dan bisnis, pelacakan arus kas, dan analisis profitabilitas. Paket Bisnis kami juga mencakup laporan keuangan otomatis dan persiapan pajak.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-12 text-center">
-            <p className="text-neutral-600 mb-6">Masih memiliki pertanyaan?</p>
-            <Button variant="outline" className="font-medium">
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Hubungi Tim Dukungan
-            </Button>
+                  </ul>
+                  <Link href="/dashboard">
+                    <Button className="w-full mt-6 bg-primary-500 hover:bg-primary-700 text-white">
+                      Mulai Sekarang
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 relative overflow-hidden" id="benefits">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-800 to-secondary-800"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#065F46_0%,_transparent_50%)] opacity-30"></div>
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(255,255,255,0.05)_0,_rgba(255,255,255,0.05)_20px,_transparent_20px,_transparent_40px)]"></div>
-        
-        {/* Glass card container */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white/15 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-white/30">
-            <div className="p-12 text-center text-white space-y-12">
-              <div>
-                <div className="inline-block rounded-full bg-white/10 px-4 py-2 mb-4 backdrop-blur-sm border border-white/20">
-                  <div className="flex items-center space-x-2">
-                    <Star className="h-4 w-4 text-amber-300" />
-                    <span className="text-sm font-medium text-white">Keunggulan Kami</span>
+      <section className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+              Mengapa <span className="gradient-text">Fintar</span>?
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit, index) => (
+              <div
+                key={index}
+                className={`text-center animate-slide-in-up animate-delay-${(index + 1) * 200}`}
+              >
+                <div className="text-5xl mb-4">{benefit.icon}</div>
+                <h3 className="text-xl font-bold text-font-light mb-3">{benefit.title}</h3>
+                <p className="text-font-secondary">{benefit.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative z-10 py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+              Pertanyaan <span className="gradient-text">Umum</span>
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <Card
+                key={index}
+                className="glass-effect border-primary-500/20 cursor-pointer transition-all duration-300 hover:border-primary-500/40"
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-font-light">{faq.question}</h3>
+                    <ChevronRight
+                      className={`h-5 w-5 text-primary-600 transition-transform duration-300 ${
+                        openFaq === index ? 'rotate-90' : ''
+                      }`}
+                    />
                   </div>
+                </CardHeader>
+                {openFaq === index && (
+                  <CardContent className="pt-0">
+                    <p className="text-font-secondary">{faq.answer}</p>
+                  </CardContent>
+                )}
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+              Pilihan <span className="gradient-text">Berlangganan</span>
+            </h2>
+            <p className="text-xl text-font-secondary max-w-3xl mx-auto">
+              Paket yang dirancang untuk setiap kebutuhan finansial Anda
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Basic Plan */}
+            <Card className="glass-effect border-primary-500/20 card-hover relative">
+              <CardHeader className="text-center">
+                <Badge className="mb-4 mx-auto bg-secondary-500/20 text-secondary-600 border-secondary-500/30">
+                  Starter
+                </Badge>
+                <CardTitle className="text-font-light text-2xl mb-2">Basic</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-font-light">Gratis</span>
+                  <span className="text-font-secondary">/bulan</span>
                 </div>
-                <h2 className="text-4xl font-extrabold tracking-tight">Mengapa Memilih Fintar?</h2>
-                <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-                  Platform finansial yang didesain untuk kebutuhan modern dengan keamanan tingkat bank
-                </p>
+                <p className="text-font-secondary">Perfect untuk pemula yang ingin mencoba</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Dashboard basic keuangan
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    AI assistant terbatas (5 query/hari)
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Tracking pengeluaran dasar
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    1 goal finansial
+                  </li>
+                </ul>
+                <Link href="/dashboard">
+                  <Button className="w-full bg-primary-500 hover:bg-primary-700 text-white">
+                    Mulai Gratis
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Premium Plan */}
+            <Card className="glass-effect border-primary-500/40 card-hover relative scale-105 neon-glow">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-accent-500 text-neutral-500 border-accent-600 px-4 py-1">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Paling Populer
+                </Badge>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {benefits.map((benefit, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center space-y-6 p-6 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
-                  >
-                    <div className="p-4 bg-white/10 rounded-full shadow-xl shadow-black/10 group-hover:shadow-black/20 transition-all">
-                      <benefit.icon className="h-8 w-8 text-white" />
-                    </div>
-                    <p className="text-center font-medium text-lg">{benefit.text}</p>
-                    <div className="w-12 h-1 bg-white/30 rounded-full"></div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="flex justify-center pt-6">
-                <Button variant="secondary" size="lg" className="bg-white text-primary-600 hover:bg-white/90 font-medium shadow-xl shadow-black/10">
-                  <Award className="mr-2 h-5 w-5" />
-                  <span>Lihat Semua Keunggulan</span>
-                </Button>
-              </div>
+              <CardHeader className="text-center">
+                <Badge className="mb-4 mx-auto bg-primary-500/20 text-primary-600 border-primary-500/30">
+                  Professional
+                </Badge>
+                <CardTitle className="text-font-light text-2xl mb-2">Premium</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-font-light">₹299</span>
+                  <span className="text-font-secondary">/bulan</span>
+                </div>
+                <p className="text-font-secondary">Untuk pengguna serius yang ingin hasil optimal</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Dashboard advanced dengan AI insights
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    AI assistant unlimited
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Smart budgeting & forecasting
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Unlimited financial goals
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Investment recommendations
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Priority customer support
+                  </li>
+                </ul>
+                <Link href="/dashboard">
+                  <Button className="w-full bg-accent-500 hover:bg-accent-700 text-neutral-500">
+                    Upgrade Sekarang
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise Plan */}
+            <Card className="glass-effect border-primary-500/20 card-hover relative">
+              <CardHeader className="text-center">
+                <Badge className="mb-4 mx-auto bg-secondary-500/20 text-secondary-600 border-secondary-500/30">
+                  Enterprise
+                </Badge>
+                <CardTitle className="text-font-light text-2xl mb-2">Business</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-font-light">₹999</span>
+                  <span className="text-font-secondary">/bulan</span>
+                </div>
+                <p className="text-font-secondary">Solusi lengkap untuk bisnis dan tim</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Semua fitur Premium
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Multi-user team management
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Business financial analytics
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Custom reports & exports
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    Dedicated account manager
+                  </li>
+                  <li className="flex items-center text-font-secondary">
+                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
+                    API integration support
+                  </li>
+                </ul>
+                <Link href="/contact">
+                  <Button variant="outline" className="w-full border-primary-500 text-primary-600 hover:bg-primary-500/10">
+                    Hubungi Sales
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-font-secondary mb-4">
+              Semua paket dilengkapi dengan 30 hari garansi uang kembali
+            </p>
+            <div className="flex justify-center items-center space-x-6 text-font-muted">
+              <span className="flex items-center">
+                <Shield className="w-4 h-4 mr-2 text-primary-600" />
+                Bank-level Security
+              </span>
+              <span className="flex items-center">
+                <Users className="w-4 h-4 mr-2 text-primary-600" />
+                24/7 Support
+              </span>
+              <span className="flex items-center">
+                <Star className="w-4 h-4 mr-2 text-primary-600" />
+                99.9% Uptime
+              </span>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-font-primary relative overflow-hidden">
-        {/* Abstract financial graph background */}
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,_#0F172A_0%,_#1E293B_100%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#065F46_0%,_transparent_50%)] opacity-20"></div>
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(30,64,175,0.1)_0,_rgba(30,64,175,0.1)_1px,_transparent_1px,_transparent_10px)]"></div>
-        
-        <div className="max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="bg-gradient-to-br from-primary-900 to-secondary-900 rounded-3xl p-12 shadow-2xl border border-primary-500/30">
-            <div className="space-y-8">
-              <div className="inline-block rounded-full bg-white/10 px-4 py-2 mb-2">
-                <div className="flex items-center space-x-2">
-                  <Wallet className="h-4 w-4 text-primary-400" />
-                  <span className="text-sm font-medium text-primary-300">Mulai Perjalanan Finansial</span>
-                </div>
-              </div>
-              
-              <h2 className="text-4xl font-extrabold text-white tracking-tight">
-                Siap Mengambil <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-300">Kontrol Keuangan</span> Anda?
+      <section className="relative z-10 py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Card className="glass-effect border-primary-500/30 neon-glow">
+            <CardContent className="py-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
+                Siap Mengubah <span className="gradient-text">Masa Depan</span> Keuangan Anda?
               </h2>
-              
-              <p className="text-xl text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-                Bergabunglah dengan ribuan pengguna yang telah merasakan
-                transformasi finansial dengan platform AI Fintar
+              <p className="text-xl text-font-secondary mb-8 max-w-2xl mx-auto">
+                Bergabung dengan ribuan pengguna yang telah merasakan transformasi keuangan dengan Fintar
               </p>
-              
-              <div className="pt-4 flex flex-col sm:flex-row gap-6 justify-center">
-                <Link href="/register">
-                  <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0 shadow-xl shadow-amber-900/30 font-medium">
-                    <span>Daftar Sekarang - Gratis</span>
-                    <ArrowRight className="ml-2 h-5 w-5" />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/dashboard">
+                  <Button size="lg" className="btn-primary px-8 py-4 text-lg font-semibold">
+                    <Banknote className="mr-3 h-5 w-5" />
+                    Mulai Gratis Sekarang
                   </Button>
                 </Link>
-                <Link href="/testimonials">
-                  <Button size="lg" variant="outline" className="text-lg px-8 py-6 text-white border-white/30 hover:bg-white/10 transition-colors font-medium">
-                    <Users className="mr-2 h-5 w-5" />
-                    <span>Baca Testimoni</span>
+                <Link href="/login">
+                  <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10">
+                    <CreditCard className="mr-3 h-5 w-5" />
+                    Sudah Punya Akun?
                   </Button>
                 </Link>
               </div>
-              
-              {/* Security badges */}
-              <div className="pt-8 flex flex-wrap items-center justify-center gap-4">
-                <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-full">
-                  <Lock className="h-4 w-4 text-neutral-400" />
-                  <span className="text-xs font-medium text-neutral-300">Data Terenkripsi</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-full">
-                  <Shield className="h-4 w-4 text-neutral-400" />
-                  <span className="text-xs font-medium text-neutral-300">Keamanan Bank-Level</span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-full">
-                  <Globe className="h-4 w-4 text-neutral-400" />
-                  <span className="text-xs font-medium text-neutral-300">Support 24/7</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-b from-blue-50 to-white py-16 border-t border-blue-100 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_#1E40AF_0%,_transparent_70%)] opacity-[0.05]"></div>
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,_rgba(30,64,175,0.01)_0,_rgba(30,64,175,0.01)_2px,_transparent_2px,_transparent_10px)]"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            {/* Logo and tagline */}
-            <div className="space-y-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
-                  <DollarSign className="text-white h-6 w-6" />
-                </div>
-                <span className="text-2xl font-extrabold text-neutral-900">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Fin</span>tar
-                </span>
+      <footer className="relative z-10 border-t border-primary-500/20 bg-neutral-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="flex justify-center items-center space-x-2 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-xl">F</span>
               </div>
-              <p className="text-neutral-700">
-                Platform pemberdayaan finansial berbasis AI untuk individu dan UMKM
+              <span className="text-2xl font-bold gradient-text">Fintar</span>
+            </div>
+            <p className="text-font-secondary mb-6">
+              Revolusi keuangan digital Indonesia dengan teknologi AI terdepan
+            </p>
+            <div className="flex justify-center space-x-8 text-font-muted">
+              <Link href="/privacy" className="hover:text-primary-600 transition-colors duration-300">Privacy</Link>
+              <Link href="/terms" className="hover:text-primary-600 transition-colors duration-300">Terms</Link>
+              <Link href="/support" className="hover:text-primary-600 transition-colors duration-300">Support</Link>
+            </div>
+            <div className="mt-8 pt-8 border-t border-primary-500/20">
+              <p className="text-font-muted">
+                © 2024 Fintar. All rights reserved. Made with ❤️ in Indonesia
               </p>
-              <div className="flex space-x-3">
-                <a href="#" className="transition-transform hover:scale-110">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-white shadow-md border border-blue-100 flex items-center justify-center group hover:bg-gradient-to-br hover:from-primary-50 hover:to-primary-100">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:text-primary-600">FB</span>
-                  </div>
-                </a>
-                <a href="#" className="transition-transform hover:scale-110">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-white shadow-md border border-blue-100 flex items-center justify-center group hover:bg-gradient-to-br hover:from-primary-50 hover:to-primary-100">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:text-primary-600">TW</span>
-                  </div>
-                </a>
-                <a href="#" className="transition-transform hover:scale-110">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-white shadow-md border border-blue-100 flex items-center justify-center group hover:bg-gradient-to-br hover:from-primary-50 hover:to-primary-100">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:text-primary-600">IG</span>
-                  </div>
-                </a>
-                <a href="#" className="transition-transform hover:scale-110">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-white shadow-md border border-blue-100 flex items-center justify-center group hover:bg-gradient-to-br hover:from-primary-50 hover:to-primary-100">
-                    <span className="text-sm font-semibold text-blue-600 group-hover:text-primary-600">LI</span>
-                  </div>
-                </a>
-              </div>
-            </div>
-            
-            {/* Quick links */}
-            <div>
-              <h3 className="font-bold text-lg mb-5 text-neutral-900 border-b border-blue-100 pb-2">Produk</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Dashboard</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> AI Copilot</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Edukasi</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Konsultasi</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-bold text-lg mb-5 text-neutral-900 border-b border-blue-100 pb-2">Perusahaan</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Tentang Kami</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Karir</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Press</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Blog</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-bold text-lg mb-5 text-neutral-900 border-b border-blue-100 pb-2">Legal</h3>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Ketentuan Layanan</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Kebijakan Privasi</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Keamanan</a></li>
-                <li><a href="#" className="text-font-primary hover:text-primary-600 transition-colors flex items-center"><ArrowRight className="h-3 w-3 mr-2 text-primary-500" /> Cookies</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="mt-16 pt-8 border-t border-blue-100 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-center md:text-left">
-              <p className="text-neutral-700 text-sm bg-gradient-to-r from-blue-50 to-primary-50 px-4 py-2 rounded-full inline-block shadow-sm border border-blue-100">
-                © 2025 Fintar. Semua hak dilindungi. Platform Pemberdayaan Finansial Berbasis AI.
-              </p>
-            </div>
-            <div className="mt-6 md:mt-0 flex space-x-6">
-              <a href="#" className="text-primary-600 hover:text-primary-700 text-sm hover:underline font-medium">Ketentuan</a>
-              <a href="#" className="text-primary-600 hover:text-primary-700 text-sm hover:underline font-medium">Privasi</a>
-              <a href="#" className="text-primary-600 hover:text-primary-700 text-sm hover:underline font-medium">Cookies</a>
             </div>
           </div>
         </div>

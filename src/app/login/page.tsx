@@ -51,23 +51,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-bg-dark via-bg-main to-bg-darker flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10"></div>
+      <div className="absolute top-20 left-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+      <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
         <div className="text-center">
-          <Link href="/landing" className="inline-flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">F</span>
+          <Link
+            href="/landing"
+            className="inline-flex items-center space-x-2 group"
+          >
+            <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center neon-glow group-hover:scale-110 transition-all duration-300">
+              <span className="text-white font-bold text-lg">F</span>
             </div>
-            <span className="text-3xl font-bold text-primary-600">Fintar</span>
+            <span className="text-3xl font-bold gradient-text">Fintar</span>
           </Link>
-          <p className="mt-2 text-neutral-600">Masuk ke akun Anda</p>
+          <p className="mt-4 text-font-secondary">
+            Masuk ke akun Anda dan kelola keuangan dengan cerdas
+          </p>
         </div>
 
         {/* Login Form */}
-        <Card>
+        <Card className="glass-effect border-primary-500/20">
           <CardHeader>
-            <CardTitle>Selamat Datang Kembali</CardTitle>
+            <CardTitle className="text-font-light text-2xl text-center">
+              Selamat Datang Kembali
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -93,7 +105,7 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-9 text-neutral-400 hover:text-neutral-600"
+                  className="absolute right-3 top-9 text-font-muted hover:text-font-secondary transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -105,13 +117,24 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="text-sm text-error bg-red-50 p-3 rounded-md">
+                <div className="text-sm text-error-light bg-error-dark/20 border border-error-dark/30 p-3 rounded-lg">
                   {error}
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Memproses..." : "Masuk"}
+              <Button
+                type="submit"
+                className="w-full bg-primary-500 hover:bg-primary-700 text-white"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Memproses...</span>
+                  </div>
+                ) : (
+                  "Masuk"
+                )}
               </Button>
             </form>
 
@@ -119,7 +142,7 @@ export default function LoginPage() {
               <div className="text-center">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary-600 hover:underline"
+                  className="text-sm text-primary-400 hover:text-primary-300 hover:underline transition-colors"
                 >
                   Lupa password?
                 </Link>
@@ -127,20 +150,20 @@ export default function LoginPage() {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-neutral-200" />
+                  <div className="w-full border-t border-primary-500/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-neutral-500">Atau</span>
+                  <span className="px-2 bg-bg-main text-font-muted">Atau</span>
                 </div>
               </div>
 
               <div className="text-center">
-                <span className="text-sm text-neutral-600">
+                <span className="text-sm text-font-secondary">
                   Belum punya akun?{" "}
                 </span>
                 <Link
                   href="/register"
-                  className="text-sm text-primary-600 hover:underline font-medium"
+                  className="text-sm text-primary-400 hover:text-primary-300 hover:underline font-medium transition-colors"
                 >
                   Daftar sekarang
                 </Link>
@@ -150,15 +173,22 @@ export default function LoginPage() {
         </Card>
 
         {/* Demo Info */}
-        <Card className="bg-accent-50 border-accent-200">
+        <Card className="glass-effect border-accent-500/30 bg-accent-500/10">
           <CardContent className="p-4">
-            <p className="text-sm text-accent-800 text-center">
-              <strong>Demo Account:</strong>
-              <br />
-              Email: demo@fintar.com
-              <br />
-              Password: demo123
-            </p>
+            <div className="text-center">
+              <div className="inline-flex items-center space-x-2 mb-2">
+                <div className="w-2 h-2 bg-accent-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-accent-300">
+                  Demo Account
+                </span>
+              </div>
+              <p className="text-sm text-font-secondary">
+                <strong className="text-font-light">Email:</strong>{" "}
+                demo@fintar.com
+                <br />
+                <strong className="text-font-light">Password:</strong> demo123
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

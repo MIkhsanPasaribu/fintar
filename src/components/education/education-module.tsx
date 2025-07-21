@@ -150,13 +150,13 @@ const getCategoryIcon = (category: string) => {
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
     case "beginner":
-      return "bg-secondary-100 text-secondary-700";
+      return "bg-secondary-500/20 text-secondary-300 border-secondary-500/30";
     case "intermediate":
-      return "bg-accent-100 text-accent-700";
+      return "bg-accent-500/20 text-accent-300 border-accent-500/30";
     case "advanced":
-      return "bg-error/10 text-error";
+      return "bg-error-dark/20 text-error-light border-error-dark/30";
     default:
-      return "bg-neutral-100 text-neutral-700";
+      return "bg-primary-500/20 text-primary-300 border-primary-500/30";
   }
 };
 
@@ -188,14 +188,14 @@ export default function EducationModule() {
     <div className="space-y-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="glass-effect border-primary-500/20 card-hover">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-secondary-100 text-secondary-600 rounded-lg">
+              <div className="p-3 bg-secondary-500/20 text-secondary-300 rounded-xl border border-secondary-500/30 neon-glow">
                 <BookOpen className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-medium text-neutral-600">
+                <p className="text-sm font-medium text-font-secondary">
                   Konten Diselesaikan
                 </p>
                 <p className="text-2xl font-bold text-neutral-900">
