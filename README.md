@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 Fintar - AI-Based Financial Empowerment Platform
+
+Fintar adalah platform pemberdayaan finansial berbasis AI yang membantu individu dan UMKM dalam mengelola keuangan, meningkatkan literasi keuangan, dan mendapatkan konsultasi finansial dari AI maupun konsultan profesional.
+
+![Fintar Dashboard Preview](https://via.placeholder.com/800x400/1E40AF/FFFFFF?text=Fintar+Dashboard)
 
 ## Getting Started
 
