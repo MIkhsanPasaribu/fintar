@@ -39,7 +39,8 @@ const features = [
   {
     icon: Brain,
     title: "AI Financial Assistant",
-    description: "Smart AI yang memahami kebutuhan finansial personal Anda dengan analisis mendalam",
+    description:
+      "Smart AI yang memahami kebutuhan finansial personal Anda dengan analisis mendalam",
     color: "primary",
     animation: "slide-in-left",
     delay: "animate-delay-500",
@@ -47,7 +48,8 @@ const features = [
   {
     icon: BarChart3,
     title: "Real-time Analytics",
-    description: "Dashboard canggih dengan visualisasi data keuangan yang interaktif dan real-time",
+    description:
+      "Dashboard canggih dengan visualisasi data keuangan yang interaktif dan real-time",
     color: "accent",
     animation: "slide-in-up",
     delay: "animate-delay-800",
@@ -55,7 +57,8 @@ const features = [
   {
     icon: Shield,
     title: "Bank-level Security",
-    description: "Keamanan tingkat perbankan dengan enkripsi end-to-end untuk melindungi data Anda",
+    description:
+      "Keamanan tingkat perbankan dengan enkripsi end-to-end untuk melindungi data Anda",
     color: "secondary",
     animation: "slide-in-right",
     delay: "animate-delay-1200",
@@ -63,7 +66,8 @@ const features = [
   {
     icon: Target,
     title: "Goal Planning",
-    description: "Perencanaan finansial yang disesuaikan dengan target dan timeline personal Anda",
+    description:
+      "Perencanaan finansial yang disesuaikan dengan target dan timeline personal Anda",
     color: "primary",
     animation: "scale-in",
     delay: "animate-delay-1400",
@@ -71,7 +75,8 @@ const features = [
   {
     icon: Zap,
     title: "Instant Insights",
-    description: "Dapatkan insight keuangan instan dengan prediksi berbasis machine learning",
+    description:
+      "Dapatkan insight keuangan instan dengan prediksi berbasis machine learning",
     color: "accent",
     animation: "flip-in",
     delay: "animate-delay-1000",
@@ -79,7 +84,8 @@ const features = [
   {
     icon: Calculator,
     title: "Smart Calculator",
-    description: "Kalkulator finansial cerdas untuk semua kebutuhan perhitungan investasi Anda",
+    description:
+      "Kalkulator finansial cerdas untuk semua kebutuhan perhitungan investasi Anda",
     color: "secondary",
     animation: "bounce-in",
     delay: "animate-delay-600",
@@ -91,19 +97,31 @@ const services = [
     icon: MessageSquare,
     title: "AI Consultation",
     description: "Konsultasi dengan AI assistant 24/7",
-    features: ["Personal Finance Analysis", "Investment Recommendations", "Risk Assessment"],
+    features: [
+      "Personal Finance Analysis",
+      "Investment Recommendations",
+      "Risk Assessment",
+    ],
   },
   {
     icon: BookOpen,
     title: "Financial Education",
     description: "Pembelajaran keuangan interaktif",
-    features: ["Beginner to Expert Courses", "Interactive Simulations", "Progress Tracking"],
+    features: [
+      "Beginner to Expert Courses",
+      "Interactive Simulations",
+      "Progress Tracking",
+    ],
   },
   {
     icon: Calendar,
     title: "Expert Booking",
     description: "Sesi konsultasi dengan ahli keuangan",
-    features: ["Certified Financial Advisors", "Flexible Scheduling", "Personalized Advice"],
+    features: [
+      "Certified Financial Advisors",
+      "Flexible Scheduling",
+      "Personalized Advice",
+    ],
   },
 ];
 
@@ -125,7 +143,8 @@ const benefits = [
   },
   {
     title: "Keamanan Terjamin",
-    description: "Perlindungan data berlapis dengan standar keamanan internasional",
+    description:
+      "Perlindungan data berlapis dengan standar keamanan internasional",
     icon: "🔒",
   },
 ];
@@ -133,19 +152,63 @@ const benefits = [
 const faqs = [
   {
     question: "Bagaimana keamanan data finansial saya?",
-    answer: "Kami menggunakan enkripsi AES-256 dan protokol keamanan tingkat perbankan. Data Anda tersimpan aman dan tidak pernah dibagikan ke pihak ketiga tanpa persetujuan eksplisit.",
+    answer:
+      "Kami menggunakan enkripsi AES-256 dan protokol keamanan tingkat perbankan. Data Anda tersimpan aman dan tidak pernah dibagikan ke pihak ketiga tanpa persetujuan eksplisit.",
   },
   {
     question: "Apakah AI dapat memberikan saran investasi yang akurat?",
-    answer: "AI kami dilatih dengan data pasar selama 10+ tahun dan memiliki akurasi prediksi 98%. Namun, kami selalu menyarankan untuk melakukan riset tambahan sebelum mengambil keputusan investasi besar.",
+    answer:
+      "AI kami dilatih dengan data pasar selama 10+ tahun dan memiliki akurasi prediksi 98%. Namun, kami selalu menyarankan untuk melakukan riset tambahan sebelum mengambil keputusan investasi besar.",
   },
   {
     question: "Berapa biaya untuk menggunakan platform ini?",
-    answer: "Kami menawarkan paket Basic gratis dengan fitur dasar, dan paket Premium mulai dari Rp49.000/bulan dengan akses penuh ke semua fitur AI dan konsultasi expert.",
+    answer:
+      "Kami menawarkan paket Basic gratis dengan fitur dasar, dan paket Premium mulai dari Rp49.000/bulan dengan akses penuh ke semua fitur AI dan konsultasi expert.",
   },
   {
     question: "Apakah bisa digunakan untuk bisnis?",
-    answer: "Ya! Fintar mendukung manajemen keuangan personal maupun bisnis. Kami memiliki fitur khusus untuk UMKM dan enterprise dengan dashboard yang dapat dikustomisasi.",
+    answer:
+      "Ya! Fintar mendukung manajemen keuangan personal maupun bisnis. Kami memiliki fitur khusus untuk UMKM dan enterprise dengan dashboard yang dapat dikustomisasi.",
+  },
+];
+
+const teamMembers = [
+  {
+    name: "M. Ikhsan Pasaribu",
+    role: "Full Stack Developer & Project Lead",
+    description:
+      "Passionate about creating innovative financial solutions with modern web technologies",
+    avatar: "MI",
+    expertise: [
+      "React/Next.js",
+      "Node.js",
+      "Database Design",
+      "AI Integration",
+    ],
+    color: "primary",
+  },
+  {
+    name: "Febryan Al Zaqri",
+    role: "Frontend Developer & UI/UX Designer",
+    description:
+      "Specialist in creating beautiful and intuitive user interfaces for financial applications",
+    avatar: "FZ",
+    expertise: ["React", "TailwindCSS", "UI/UX Design", "Mobile Development"],
+    color: "accent",
+  },
+  {
+    name: "Rian Septiawan",
+    role: "Backend Developer & DevOps Engineer",
+    description:
+      "Expert in building robust backend systems and managing cloud infrastructure",
+    avatar: "RS",
+    expertise: [
+      "Node.js",
+      "Database Optimization",
+      "Cloud Computing",
+      "API Development",
+    ],
+    color: "secondary",
   },
 ];
 
@@ -157,13 +220,13 @@ export default function DarkLandingPage() {
 
   useEffect(() => {
     setIsVisible(true);
-    
+
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   useEffect(() => {
@@ -178,7 +241,7 @@ export default function DarkLandingPage() {
       {/* Animated Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-darker via-primary-dark to-bg-surface"></div>
-        <div 
+        <div
           className="absolute w-96 h-96 bg-teal-dark/10 rounded-full blur-3xl cursor-glow"
           data-x={mousePosition.x}
           data-y={mousePosition.y}
@@ -197,17 +260,40 @@ export default function DarkLandingPage() {
               </div>
               <span className="text-2xl font-bold gradient-text">Fintar</span>
             </div>
-            
+
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#features" className="nav-link hover:text-primary-600 transition-all duration-300">Features</Link>
-              <Link href="#services" className="nav-link hover:text-primary-600 transition-all duration-300">Services</Link>
-              <Link href="#about" className="nav-link hover:text-primary-600 transition-all duration-300">About</Link>
-              <Link href="#contact" className="nav-link hover:text-primary-600 transition-all duration-300">Contact</Link>
+              <Link
+                href="#features"
+                className="nav-link hover:text-primary-600 transition-all duration-300"
+              >
+                Features
+              </Link>
+              <Link
+                href="#services"
+                className="nav-link hover:text-primary-600 transition-all duration-300"
+              >
+                Services
+              </Link>
+              <Link
+                href="#about"
+                className="nav-link hover:text-primary-600 transition-all duration-300"
+              >
+                About
+              </Link>
+              <Link
+                href="#contact"
+                className="nav-link hover:text-primary-600 transition-all duration-300"
+              >
+                Contact
+              </Link>
             </div>
 
             <div className="flex items-center space-x-4">
               <Link href="/login">
-                <Button variant="ghost" className="text-font-light hover:text-primary-600 hover:bg-primary-500/10">
+                <Button
+                  variant="ghost"
+                  className="text-font-light hover:text-primary-600 hover:bg-primary-500/10"
+                >
                   Masuk
                 </Button>
               </Link>
@@ -230,33 +316,56 @@ export default function DarkLandingPage() {
               <Sparkles className="w-4 h-4 mr-2" />
               Powered by Advanced AI Technology
             </Badge>
-            
-            <h1 className={`text-5xl md:text-7xl font-bold mb-6 leading-tight transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}>
+
+            <h1
+              className={`text-5xl md:text-7xl font-bold mb-6 leading-tight transition-all duration-1000 ${
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
+              }`}
+            >
               <span className="gradient-text">Revolusi</span> Keuangan
               <br />
               <span className="text-font-light">Digital Indonesia</span>
             </h1>
-            
-            <p className={`text-xl md:text-2xl text-font-secondary max-w-4xl mx-auto mb-12 leading-relaxed transition-all duration-1000 delay-300 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}>
-              Platform financial technology terdepan dengan <span className="text-primary-600 font-semibold">AI Assistant</span> yang 
-              membantu mengoptimalkan keuangan personal dan bisnis Anda secara otomatis
+
+            <p
+              className={`text-xl md:text-2xl text-font-secondary max-w-4xl mx-auto mb-12 leading-relaxed transition-all duration-1000 delay-300 ${
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
+              }`}
+            >
+              Platform financial technology terdepan dengan{" "}
+              <span className="text-primary-600 font-semibold">
+                AI Assistant
+              </span>{" "}
+              yang membantu mengoptimalkan keuangan personal dan bisnis Anda
+              secara otomatis
             </p>
 
-            <div className={`flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 transition-all duration-1000 delay-500 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}>
+            <div
+              className={`flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 transition-all duration-1000 delay-500 ${
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
+              }`}
+            >
               <Link href="/dashboard">
-                <Button size="lg" className="btn-primary px-8 py-4 text-lg font-semibold">
+                <Button
+                  size="lg"
+                  className="btn-primary px-8 py-4 text-lg font-semibold"
+                >
                   <Play className="mr-3 h-5 w-5" />
                   Mulai Sekarang Gratis
                 </Button>
               </Link>
               <Link href="#demo">
-                <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10"
+                >
                   <LineChart className="mr-3 h-5 w-5" />
                   Lihat Demo
                 </Button>
@@ -268,12 +377,16 @@ export default function DarkLandingPage() {
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className={`text-center animate-fade-in-scale animate-delay-${(index + 1) * 200}`}
+                  className={`text-center animate-fade-in-scale animate-delay-${
+                    (index + 1) * 200
+                  }`}
                 >
                   <div className="flex justify-center mb-2">
                     <stat.icon className="h-8 w-8 text-primary-600" />
                   </div>
-                  <div className="text-3xl font-bold text-font-light mb-1">{stat.number}</div>
+                  <div className="text-3xl font-bold text-font-light mb-1">
+                    {stat.number}
+                  </div>
                   <div className="text-font-secondary">{stat.label}</div>
                 </div>
               ))}
@@ -290,7 +403,8 @@ export default function DarkLandingPage() {
               Fitur <span className="gradient-text">Revolusioner</span>
             </h2>
             <p className="text-xl text-font-secondary max-w-3xl mx-auto">
-              Teknologi terdepan untuk mengelola keuangan dengan lebih cerdas dan efisien
+              Teknologi terdepan untuk mengelola keuangan dengan lebih cerdas
+              dan efisien
             </p>
           </div>
 
@@ -302,13 +416,19 @@ export default function DarkLandingPage() {
                 onMouseEnter={() => setActiveFeature(index)}
               >
                 <CardHeader>
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${
-                    feature.color === 'primary' 
-                      ? 'bg-primary-500/20 text-primary-600' 
-                      : feature.color === 'accent'
-                      ? 'bg-accent-500/20 text-accent-600'
-                      : 'bg-secondary-500/20 text-secondary-600'
-                  } ${activeFeature === index ? 'neon-glow animate-pulse-soft' : ''} group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 ${
+                      feature.color === "primary"
+                        ? "bg-primary-500/20 text-primary-600"
+                        : feature.color === "accent"
+                        ? "bg-accent-500/20 text-accent-600"
+                        : "bg-secondary-500/20 text-secondary-600"
+                    } ${
+                      activeFeature === index
+                        ? "neon-glow animate-pulse-soft"
+                        : ""
+                    } group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <feature.icon className="h-8 w-8" />
                   </div>
                   <CardTitle className="text-font-light text-xl group-hover:text-primary-600 transition-colors duration-300">
@@ -340,18 +460,26 @@ export default function DarkLandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <Card key={index} className="glass-effect border-primary-500/20 card-hover">
+              <Card
+                key={index}
+                className="glass-effect border-primary-500/20 card-hover"
+              >
                 <CardHeader>
                   <div className="w-16 h-16 bg-primary-500/20 rounded-2xl flex items-center justify-center mb-4">
                     <service.icon className="h-8 w-8 text-primary-600" />
                   </div>
-                  <CardTitle className="text-font-light text-xl">{service.title}</CardTitle>
+                  <CardTitle className="text-font-light text-xl">
+                    {service.title}
+                  </CardTitle>
                   <p className="text-font-secondary">{service.description}</p>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
                     {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-font-secondary">
+                      <li
+                        key={featureIndex}
+                        className="flex items-center text-font-secondary"
+                      >
                         <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
                         {feature}
                       </li>
@@ -382,10 +510,14 @@ export default function DarkLandingPage() {
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className={`text-center animate-slide-in-up animate-delay-${(index + 1) * 200}`}
+                className={`text-center animate-slide-in-up animate-delay-${
+                  (index + 1) * 200
+                }`}
               >
                 <div className="text-5xl mb-4">{benefit.icon}</div>
-                <h3 className="text-xl font-bold text-font-light mb-3">{benefit.title}</h3>
+                <h3 className="text-xl font-bold text-font-light mb-3">
+                  {benefit.title}
+                </h3>
                 <p className="text-font-secondary">{benefit.description}</p>
               </div>
             ))}
@@ -411,10 +543,12 @@ export default function DarkLandingPage() {
               >
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold text-font-light">{faq.question}</h3>
+                    <h3 className="text-lg font-semibold text-font-light">
+                      {faq.question}
+                    </h3>
                     <ChevronRight
                       className={`h-5 w-5 text-primary-600 transition-transform duration-300 ${
-                        openFaq === index ? 'rotate-90' : ''
+                        openFaq === index ? "rotate-90" : ""
                       }`}
                     />
                   </div>
@@ -430,178 +564,85 @@ export default function DarkLandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="relative z-10 py-20">
+      {/* Teams Section */}
+      <section id="team" className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
-              Pilihan <span className="gradient-text">Berlangganan</span>
+              Tim <span className="gradient-text">Developer</span>
             </h2>
             <p className="text-xl text-font-secondary max-w-3xl mx-auto">
-              Paket yang dirancang untuk setiap kebutuhan finansial Anda
+              Bertemu dengan tim ahli yang membangun platform keuangan digital
+              terdepan di Indonesia
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Basic Plan */}
-            <Card className="glass-effect border-primary-500/20 card-hover relative">
-              <CardHeader className="text-center">
-                <Badge className="mb-4 mx-auto bg-secondary-500/20 text-secondary-600 border-secondary-500/30">
-                  Starter
-                </Badge>
-                <CardTitle className="text-font-light text-2xl mb-2">Basic</CardTitle>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-font-light">Gratis</span>
-                  <span className="text-font-secondary">/bulan</span>
-                </div>
-                <p className="text-font-secondary">Perfect untuk pemula yang ingin mencoba</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Dashboard basic keuangan
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    AI assistant terbatas (5 query/hari)
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Tracking pengeluaran dasar
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    1 goal finansial
-                  </li>
-                </ul>
-                <Link href="/dashboard">
-                  <Button className="w-full bg-primary-500 hover:bg-primary-700 text-white">
-                    Mulai Gratis
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            {teamMembers.map((member, index) => (
+              <Card
+                key={index}
+                className="glass-effect border-primary-500/20 card-hover relative text-center"
+              >
+                <CardContent className="pt-8 pb-6">
+                  <div
+                    className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-2xl font-bold ${
+                      member.color === "primary"
+                        ? "bg-gradient-to-r from-teal-dark to-teal-light text-white"
+                        : member.color === "accent"
+                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-primary-base"
+                        : "bg-gradient-to-r from-primary-light to-primary-dark text-white"
+                    } shadow-lg neon-glow`}
+                  >
+                    {member.avatar}
+                  </div>
 
-            {/* Premium Plan */}
-            <Card className="glass-effect border-primary-500/40 card-hover relative scale-105 neon-glow">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-accent-500 text-neutral-500 border-accent-600 px-4 py-1">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Paling Populer
-                </Badge>
-              </div>
-              <CardHeader className="text-center">
-                <Badge className="mb-4 mx-auto bg-primary-500/20 text-primary-600 border-primary-500/30">
-                  Professional
-                </Badge>
-                <CardTitle className="text-font-light text-2xl mb-2">Premium</CardTitle>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-font-light">Rp49.000</span>
-                  <span className="text-font-secondary">/bulan</span>
-                </div>
-                <p className="text-font-secondary">Untuk pengguna serius yang ingin hasil optimal</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Dashboard advanced dengan AI insights
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    AI assistant unlimited
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Smart budgeting & forecasting
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Unlimited financial goals
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Investment recommendations
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Priority customer support
-                  </li>
-                </ul>
-                <Link href="/dashboard">
-                  <Button className="w-full bg-accent-500 hover:bg-accent-700 text-neutral-500">
-                    Upgrade Sekarang
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                  <CardTitle className="text-font-light text-xl mb-2">
+                    {member.name}
+                  </CardTitle>
+                  <p className="text-orange-500 font-semibold mb-4">
+                    {member.role}
+                  </p>
+                  <p className="text-font-secondary mb-6 leading-relaxed">
+                    {member.description}
+                  </p>
 
-            {/* Enterprise Plan */}
-            <Card className="glass-effect border-primary-500/20 card-hover relative">
-              <CardHeader className="text-center">
-                <Badge className="mb-4 mx-auto bg-secondary-500/20 text-secondary-600 border-secondary-500/30">
-                  Enterprise
-                </Badge>
-                <CardTitle className="text-font-light text-2xl mb-2">Business</CardTitle>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-font-light">Rp199.000</span>
-                  <span className="text-font-secondary">/bulan</span>
-                </div>
-                <p className="text-font-secondary">Solusi lengkap untuk bisnis dan tim</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Semua fitur Premium
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Multi-user team management
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Business financial analytics
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Custom reports & exports
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    Dedicated account manager
-                  </li>
-                  <li className="flex items-center text-font-secondary">
-                    <ChevronRight className="h-4 w-4 text-primary-600 mr-2" />
-                    API integration support
-                  </li>
-                </ul>
-                <Link href="/contact">
-                  <Button variant="outline" className="w-full border-primary-500 text-primary-600 hover:bg-primary-500/10">
-                    Hubungi Sales
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                  <div className="space-y-2">
+                    <h4 className="text-font-light font-medium mb-3">
+                      Keahlian:
+                    </h4>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {member.expertise.map((skill, skillIndex) => (
+                        <Badge
+                          key={skillIndex}
+                          className="bg-primary-light/20 text-teal-light border-primary-light/30 text-xs"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-font-secondary mb-4">
-              Semua paket dilengkapi dengan 30 hari garansi uang kembali
+            <p className="text-font-secondary mb-6">
+              Tim berpengalaman dengan dedikasi tinggi untuk menghadirkan solusi
+              finansial terbaik
             </p>
-            <div className="flex justify-center items-center space-x-6 text-font-muted">
+            <div className="flex justify-center items-center space-x-8 text-font-muted">
               <span className="flex items-center">
-                <Shield className="w-4 h-4 mr-2 text-primary-600" />
-                Bank-level Security
+                <Brain className="w-4 h-4 mr-2 text-orange-500" />
+                5+ Years Experience
               </span>
               <span className="flex items-center">
-                <Users className="w-4 h-4 mr-2 text-primary-600" />
-                24/7 Support
+                <Target className="w-4 h-4 mr-2 text-teal-light" />
+                Innovation Focused
               </span>
               <span className="flex items-center">
-                <Star className="w-4 h-4 mr-2 text-primary-600" />
-                99.9% Uptime
+                <Users className="w-4 h-4 mr-2 text-primary-light" />
+                Collaborative Team
               </span>
             </div>
           </div>
@@ -614,20 +655,29 @@ export default function DarkLandingPage() {
           <Card className="glass-effect border-primary-500/30 neon-glow">
             <CardContent className="py-16">
               <h2 className="text-4xl md:text-5xl font-bold text-font-light mb-6">
-                Siap Mengubah <span className="gradient-text">Masa Depan</span> Keuangan Anda?
+                Siap Mengubah <span className="gradient-text">Masa Depan</span>{" "}
+                Keuangan Anda?
               </h2>
               <p className="text-xl text-font-secondary mb-8 max-w-2xl mx-auto">
-                Bergabung dengan ribuan pengguna yang telah merasakan transformasi keuangan dengan Fintar
+                Bergabung dengan ribuan pengguna yang telah merasakan
+                transformasi keuangan dengan Fintar
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                 <Link href="/dashboard">
-                  <Button size="lg" className="btn-primary px-8 py-4 text-lg font-semibold">
+                  <Button
+                    size="lg"
+                    className="btn-primary px-8 py-4 text-lg font-semibold"
+                  >
                     <Banknote className="mr-3 h-5 w-5" />
                     Mulai Gratis Sekarang
                   </Button>
                 </Link>
                 <Link href="/login">
-                  <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-8 py-4 text-lg border-primary-500 text-primary-600 hover:bg-primary-500/10"
+                  >
                     <CreditCard className="mr-3 h-5 w-5" />
                     Sudah Punya Akun?
                   </Button>
@@ -652,9 +702,24 @@ export default function DarkLandingPage() {
               Revolusi keuangan digital Indonesia dengan teknologi AI terdepan
             </p>
             <div className="flex justify-center space-x-8 text-font-muted">
-              <Link href="/privacy" className="hover:text-primary-600 transition-colors duration-300">Privacy</Link>
-              <Link href="/terms" className="hover:text-primary-600 transition-colors duration-300">Terms</Link>
-              <Link href="/support" className="hover:text-primary-600 transition-colors duration-300">Support</Link>
+              <Link
+                href="/privacy"
+                className="hover:text-primary-600 transition-colors duration-300"
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="hover:text-primary-600 transition-colors duration-300"
+              >
+                Terms
+              </Link>
+              <Link
+                href="/support"
+                className="hover:text-primary-600 transition-colors duration-300"
+              >
+                Support
+              </Link>
             </div>
             <div className="mt-8 pt-8 border-t border-primary-500/20">
               <p className="text-font-muted">
