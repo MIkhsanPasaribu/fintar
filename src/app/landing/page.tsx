@@ -175,38 +175,38 @@ const faqs = [
 const teamMembers = [
   {
     name: "M. Ikhsan Pasaribu",
-    role: "Full Stack Developer & Project Lead",
+    role: "Project Lead & AI Engineer",
     description:
-      "Passionate about creating innovative financial solutions with modern web technologies",
+      "Memimpin pengembangan platform dengan fokus pada integrasi AI dan machine learning untuk solusi finansial cerdas",
     avatar: "MI",
     expertise: [
-      "React/Next.js",
-      "Node.js",
-      "Database Design",
-      "AI Integration",
+      "AI/ML Engineering",
+      "System Architecture",
+      "Project Management",
+      "Financial Technology",
     ],
     color: "primary",
   },
   {
     name: "Febryan Al Zaqri",
-    role: "Frontend Developer & UI/UX Designer",
+    role: "Fullstack Developer & AI Engineer",
     description:
-      "Specialist in creating beautiful and intuitive user interfaces for financial applications",
+      "Mengembangkan sistem end-to-end dengan implementasi AI untuk analisis keuangan dan prediksi pasar",
     avatar: "FZ",
-    expertise: ["React", "TailwindCSS", "UI/UX Design", "Mobile Development"],
+    expertise: ["Full-Stack Development", "AI Integration", "Data Analysis", "API Development"],
     color: "accent",
   },
   {
     name: "Rian Septiawan",
-    role: "Backend Developer & DevOps Engineer",
+    role: "Fullstack Developer & DevOps Engineer",
     description:
-      "Expert in building robust backend systems and managing cloud infrastructure",
+      "Bertanggung jawab atas infrastruktur cloud, deployment automation, dan keamanan sistem platform",
     avatar: "RS",
     expertise: [
-      "Node.js",
-      "Database Optimization",
-      "Cloud Computing",
-      "API Development",
+      "Cloud Infrastructure",
+      "CI/CD Pipeline",
+      "System Security",
+      "Database Management",
     ],
     color: "secondary",
   },
