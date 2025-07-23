@@ -49,6 +49,117 @@ Fintar adalah AI-based Financial Empowerment Platform yang dirancang untuk memba
 - **Prompt Monitoring**: PromptLayer / LangSmith
 - **Model Lokal (opsional)**: IndoBERT, IndoGPT (via HuggingFace)
 
+## 📁 FOLDER STRUCTURE
+
+```
+fintar/
+├── frontend/                 # Next.js Frontend Application
+│   ├── src/
+│   │   ├── app/              # App router pages (Next.js 13+)
+│   │   │   ├── layout.tsx    # Root layout
+│   │   │   ├── page.tsx      # Home page
+│   │   │   ├── login/        # Authentication pages
+│   │   │   ├── dashboard/    # Main dashboard
+│   │   │   ├── chat/         # AI chat interface
+│   │   │   ├── education/    # Financial education
+│   │   │   └── api/          # API routes (if needed)
+│   │   ├── components/       # Reusable UI components
+│   │   │   ├── ui/           # Base UI components
+│   │   │   ├── layout/       # Layout components
+│   │   │   ├── dashboard/    # Dashboard specific
+│   │   │   ├── chat/         # Chat components
+│   │   │   ├── education/    # Education components
+│   │   │   └── booking/      # Booking system
+│   │   ├── store/            # Zustand state management
+│   │   │   ├── index.ts      # Store configuration
+│   │   │   ├── user.ts       # User state
+│   │   │   ├── dashboard.ts  # Dashboard state
+│   │   │   └── notification.ts # Notifications
+│   │   ├── lib/              # Utilities and helpers
+│   │   │   ├── utils.ts      # General utilities
+│   │   │   ├── auth.ts       # Auth helpers
+│   │   │   └── api.ts        # API client
+│   │   └── types/            # TypeScript definitions
+│   ├── public/               # Static assets
+│   ├── package.json          # Frontend dependencies
+│   ├── next.config.ts        # Next.js configuration
+│   ├── tailwind.config.js    # TailwindCSS config
+│   └── tsconfig.json         # TypeScript config
+├── backend/                  # NestJS Backend API
+│   ├── src/
+│   │   ├── main.ts           # Application entry point
+│   │   ├── app.module.ts     # Root module
+│   │   ├── auth/             # Authentication module
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   └── strategies/   # Passport strategies
+│   │   ├── users/            # User management
+│   │   ├── chat/             # AI chat system
+│   │   ├── financial/        # Financial data management
+│   │   ├── consultants/      # Consultant management
+│   │   └── common/           # Shared modules
+│   │       ├── prisma/       # Prisma service
+│   │       ├── mongo/        # MongoDB connection
+│   │       └── guards/       # Auth guards
+│   ├── package.json          # Backend dependencies
+│   ├── nest-cli.json         # NestJS CLI config
+│   └── tsconfig.json         # TypeScript config
+├── database/                 # Database schemas and configs
+│   ├── prisma/               # PostgreSQL schema
+│   │   ├── schema.prisma     # Main Prisma schema
+│   │   ├── migrations/       # Database migrations
+│   │   └── seed.ts           # Database seeding
+│   ├── mongodb/              # MongoDB schemas
+│   │   └── schemas/          # Mongoose schemas
+│   ├── docker-compose.db.yml # Database containers
+│   └── README.md             # Database documentation
+├── .github/                  # GitHub configuration
+│   ├── copilot-instructions.md
+│   └── workflows/            # CI/CD workflows
+├── .env.example              # Environment variables template
+├── .gitignore                # Git ignore rules
+├── package.json              # Root package.json (workspace)
+├── fintar.code-workspace     # VS Code workspace config
+└── README.md                 # Project documentation
+```
+
+## 🚀 DEVELOPMENT COMMANDS
+
+### Root Commands (from project root):
+- `npm run setup` - Complete project setup
+- `npm run dev` - Start all services (database + backend + frontend)
+- `npm run build` - Build all applications
+- `npm run test` - Run all tests
+- `npm run lint` - Lint all code
+
+### Frontend Commands (cd frontend):
+- `npm run dev` - Start Next.js development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+
+### Backend Commands (cd backend):
+- `npm run start:dev` - Start NestJS development server
+- `npm run build` - Build for production
+- `npm run start:prod` - Start production server
+- `npm run db:migrate` - Run database migrations
+- `npm run db:studio` - Open Prisma Studio
+
+### Database Commands:
+- `npm run db:start` - Start database containers
+- `npm run db:stop` - Stop database containers
+- `npm run db:setup` - Complete database setup
+
+## 📱 APPLICATION PORTS
+
+- **Frontend (Next.js)**: http://localhost:3000
+- **Backend (NestJS)**: http://localhost:3001
+- **API Documentation**: http://localhost:3001/api/docs
+- **PostgreSQL**: localhost:5432
+- **MongoDB**: localhost:27017
+- **Redis**: localhost:6379
+- **Prisma Studio**: http://localhost:5555
+
 ### 🔗 Blockchain Layer (Opsional)
 
 - **Platform**: Polygon zkEVM / BNB Smart Chain
@@ -198,3 +309,144 @@ When generating AI financial advice, use this persona:
 - Validate all inputs
 - Implement CORS properly
 - Use Helmet.js for security headers
+
+## 📁 PROJECT STRUCTURE
+
+### 🏗️ Folder Organization
+
+```
+fintar/
+├── node_modules/                     # Dependencies (shared)
+├── .github/                          # GitHub workflows & templates
+│   └── copilot-instructions.md
+├── .gitignore                        # Git ignore rules
+├── README.md                         # Project documentation
+├── package.json                      # Root package.json for scripts
+├── docker-compose.yml               # Multi-service container setup
+│
+├── frontend/                         # 🔵 Next.js Frontend Application
+│   ├── node_modules/                 # Frontend-specific dependencies
+│   ├── public/                       # Static assets
+│   ├── src/
+│   │   ├── app/                      # Next.js 15 App Router
+│   │   │   ├── (auth)/              # Auth route groups
+│   │   │   ├── api/                 # API routes (if needed)
+│   │   │   ├── dashboard/           # Dashboard pages
+│   │   │   ├── landing/             # Landing page
+│   │   │   ├── globals.css          # Global styles
+│   │   │   ├── layout.tsx           # Root layout
+│   │   │   └── page.tsx             # Home page
+│   │   ├── components/              # React components
+│   │   │   ├── ui/                  # Base UI components
+│   │   │   ├── chat/                # AI chat components
+│   │   │   ├── dashboard/           # Dashboard components
+│   │   │   ├── layout/              # Layout components
+│   │   │   └── forms/               # Form components
+│   │   ├── store/                   # Zustand stores
+│   │   ├── lib/                     # Utility functions
+│   │   ├── types/                   # TypeScript types
+│   │   └── hooks/                   # Custom React hooks
+│   ├── package.json                 # Frontend dependencies
+│   ├── next.config.js               # Next.js configuration
+│   ├── tailwind.config.js           # TailwindCSS config
+│   ├── tsconfig.json                # TypeScript config
+│   └── Dockerfile                   # Frontend container
+│
+├── backend/                          # 🟢 NestJS Backend API
+│   ├── node_modules/                 # Backend-specific dependencies
+│   ├── src/
+│   │   ├── auth/                     # Authentication module
+│   │   ├── users/                    # User management
+│   │   ├── chat/                     # AI chat module
+│   │   ├── financial/                # Financial planning
+│   │   ├── consultants/              # Consultant marketplace
+│   │   ├── common/                   # Shared utilities
+│   │   ├── guards/                   # Route guards
+│   │   ├── decorators/               # Custom decorators
+│   │   ├── pipes/                    # Validation pipes
+│   │   ├── filters/                  # Exception filters
+│   │   ├── main.ts                   # Application entry point
+│   │   └── app.module.ts             # Root module
+│   ├── test/                         # Test files
+│   ├── prisma/                       # Prisma schema & migrations
+│   │   ├── schema.prisma             # Database schema
+│   │   ├── migrations/               # Migration files
+│   │   └── seed.ts                   # Database seeding
+│   ├── package.json                  # Backend dependencies
+│   ├── nest-cli.json                 # NestJS CLI config
+│   ├── tsconfig.json                 # TypeScript config
+│   └── Dockerfile                    # Backend container
+│
+├── database/                         # 🟣 Database Scripts & Config
+│   ├── postgresql/                   # PostgreSQL setup
+│   │   ├── init/                     # Initialization scripts
+│   │   ├── backups/                  # Database backups
+│   │   └── docker-compose.postgres.yml
+│   ├── mongodb/                      # MongoDB setup
+│   │   ├── init/                     # Initialization scripts
+│   │   ├── data/                     # Data files
+│   │   └── docker-compose.mongo.yml
+│   ├── redis/                        # Redis configuration
+│   │   └── redis.conf
+│   └── scripts/                      # Database utility scripts
+│       ├── setup.sh                  # Initial setup
+│       ├── migrate.sh                # Migration runner
+│       └── backup.sh                 # Backup utility
+│
+└── docs/                             # 📚 Project Documentation
+    ├── api/                          # API documentation
+    ├── deployment/                   # Deployment guides
+    ├── development/                  # Development setup
+    └── architecture/                 # System architecture
+```
+
+### 🚀 Development Commands
+
+**Root Level Commands:**
+
+```bash
+npm run dev              # Start all services (frontend + backend + db)
+npm run build            # Build all applications
+npm run test             # Run all tests
+npm run docker:up        # Start with Docker Compose
+npm run docker:down      # Stop Docker services
+```
+
+**Frontend Commands:**
+
+```bash
+cd frontend
+npm run dev              # Start Next.js development server
+npm run build            # Build for production
+npm run start            # Start production server
+npm run lint             # Run ESLint
+```
+
+**Backend Commands:**
+
+```bash
+cd backend
+npm run start:dev        # Start NestJS in development mode
+npm run build            # Build TypeScript
+npm run start:prod       # Start production server
+npm run test             # Run unit tests
+npm run test:e2e         # Run end-to-end tests
+npm run db:migrate       # Run Prisma migrations
+npm run db:seed          # Seed database
+```
+
+### 🐳 Docker Integration
+
+- Each service (frontend, backend) has its own Dockerfile
+- Root `docker-compose.yml` orchestrates all services
+- Database services run in separate containers
+- Development and production environment configurations
+- Hot reloading enabled for development containers
+
+### 🔧 Configuration Management
+
+- Environment variables per service (`.env.local`, `.env.production`)
+- Shared configuration through root package.json scripts
+- Service-specific configurations in respective directories
+- Docker environment variable injection
+- CI/CD pipeline configuration in `.github/workflows/`
