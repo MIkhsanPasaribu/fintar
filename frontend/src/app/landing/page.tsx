@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -178,7 +179,8 @@ const teamMembers = [
     role: "Project Lead & AI Engineer",
     description:
       "Memimpin pengembangan platform dengan fokus pada integrasi AI dan machine learning untuk solusi finansial cerdas",
-    avatar: "MI",
+    avatar: "https://github.com/MIkhsanPasaribu.png",
+    githubUsername: "MIkhsanPasaribu",
     expertise: [
       "AI/ML Engineering",
       "System Architecture",
@@ -192,8 +194,14 @@ const teamMembers = [
     role: "Fullstack Developer & AI Engineer",
     description:
       "Mengembangkan sistem end-to-end dengan implementasi AI untuk analisis keuangan dan prediksi pasar",
-    avatar: "FZ",
-    expertise: ["Full-Stack Development", "AI Integration", "Data Analysis", "API Development"],
+    avatar: "https://github.com/febryanalza.png",
+    githubUsername: "febryanpratama",
+    expertise: [
+      "Full-Stack Development",
+      "AI Integration",
+      "Data Analysis",
+      "API Development",
+    ],
     color: "accent",
   },
   {
@@ -201,7 +209,8 @@ const teamMembers = [
     role: "Fullstack Developer & DevOps Engineer",
     description:
       "Bertanggung jawab atas infrastruktur cloud, deployment automation, dan keamanan sistem platform",
-    avatar: "RS",
+    avatar: "https://github.com/Ryan-infitech.png",
+    githubUsername: "rianseptiawan",
     expertise: [
       "Cloud Infrastructure",
       "CI/CD Pipeline",
@@ -421,8 +430,8 @@ export default function DarkLandingPage() {
                       feature.color === "primary"
                         ? "bg-primary-500/20 text-primary-600"
                         : feature.color === "accent"
-                        ? "bg-accent-500/20 text-accent-600"
-                        : "bg-secondary-500/20 text-secondary-600"
+                          ? "bg-accent-500/20 text-accent-600"
+                          : "bg-secondary-500/20 text-secondary-600"
                     } ${
                       activeFeature === index
                         ? "neon-glow animate-pulse-soft"
@@ -584,16 +593,27 @@ export default function DarkLandingPage() {
                 className="glass-effect border-primary-500/20 card-hover relative text-center"
               >
                 <CardContent className="pt-8 pb-6">
-                  <div
-                    className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center text-2xl font-bold ${
-                      member.color === "primary"
-                        ? "bg-gradient-to-r from-teal-dark to-teal-light text-white"
-                        : member.color === "accent"
-                        ? "bg-gradient-to-r from-orange-500 to-orange-600 text-primary-base"
-                        : "bg-gradient-to-r from-primary-light to-primary-dark text-white"
-                    } shadow-lg neon-glow`}
-                  >
-                    {member.avatar}
+                  <div className="relative w-24 h-24 mx-auto mb-6">
+                    <Image
+                      src={member.avatar}
+                      alt={`${member.name} profile`}
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 rounded-full object-cover shadow-lg neon-glow ring-2 ring-primary-500/30 hover:ring-primary-500/60 transition-all duration-300"
+                      onError={(e) => {
+                        // Fallback to GitHub avatar if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.src = `https://github.com/${member.githubUsername}.png?size=200`;
+                      }}
+                    />
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center shadow-lg">
+                      <span className="text-white text-xs font-bold">
+                        {member.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </span>
+                    </div>
                   </div>
 
                   <CardTitle className="text-font-light text-xl mb-2">
