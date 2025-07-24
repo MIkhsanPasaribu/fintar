@@ -7,7 +7,7 @@
 #### 1. LLM Provider Migration
 
 - **Previous**: OpenAI GPT-4 Turbo
-- **Current**: Google Gemini 1.5 Pro
+- **Current**: Google Gemini 2.0 Flash
 - **Benefits**:
   - Larger context window (8192 tokens vs 4000)
   - More cost-effective pricing
