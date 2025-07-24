@@ -1,10 +1,12 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SupabaseService implements OnModuleInit {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null = null;
+  private isAvailable = false;
+  private readonly logger = new Logger(SupabaseService.name);
 
   constructor(private configService: ConfigService) {}
 
@@ -13,18 +15,46 @@ export class SupabaseService implements OnModuleInit {
     const supabaseKey = this.configService.get<string>("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Supabase URL and Anon Key must be provided");
+      this.isAvailable = false;
+      this.logger.warn(
+        "Supabase integration is disabled: Missing credentials. " +
+          "Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables to enable Supabase features."
+      );
+      return; 
     }
 
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    try {
+      this.logger.log("Initializing Supabase client...");
+      this.supabase = createClient(supabaseUrl, supabaseKey);
+      this.isAvailable = true;
+      this.logger.log("Supabase client initialized successfully");
+    } catch (error) {
+      this.isAvailable = false;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to initialize Supabase client: ${errorMessage}`
+      );
+    }
   }
 
   getClient(): SupabaseClient {
+    if (!this.isAvailable || !this.supabase) {
+      throw new Error(
+        "Supabase client is not available. Check if credentials are properly configured."
+      );
+    }
     return this.supabase;
+  }
+
+  isSupabaseAvailable(): boolean {
+    return this.isAvailable;
   }
 
   // Auth methods
   async signUp(email: string, password: string) {
+    if (!this.isSupabaseAvailable()) {
+      throw new Error("Supabase authentication is not available");
+    }
     return await this.supabase.auth.signUp({
       email,
       password,
@@ -32,6 +62,9 @@ export class SupabaseService implements OnModuleInit {
   }
 
   async signIn(email: string, password: string) {
+    if (!this.isSupabaseAvailable()) {
+      throw new Error("Supabase authentication is not available");
+    }
     return await this.supabase.auth.signInWithPassword({
       email,
       password,
@@ -39,10 +72,16 @@ export class SupabaseService implements OnModuleInit {
   }
 
   async signOut() {
+    if (!this.isSupabaseAvailable()) {
+      throw new Error("Supabase authentication is not available");
+    }
     return await this.supabase.auth.signOut();
   }
 
   async getUser(accessToken: string) {
+    if (!this.isSupabaseAvailable()) {
+      throw new Error("Supabase authentication is not available");
+    }
     return await this.supabase.auth.getUser(accessToken);
   }
 
