@@ -11,7 +11,7 @@ export class SupabaseService implements OnModuleInit {
   constructor(private configService: ConfigService) {}
 
   async onModuleInit() {
-    const supabaseUrl = this.configService.get<string>("SUPABASE_URL");
+    const supabaseUrl = this.configService.get<string>("DATABASE_URL");
     const supabaseKey = this.configService.get<string>("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
