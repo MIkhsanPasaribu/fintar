@@ -5,6 +5,7 @@ import { UsersModule } from "./users/users.module";
 import { ChatModule } from "./chat/chat.module";
 import { FinancialModule } from "./financial/financial.module";
 import { ConsultantsModule } from "./consultants/consultants.module";
+import { AiModule } from "./ai/ai.module";
 import { PrismaModule } from "./common/prisma/prisma.module";
 import { MongoModule } from "./common/mongo/mongo.module";
 import { SupabaseModule } from "./common/supabase/supabase.module";
@@ -23,6 +24,7 @@ import { SupabaseModule } from "./common/supabase/supabase.module";
     ChatModule,
     FinancialModule,
     ConsultantsModule,
+    AiModule,
   ],
 })
 export class AppModule {}

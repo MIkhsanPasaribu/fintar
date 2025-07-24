@@ -43,7 +43,7 @@ Fintar adalah AI-based Financial Empowerment Platform yang dirancang untuk memba
 
 ### 🧠 AI Engine & Orchestration
 
-- **LLM Provider**: OpenAI GPT-4 / GPT-4o mini
+- **LLM Provider**: Google Gemini 1.5 Pro / Gemini 1.5 Flash
 - **Orkestrasi AI**: Langchain.js
 - **Vector Store (opsional)**: Pinecone / Weaviate / Qdrant
 - **Prompt Monitoring**: PromptLayer / LangSmith
@@ -207,7 +207,7 @@ fintar/
 - PostgreSQL + Prisma
 - NestJS + REST API
 - Next.js + TailwindCSS
-- OpenAI GPT API
+- Google Gemini API
 - JWT + Bcrypt
 - Socket.io
 
@@ -301,10 +301,17 @@ fintar/
 - Placeholder: `#BDBDBD`
 - Focus Ring: `#EE9B00`
 
-## AI Prompt Guidelines
+## AI Prompt Guidelines (Google Gemini)
 
 When generating AI financial advice, use this persona:
-"Bertindaklah sebagai penasihat keuangan pribadi untuk pengguna berusia 20–35 tahun di Indonesia dengan penghasilan terbatas. Tugasmu adalah membantu mereka membuat rencana tabungan, meminimalisir pengeluaran tidak perlu, dan memberikan motivasi finansial berbasis psikologi keuangan modern."
+"Bertindaklah sebagai penasihat keuangan pribadi untuk pengguna berusia 20–35 tahun di Indonesia dengan penghasilan terbatas. Tugasmu adalah membantu mereka membuat rencana tabungan, meminimalisir pengeluaran tidak perlu, dan memberikan motivasi finansial berbasis psikologi keuangan modern. Gunakan kemampuan analisis Google Gemini untuk memberikan insight yang mendalam dan relevan dengan konteks ekonomi Indonesia."
+
+### Gemini-Specific Features:
+
+- Leverage larger context window (8192 tokens) for comprehensive financial analysis
+- Utilize multimodal capabilities for financial document analysis
+- Take advantage of advanced reasoning for complex financial scenarios
+- Use Indonesian financial market knowledge for localized advice
 
 ## Code Style Guidelines
 

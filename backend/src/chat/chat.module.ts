@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
+import { AiModule } from "../ai/ai.module";
 
-@Module({})
+@Module({
+  imports: [AiModule],
+  exports: [AiModule],
+})
 export class ChatModule {}
