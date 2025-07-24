@@ -152,7 +152,7 @@ POST /ai/cleanup                        # Clean old data
 ```bash
 # Google Gemini Configuration
 GOOGLE_API_KEY=your-google-api-key
-GEMINI_MODEL=gemini-1.5-pro
+GEMINI_MODEL=gemini-2.0-flash
 GEMINI_TEMPERATURE=0.7
 GEMINI_MAX_OUTPUT_TOKENS=8192
 GEMINI_TOP_P=0.95

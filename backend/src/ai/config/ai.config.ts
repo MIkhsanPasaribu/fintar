@@ -23,7 +23,7 @@ export interface AiConfig {
 export const createAiConfig = (configService: ConfigService): AiConfig => ({
   gemini: {
     apiKey: configService.get("GOOGLE_API_KEY", ""),
-    model: configService.get("GEMINI_MODEL", "gemini-1.5-pro"),
+    model: configService.get("GEMINI_MODEL", "gemini-2.0-flash"),
     temperature: parseFloat(configService.get("GEMINI_TEMPERATURE", "0.7")),
     maxOutputTokens: parseInt(
       configService.get("GEMINI_MAX_OUTPUT_TOKENS", "8192")

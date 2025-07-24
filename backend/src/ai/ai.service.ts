@@ -473,7 +473,7 @@ export class AiService {
         "operational_analysis",
         "market_analysis",
       ],
-      models: ["gemini-1.5-pro", "gemini-1.5-flash"],
+      models: ["gemini-2.0-flash"],
       languages: ["en", "id"],
       maxTokens: 8192,
       supportedFormats: ["text", "json"],
@@ -484,7 +484,7 @@ export class AiService {
     const config = this.langChainService.getConfig();
     return {
       provider: "Google Gemini",
-      model: config.gemini.model || "gemini-1.5-pro",
+      model: config.gemini.model || "gemini-2.0-flash",
       version: "1.0.0",
       features: {
         streaming: true,
@@ -579,7 +579,7 @@ export class AiService {
           operation: "chat_processing",
           duration: 150,
           status: "success",
-          metadata: { model: "gemini-1.5-pro", tokens: 450 },
+          metadata: { model: "gemini-2.0-flash", tokens: 450 },
         },
       ],
     };
