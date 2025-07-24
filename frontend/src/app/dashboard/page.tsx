@@ -1,10 +1,10 @@
 import Layout from "@/components/layout/layout";
-import DashboardOverview from "@/components/dashboard/overview";
+import EnhancedDashboardOverview from "@/components/dashboard/enhanced-overview";
 
 export default function DashboardPage() {
   return (
     <Layout>
-      <DashboardOverview />
+      <EnhancedDashboardOverview />
     </Layout>
   );
 }

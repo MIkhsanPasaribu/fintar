@@ -84,14 +84,14 @@ function MessageBubble({ message }: MessageBubbleProps) {
                     minute: "2-digit",
                   })
                 : typeof message.timestamp === "string"
-                ? new Date(message.timestamp).toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : new Date().toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  ? new Date(message.timestamp).toLocaleTimeString("id-ID", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : new Date().toLocaleTimeString("id-ID", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
             </span>
             {message.category && (
               <Badge
@@ -140,24 +140,95 @@ export default function AIChatInterface() {
     };
 
     addMessage(userMessage);
+    const currentInput = input.trim();
     setInput("");
     setLoading(true);
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call the enhanced API that connects to backend
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          chatType: "financial",
+          userId: sessionStorage.getItem("userId") || undefined,
+          sessionId: sessionStorage.getItem("sessionId") || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Store session info for future requests
+      if (data.sessionId) {
+        sessionStorage.setItem("sessionId", data.sessionId);
+      }
+      if (data.userId) {
+        sessionStorage.setItem("userId", data.userId);
+      }
+
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         type: "assistant",
-        content: generateAIResponse(input),
+        content: data.message,
         timestamp: new Date(),
-        category: detectCategory(input),
+        category: detectCategory(currentInput),
       };
 
       addMessage(aiResponse);
+
+      // Add suggestions as separate messages if available
+      if (data.suggestions && data.suggestions.length > 0) {
+        setTimeout(() => {
+          const suggestionMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            type: "assistant",
+            content: `💡 Saran pertanyaan lanjutan:\n${data.suggestions.map((s: string, i: number) => `${i + 1}. ${s}`).join("\n")}`,
+            timestamp: new Date(),
+            category: "general",
+          };
+          addMessage(suggestionMessage);
+        }, 500);
+      }
+
+      // Show metadata if in development mode
+      if (process.env.NODE_ENV === "development" && data.metadata) {
+        setTimeout(() => {
+          const metadataMessage: Message = {
+            id: (Date.now() + 3).toString(),
+            type: "assistant",
+            content: `🤖 Model: ${data.metadata.model} | Response Time: ${data.metadata.responseTime}ms${data.warning ? ` | ⚠️ ${data.warning}` : ""}`,
+            timestamp: new Date(),
+            category: "general",
+          };
+          addMessage(metadataMessage);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Chat API error:", error);
+
+      // Fallback to local response on error
+      const fallbackResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        content:
+          "Maaf, terjadi kesalahan saat menghubungi AI service. " +
+          generateAIResponse(currentInput),
+        timestamp: new Date(),
+        category: detectCategory(currentInput),
+      };
+      addMessage(fallbackResponse);
+    } finally {
       setLoading(false);
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const generateAIResponse = (userInput: string): string => {
@@ -175,7 +246,7 @@ export default function AIChatInterface() {
       return "Menabung adalah fondasi keuangan yang kuat! Saya sarankan menggunakan metode 50-30-20: 50% kebutuhan, 30% keinginan, 20% tabungan. Apakah Anda sudah memiliki dana darurat setara 6-12 bulan pengeluaran?";
     }
 
-    return "Terima kasih atas pertanyaannya! Sebagai AI Financial Advisor, saya siap membantu Anda dalam perencanaan keuangan, budgeting, investasi, dan strategi menabung. Apakah ada aspek keuangan khusus yang ingin Anda diskusikan?";
+    return "Terima kasih atas pertanyaannya! Sebagai Fintar AI Assistant, saya siap membantu Anda dalam perencanaan keuangan, budgeting, investasi, dan strategi menabung. Apakah ada aspek keuangan khusus yang ingin Anda diskusikan?";
   };
 
   const detectCategory = (input: string): Message["category"] => {
@@ -219,10 +290,10 @@ export default function AIChatInterface() {
           </div>
           <div>
             <h3 className="text-xl font-semibold text-font-light">
-              AI Financial Advisor
+              Fintar AI Assistant
             </h3>
             <p className="text-sm text-font-secondary">
-              Konsultasi keuangan 24/7 dengan AI
+              24/7 Konsultasi Keuangan Pintar • Solusi AI Terdepan
             </p>
           </div>
         </CardTitle>
@@ -238,7 +309,7 @@ export default function AIChatInterface() {
               </div>
               <div>
                 <h4 className="font-medium text-font-light mb-2">
-                  Selamat datang di AI Financial Advisor!
+                  Selamat datang di Fintar AI Assistant!
                 </h4>
                 <p className="text-sm text-font-secondary">
                   Tanyakan apa saja tentang keuangan, budgeting, investasi, atau
