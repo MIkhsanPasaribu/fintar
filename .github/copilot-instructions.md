@@ -301,6 +301,67 @@ fintar/
 - Placeholder: `#BDBDBD`
 - Focus Ring: `#EE9B00`
 
+## 🎨 WARNA PALETTE – MODERN FINANCE THEME (LIGHT)
+
+### 🎯 Color Identity (Semua background dominan terang)
+
+**Primary Colors:**
+
+- `#F8F9FA` — primary base
+- `#E9ECEF` — primary dark
+- `#DEE2E6` — primary light
+
+**Secondary Colors:**
+
+- `#0077B6` — strong trust blue
+- `#0096C7` — soft supportive blue
+- `#90E0EF` — pastel companion
+
+**Accent Colors:**
+
+- `#F77F00` — action accent (cta buttons)
+- `#D96704` — hover/press accent
+- `#C9302C` — warning/danger
+
+**Neutral Colors:**
+
+- `#FFFFFF` — background light
+- `#FAFBFC` — modal/surface
+- `#F5F7FA` — header/sidebar
+
+**Font Colors:**
+
+- `#212529` — main dark text
+- `#495057` — secondary text
+- `#6C757D` — tertiary/muted text
+
+### 🎨 Komponen UI (Light Theme)
+
+**Button:**
+
+- Primary: `#F77F00` (bg) + `#FFFFFF` (text)
+- Hover: `#D96704`
+- Disabled: `#DEE2E6`
+
+**Card / Surface:**
+
+- Background: `#FFFFFF`
+- Border: `#E9ECEF`
+- Text: `#212529`
+
+**Modal:**
+
+- Background: `#FFFFFF`
+- Shadow: soft `rgba(0,0,0,0.1)`
+- Close Button: `#D96704`
+
+**Input Field:**
+
+- Background: `#FAFBFC`
+- Border: `#DEE2E6`
+- Placeholder: `#6C757D`
+- Focus Ring: `#F77F00`
+
 ## AI Prompt Guidelines (Google Gemini)
 
 When generating AI financial advice, use this persona:
@@ -321,8 +382,9 @@ When generating AI financial advice, use this persona:
 - Use Tailwind utility classes for styling with the specified color palette
 - Create reusable components in `/src/components`
 - API routes should be in `/src/app/api`
-- Focus on dark theme design with glassmorphism effects
+- Support both light and dark theme with theme toggle functionality
 - Mobile-first approach for responsive design
+- Implement glassmorphism effects for both themes
 
 ## Security Requirements
 
