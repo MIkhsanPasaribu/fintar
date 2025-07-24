@@ -17,7 +17,7 @@ export default function ChatPage() {
             </p>
           </div>
 
-          <Card className="glass-effect border-primary-500/20">
+          <Card className="glass-effect border-secondary-400/20">
             <AIChatInterface />
           </Card>
         </div>

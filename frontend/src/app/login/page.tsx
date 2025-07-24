@@ -54,8 +54,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-bg-dark via-bg-main to-bg-darker flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10"></div>
-      <div className="absolute top-20 left-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-20 left-20 w-64 h-64 bg-secondary-400/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
       <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Logo */}
@@ -75,7 +75,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <Card className="glass-effect border-primary-500/20">
+        <Card className="glass-effect border-secondary-400/20">
           <CardHeader>
             <CardTitle className="text-font-light text-2xl text-center">
               Selamat Datang Kembali
@@ -124,7 +124,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-primary-500 hover:bg-primary-700 text-white"
+                className="w-full bg-secondary-400 hover:bg-secondary-500 text-white"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -142,7 +142,7 @@ export default function LoginPage() {
               <div className="text-center">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary-400 hover:text-primary-300 hover:underline transition-colors"
+                  className="text-sm text-accent-400 hover:text-accent-500 hover:underline transition-colors"
                 >
                   Lupa password?
                 </Link>
@@ -150,7 +150,7 @@ export default function LoginPage() {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-primary-500/20" />
+                  <div className="w-full border-t border-secondary-400/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-bg-main text-font-muted"></span>
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 </span>
                 <Link
                   href="/register"
-                  className="text-sm text-primary-400 hover:text-primary-300 hover:underline font-medium transition-colors"
+                  className="text-sm text-accent-400 hover:text-accent-500 hover:underline font-medium transition-colors"
                 >
                   Daftar sekarang
                 </Link>

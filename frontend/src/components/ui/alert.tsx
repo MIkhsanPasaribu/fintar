@@ -7,11 +7,13 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary-dark border-primary-light/30 text-font-primary",
+        default:
+          "bg-secondary-400/10 border-secondary-400/30 text-text-primary",
         destructive:
           "bg-danger/10 border-danger text-danger dark:border-danger",
-        warning: "bg-orange-500/10 border-orange-500 text-orange-500",
-        success: "bg-teal-light/10 border-teal-light text-teal-light",
+        warning: "bg-accent-400/10 border-accent-400 text-accent-600",
+        success:
+          "bg-supporting-400/10 border-supporting-400 text-supporting-600",
       },
     },
     defaultVariants: {

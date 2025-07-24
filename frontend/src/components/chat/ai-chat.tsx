@@ -84,14 +84,14 @@ function MessageBubble({ message }: MessageBubbleProps) {
                     minute: "2-digit",
                   })
                 : typeof message.timestamp === "string"
-                  ? new Date(message.timestamp).toLocaleTimeString("id-ID", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : new Date().toLocaleTimeString("id-ID", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                ? new Date(message.timestamp).toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : new Date().toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
             </span>
             {message.category && (
               <Badge
@@ -190,7 +190,9 @@ export default function AIChatInterface() {
           const suggestionMessage: Message = {
             id: (Date.now() + 2).toString(),
             type: "assistant",
-            content: `💡 Saran pertanyaan lanjutan:\n${data.suggestions.map((s: string, i: number) => `${i + 1}. ${s}`).join("\n")}`,
+            content: `💡 Saran pertanyaan lanjutan:\n${data.suggestions
+              .map((s: string, i: number) => `${i + 1}. ${s}`)
+              .join("\n")}`,
             timestamp: new Date(),
             category: "general",
           };
@@ -204,7 +206,9 @@ export default function AIChatInterface() {
           const metadataMessage: Message = {
             id: (Date.now() + 3).toString(),
             type: "assistant",
-            content: `🤖 Model: ${data.metadata.model} | Response Time: ${data.metadata.responseTime}ms${data.warning ? ` | ⚠️ ${data.warning}` : ""}`,
+            content: `🤖 Model: ${data.metadata.model} | Response Time: ${
+              data.metadata.responseTime
+            }ms${data.warning ? ` | ⚠️ ${data.warning}` : ""}`,
             timestamp: new Date(),
             category: "general",
           };
@@ -283,7 +287,7 @@ export default function AIChatInterface() {
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4 border-b border-primary-500/20">
+      <CardHeader className="pb-4 border-b border-secondary-400/20">
         <CardTitle className="flex items-center space-x-2">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center neon-glow">
             <Sparkles className="w-6 h-6 text-white" />
@@ -304,8 +308,8 @@ export default function AIChatInterface() {
         <div className="flex-1 overflow-y-auto mb-4 space-y-2 max-h-[400px] scrollbar-thin scrollbar-thumb-primary-500/50 scrollbar-track-bg-darker/20">
           {messages.length === 0 && (
             <div className="text-center py-8 space-y-4">
-              <div className="w-16 h-16 bg-primary-500/20 border border-primary-500/30 rounded-full flex items-center justify-center mx-auto neon-glow">
-                <MessageCircle className="w-8 h-8 text-primary-400" />
+              <div className="w-16 h-16 bg-secondary-400/20 border border-secondary-400/30 rounded-full flex items-center justify-center mx-auto neon-glow">
+                <MessageCircle className="w-8 h-8 text-accent-400" />
               </div>
               <div>
                 <h4 className="font-medium text-font-light mb-2">
@@ -332,8 +336,8 @@ export default function AIChatInterface() {
 
           {isTyping && (
             <div className="flex justify-start">
-              <div className="flex items-center space-x-2 glass-effect border border-primary-500/20 p-3 rounded-2xl rounded-bl-none">
-                <Loader2 className="w-4 h-4 animate-spin text-primary-400" />
+              <div className="flex items-center space-x-2 glass-effect border border-secondary-400/20 p-3 rounded-2xl rounded-bl-none">
+                <Loader2 className="w-4 h-4 animate-spin text-accent-400" />
                 <span className="text-sm text-font-secondary">
                   AI sedang mengetik...
                 </span>
@@ -345,7 +349,7 @@ export default function AIChatInterface() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t border-primary-500/20 pt-4">
+        <div className="border-t border-secondary-400/20 pt-4">
           <div className="flex space-x-2">
             <Input
               ref={inputRef}
@@ -364,7 +368,7 @@ export default function AIChatInterface() {
             <Button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="bg-primary-500 hover:bg-primary-700 text-white"
+              className="bg-secondary-400 hover:bg-secondary-500 text-white"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

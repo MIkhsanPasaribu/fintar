@@ -83,7 +83,7 @@ export default function Layout({ children }: LayoutProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-font-light hover:bg-primary-500/20"
+              className="lg:hidden text-font-light hover:bg-secondary-400/20"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-6 w-6" />
@@ -102,16 +102,16 @@ export default function Layout({ children }: LayoutProps) {
                       className={cn(
                         "flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group",
                         isActive
-                          ? "bg-primary-500/20 text-primary-300 border border-primary-500/30 neon-glow"
-                          : "text-font-secondary hover:bg-primary-500/10 hover:text-font-light hover:border-primary-500/20 border border-transparent"
+                          ? "bg-secondary-400/20 text-accent-400 border border-secondary-400/30 neon-glow"
+                          : "text-font-secondary hover:bg-secondary-400/10 hover:text-font-light hover:border-secondary-400/20 border border-transparent"
                       )}
                     >
                       <item.icon
                         className={cn(
                           "mr-3 h-5 w-5 transition-all duration-200",
                           isActive
-                            ? "text-primary-400"
-                            : "group-hover:text-primary-400"
+                            ? "text-accent-400"
+                            : "group-hover:text-accent-400"
                         )}
                       />
                       {item.name}
@@ -123,7 +123,7 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
 
           {/* User menu */}
-          <div className="border-t border-primary-500/20 p-4 glass-effect">
+          <div className="border-t border-secondary-400/20 p-4 glass-effect">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-r from-accent-400 to-accent-600 rounded-full flex items-center justify-center shadow-xl neon-glow">
                 <User className="h-5 w-5 text-white" />
@@ -140,7 +140,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="space-y-2">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-font-secondary hover:bg-primary-500/10 hover:text-font-light"
+                className="w-full justify-start text-font-secondary hover:bg-secondary-400/10 hover:text-font-light"
                 onClick={() => {
                   /* Navigate to settings */
                 }}
@@ -163,12 +163,12 @@ export default function Layout({ children }: LayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top header */}
-        <header className="sticky top-0 z-30 glass-effect border-b border-primary-500/20">
+        <header className="sticky top-0 z-30 glass-effect border-b border-secondary-400/20">
           <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-font-light hover:bg-primary-500/20"
+              className="lg:hidden text-font-light hover:bg-secondary-400/20"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="h-6 w-6" />
@@ -178,7 +178,7 @@ export default function Layout({ children }: LayoutProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-font-light hover:bg-primary-500/20"
+                className="relative text-font-light hover:bg-secondary-400/20"
               >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (

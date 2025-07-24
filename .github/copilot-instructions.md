@@ -217,9 +217,9 @@ fintar/
 
 1. **AI Financial Co-Pilot 24/7**
    - Chatbot AI untuk bantu budgeting, saving plan, dll
-2. **Fitur Perencanaan Keuangan**
+2. **Fitur Perencanaan Keuangan Berbasis AI**
    - Simulasi anggaran, tujuan keuangan jangka pendek/panjang
-3. **Fitur Strategi Investasi Personal**
+3. **Fitur Strategi Investasi Personal Berbasis AI**
    - Berdasarkan pendapatan, utang, pekerjaan, dan toleransi risiko
 4. **Marketplace Konsultan Keuangan**
    - Sistem pencarian berbasis lokasi + rating konsultan
@@ -242,125 +242,165 @@ fintar/
 
 ## 🎨 WARNA PALETTE – MODERN FINANCE THEME
 
-### 🎯 Color Identity (Semua background dominan gelap)
+### 🎯 Color Identity
 
 **Primary Colors:**
 
-- `#1C1F2B` — primary base
-- `#2A2E3B` — primary dark
-- `#383C4B` — primary light
+- `#FCF8DD` — main cream background
+- `#F9F2C7` — medium cream
+- `#F6EBB1` — deep cream
 
 **Secondary Colors:**
 
-- `#005F73` — strong trust teal
-- `#0A9396` — soft supportive teal
-- `#94D2BD` — pastel companion
+- `#00809D` — primary teal blue
+- `#006B84` — deep teal
+- `#4FA3B8` — light teal
+- `#7EC8E3` — sky teal
 
 **Accent Colors:**
 
-- `#EE9B00` — action accent (cta buttons)
-- `#CA6702` — hover/press accent
-- `#BB3E03` — warning/danger
+- `#FFD700` — bright gold (primary cta)
+- `#D3AF37` — antique gold
+- `#FFA500` — orange gold
+- `#FF8C00` — dark orange
+
+**Supporting Colors:**
+
+- `#2E8B57` — sea green (success)
+- `#3CB371` — medium sea green
+- `#8B4513` — saddle brown
+- `#A0522D` — sienna brown
+
+**Alert Colors:**
+
+- `#DC143C` — crimson (danger)
+- `#FF6347` — tomato (warning)
+- `#32CD32` — lime green (success)
+- `#4169E1` — royal blue (info)
 
 **Neutral Colors:**
 
-- `#212121` — background dark
-- `#1A1A1A` — modal/surface
-- `#121212` — header/sidebar
+- `#F5E6D3` — light tan
+- `#E8D5C4` — warm gray
+- `#D4C5B9` — taupe
+- `#C8B8A6` — mushroom
 
-**Font Colors:**
+### 📝 FONT COLORS (Comprehensive)
 
-- `#FFFFFF` — main white text
-- `#E0E0E0` — secondary text
-- `#BDBDBD` — tertiary/muted text
+**Primary Text:**
 
-### 🎨 Komponen UI
+- `#0D0D0D` — main heading (h1, h2)
+- `#1A1A1A` — sub heading (h3, h4)
+- `#262626` — body text
+- `#333333` — paragraph text
 
-**Button:**
+**Secondary Text:**
 
-- Primary: `#EE9B00` (bg) + `#1C1F2B` (text)
-- Hover: `#CA6702`
-- Disabled: `#383C4B`
+- `#404040` — subtitle
+- `#4D4D4D` — description
+- `#595959` — caption
+- `#666666` — metadata
 
-**Card / Surface:**
+**Tertiary Text:**
 
-- Background: `#2A2E3B`
-- Border: `#383C4B`
-- Text: `#FFFFFF`
+- `#737373` — placeholder
+- `#808080` — disabled text
+- `#8C8C8C` — hint text
+- `#999999` — helper text
 
-**Modal:**
+**Specialized Text:**
 
-- Background: `#1A1A1A`
-- Shadow: soft `rgba(0,0,0,0.3)`
-- Close Button: `#CA6702`
+- `#2F4F4F` — financial data
+- `#1C3A3A` — important numbers
+- `#556B2F` — positive values
+- `#8B0000` — negative values
 
-**Input Field:**
+**Link & Interactive:**
 
-- Background: `#212121`
-- Border: `#383C4B`
-- Placeholder: `#BDBDBD`
-- Focus Ring: `#EE9B00`
+- `#00809D` — link default
+- `#006B84` — link hover
+- `#4FA3B8` — link visited
+- `#D3AF37` — link active
 
-## 🎨 WARNA PALETTE – MODERN FINANCE THEME (LIGHT)
+**Status Text:**
 
-### 🎯 Color Identity (Semua background dominan terang)
+- `#2E8B57` — success message
+- `#DC143C` — error message
+- `#FF8C00` — warning message
+- `#4169E1` — info message
 
-**Primary Colors:**
+**Data Text:**
 
-- `#F8F9FA` — primary base
-- `#E9ECEF` — primary dark
-- `#DEE2E6` — primary light
+- `#1C1C1C` — table header
+- `#333333` — table content
+- `#666666` — table secondary
+- `#999999` — table tertiary
 
-**Secondary Colors:**
+**Special Context:**
 
-- `#0077B6` — strong trust blue
-- `#0096C7` — soft supportive blue
-- `#90E0EF` — pastel companion
-
-**Accent Colors:**
-
-- `#F77F00` — action accent (cta buttons)
-- `#D96704` — hover/press accent
-- `#C9302C` — warning/danger
-
-**Neutral Colors:**
-
-- `#FFFFFF` — background light
-- `#FAFBFC` — modal/surface
-- `#F5F7FA` — header/sidebar
-
-**Font Colors:**
-
-- `#212529` — main dark text
-- `#495057` — secondary text
-- `#6C757D` — tertiary/muted text
+- `#8B4513` — currency symbol
+- `#006B84` — percentage
+- `#2F4F4F` — date/time
+- `#D3AF37` — highlighted/featured
 
 ### 🎨 Komponen UI (Light Theme)
 
-**Button:**
+**Button Variants:**
 
-- Primary: `#F77F00` (bg) + `#FFFFFF` (text)
-- Hover: `#D96704`
-- Disabled: `#DEE2E6`
+- Primary: `#FFD700` (bg) + `#1C1C1C` (text)
+- Secondary: `#00809D` (bg) + `#FCF8DD` (text)
+- Success: `#2E8B57` (bg) + `#FCF8DD` (text)
+- Warning: `#FFA500` (bg) + `#1C1C1C` (text)
+- Danger: `#DC143C` (bg) + `#FCF8DD` (text)
 
-**Card / Surface:**
+**Card Types:**
 
-- Background: `#FFFFFF`
-- Border: `#E9ECEF`
-- Text: `#212529`
+- Default: `#F9F2C7` (bg) + `#D3AF37` (border)
+- Premium: `#F5E6D3` (bg) + `#FFD700` (border)
+- Info: `#7EC8E3` (bg) + `#00809D` (border)
+- Success: `#E8F5E9` (bg) + `#2E8B57` (border)
 
-**Modal:**
+**Navigation:**
 
-- Background: `#FFFFFF`
-- Shadow: soft `rgba(0,0,0,0.1)`
-- Close Button: `#D96704`
+- Main Nav: `#006B84` (bg) + `#FCF8DD` (text)
+- Sub Nav: `#4FA3B8` (bg) + `#1C1C1C` (text)
+- Active: `#FFD700` (accent)
+- Hover: `#FFA500` (highlight)
 
-**Input Field:**
+**Data Visualization:**
 
-- Background: `#FAFBFC`
-- Border: `#DEE2E6`
-- Placeholder: `#6C757D`
-- Focus Ring: `#F77F00`
+- Chart 1: `#00809D`
+- Chart 2: `#FFD700`
+- Chart 3: `#2E8B57`
+- Chart 4: `#D3AF37`
+- Chart 5: `#4FA3B8`
+- Chart 6: `#A0522D`
+- Chart 7: `#FF8C00`
+- Chart 8: `#8B4513`
+
+### 💼 Special Finance Elements:
+
+**Portfolio Status:**
+
+- Excellent: `#2E8B57` + `#32CD32`
+- Good: `#00809D` + `#4FA3B8`
+- Average: `#FFA500` + `#FFD700`
+- Poor: `#A0522D` + `#8B4513`
+- Critical: `#DC143C` + `#FF6347`
+
+**Account Types:**
+
+- Gold: `linear-gradient(135deg, #FFD700, #D3AF37)`
+- Platinum: `linear-gradient(135deg, #E5E5E5, #B8B8B8)`
+- Diamond: `linear-gradient(135deg, #B9F2FF, #7EC8E3)`
+- Standard: `#00809D`
+
+**Market Indicators:**
+
+- Bull Market: `#2E8B57`
+- Bear Market: `#DC143C`
+- Neutral: `#696969`
+- Volatile: `#FF8C00`
 
 ## AI Prompt Guidelines (Google Gemini)
 

@@ -18,25 +18,25 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-105",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-105 shadow-lg hover:shadow-xl",
           {
-            // Primary Button - Using Action Accent (#EE9B00)
-            "bg-orange-500 text-primary-base hover:bg-orange-600 shadow-lg hover:shadow-xl":
+            // Primary Button - Bright Gold (#FFD700) + Dark Text (#1C1C1C)
+            "bg-accent-400 hover:bg-accent-500 text-text-primary border-2 border-accent-400 hover:border-accent-500":
               variant === "default",
-            // Secondary Button - Using Strong Trust Teal
-            "bg-teal-dark text-white hover:bg-teal-light shadow-lg hover:shadow-teal-dark/30":
+            // Secondary Button - Primary Teal Blue (#00809D) + Cream Text (#FCF8DD)
+            "bg-secondary-400 border-2 border-secondary-400 text-primary-50 hover:bg-secondary-500 hover:border-secondary-500":
               variant === "secondary",
-            // Accent Button - Using Soft Supportive Teal
-            "bg-teal-light text-primary-base hover:bg-teal-dark shadow-lg hover:shadow-teal-light/30":
+            // Accent Button - Success Green (#2E8B57) + Cream Text (#FCF8DD)
+            "bg-supporting-400 text-primary-50 hover:bg-supporting-500":
               variant === "accent",
-            // Outline Button - Using Primary Light border
-            "border-2 border-primary-light bg-transparent hover:bg-primary-light/10 text-teal-light hover:text-teal-dark hover:shadow-lg":
+            // Outline Button - Teal outline
+            "border-2 border-secondary-400 bg-transparent hover:bg-secondary-50 text-secondary-400 hover:text-secondary-500 hover:border-secondary-500":
               variant === "outline",
             // Ghost Button - Subtle hover
-            "hover:bg-primary-light/10 text-font-secondary hover:text-font-primary":
+            "hover:bg-neutral-300 text-text-description hover:text-text-body shadow-none hover:shadow-md":
               variant === "ghost",
-            // Destructive Button - Using Warning/Danger color
-            "bg-danger text-white hover:bg-danger/90 shadow-lg":
+            // Destructive Button - Crimson (#DC143C) + Cream Text (#FCF8DD)
+            "bg-danger-400 text-primary-50 hover:bg-danger-500":
               variant === "destructive",
             // Sizes
             "h-10 px-4 py-2": size === "default",

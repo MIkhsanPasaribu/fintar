@@ -5,179 +5,167 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // Fintar Modern Finance Theme - MVP Color Palette
+        // Modern Finance Theme - Cream, Teal Blue, Gold & Black
+        // Primary Colors - Cream Backgrounds
         primary: {
-          50: "#E8EBEE",
-          100: "#C1C7CC",
-          200: "#9AA3AA",
-          300: "#737F88",
-          400: "#4C5B66",
-          500: "#1C1F2B", // Primary Base
-          600: "#2A2E3B", // Primary Dark
-          700: "#383C4B", // Primary Light
-          800: "#14171F",
-          900: "#101217",
+          50: "#FCF8DD", // main cream background
+          100: "#F9F2C7", // medium cream
+          200: "#F6EBB1", // deep cream
+          300: "#F5E6D3", // light tan
+          400: "#E8D5C4", // warm gray
+          500: "#D4C5B9", // taupe
+          600: "#C8B8A6", // mushroom
+          700: "#A0522D", // sienna brown
+          800: "#8B4513", // saddle brown
+          900: "#704214", // darker brown
         },
+
+        // Secondary Colors - Teal Blues
         secondary: {
-          50: "#CCF2F4",
-          100: "#B3ECEF",
-          200: "#99E5EA",
-          300: "#7FDEE5",
-          400: "#66D7E0",
-          500: "#005F73", // Strong trust teal
-          600: "#0A9396", // Soft supportive teal
-          700: "#94D2BD", // Pastel companion
-          800: "#004D5C",
-          900: "#003A45",
+          50: "#E6F7FB", // lightest teal
+          100: "#CCF2F8", // very light teal
+          200: "#7EC8E3", // sky teal
+          300: "#4FA3B8", // light teal
+          400: "#00809D", // primary teal blue
+          500: "#006B84", // deep teal
+          600: "#005A70", // darker teal
+          700: "#00485C", // deepest teal
+          800: "#003648", // navy teal
+          900: "#002934", // darkest teal
         },
+
+        // Accent Colors - Gold & Orange
         accent: {
-          50: "#FEF5E7",
-          100: "#FDE2B3",
-          200: "#FCCE7F",
-          300: "#FBBA4B",
-          400: "#FAA617",
-          500: "#EE9B00", // Action accent (CTA buttons)
-          600: "#CA6702", // Hover/press accent
-          700: "#BB3E03", // Warning/danger
-          800: "#A65100",
-          900: "#8A4300",
+          50: "#FFFEF7", // lightest gold
+          100: "#FFFCEB", // very light gold
+          200: "#FEF3C7", // light gold
+          300: "#FDE68A", // medium light gold
+          400: "#FFD700", // bright gold (primary CTA)
+          500: "#D3AF37", // antique gold
+          600: "#FFA500", // orange gold
+          700: "#FF8C00", // dark orange
+          800: "#E67E00", // darker orange
+          900: "#CC7000", // darkest orange
         },
+
+        // Supporting Colors - Greens & Browns
+        supporting: {
+          50: "#F0FDF4", // lightest green
+          100: "#DCFCE7", // very light green
+          200: "#BBF7D0", // light green
+          300: "#86EFAC", // medium green
+          400: "#2E8B57", // sea green (success)
+          500: "#3CB371", // medium sea green
+          600: "#22C55E", // success green
+          700: "#16A34A", // darker green
+          800: "#15803D", // deep green
+          900: "#14532D", // darkest green
+        },
+
+        // Alert Colors
+        danger: {
+          50: "#FEF2F2", // lightest red
+          100: "#FEE2E2", // very light red
+          200: "#FECACA", // light red
+          300: "#FCA5A5", // medium red
+          400: "#DC143C", // crimson (danger)
+          500: "#FF6347", // tomato (warning)
+          600: "#DC2626", // red 600
+          700: "#B91C1C", // darker red
+          800: "#991B1B", // deep red
+          900: "#7F1D1D", // darkest red
+        },
+
+        // Success Colors
+        success: {
+          50: "#F0FDF4", // lightest green
+          100: "#E8F5E9", // very light green (card bg)
+          200: "#DCFCE7", // light green
+          300: "#32CD32", // lime green (success)
+          400: "#2E8B57", // sea green (main success)
+          500: "#16A34A", // success 500
+          600: "#15803D", // success 600
+          700: "#14532D", // success 700
+          800: "#166534", // darker green
+          900: "#14532D", // darkest green
+        },
+
+        // Info Colors
+        info: {
+          50: "#EFF6FF", // lightest blue
+          100: "#DBEAFE", // very light blue
+          200: "#BFDBFE", // light blue
+          300: "#7EC8E3", // sky teal (info bg)
+          400: "#4169E1", // royal blue (info)
+          500: "#3B82F6", // blue 500
+          600: "#2563EB", // blue 600
+          700: "#1D4ED8", // blue 700
+          800: "#1E40AF", // darker blue
+          900: "#1E3A8A", // darkest blue
+        },
+
+        // Text Colors
+        text: {
+          primary: "#0D0D0D", // main heading (h1, h2)
+          secondary: "#1A1A1A", // sub heading (h3, h4)
+          body: "#262626", // body text
+          paragraph: "#333333", // paragraph text
+          subtitle: "#404040", // subtitle
+          description: "#4D4D4D", // description
+          caption: "#595959", // caption
+          metadata: "#666666", // metadata
+          placeholder: "#737373", // placeholder
+          disabled: "#808080", // disabled text
+          hint: "#8C8C8C", // hint text
+          helper: "#999999", // helper text
+          financial: "#2F4F4F", // financial data
+          important: "#1C3A3A", // important numbers
+          positive: "#556B2F", // positive values
+          negative: "#8B0000", // negative values
+          currency: "#8B4513", // currency symbol
+          percentage: "#006B84", // percentage
+          datetime: "#2F4F4F", // date/time
+          featured: "#D3AF37", // highlighted/featured
+          table: {
+            header: "#1C1C1C", // table header
+            content: "#333333", // table content
+            secondary: "#666666", // table secondary
+            tertiary: "#999999", // table tertiary
+          },
+        },
+
+        // Link Colors
+        link: {
+          default: "#00809D", // link default
+          hover: "#006B84", // link hover
+          visited: "#4FA3B8", // link visited
+          active: "#D3AF37", // link active
+        },
+
+        // Status Text
+        status: {
+          success: "#2E8B57", // success message
+          error: "#DC143C", // error message
+          warning: "#FF8C00", // warning message
+          info: "#4169E1", // info message
+        },
+
+        // Neutral Grays
         neutral: {
-          50: "#F8F9FA",
-          100: "#E9ECEF",
-          200: "#DEE2E6",
-          300: "#CED4DA",
-          400: "#ADB5BD",
-          500: "#212121", // Background dark
-          600: "#1A1A1A", // Modal/surface
-          700: "#121212", // Header/sidebar
-          800: "#0D0D0D",
-          900: "#080808",
+          50: "#FFFFFF", // background white
+          100: "#FCF8DD", // main cream background
+          200: "#F9F2C7", // medium cream
+          300: "#F5E6D3", // light tan
+          400: "#E8D5C4", // warm gray
+          500: "#D4C5B9", // taupe
+          600: "#C8B8A6", // mushroom
+          700: "#999999", // helper text
+          800: "#666666", // secondary text
+          900: "#333333", // main text
         },
-        // Font Colors
-        "font-primary": "#FFFFFF", // Main white text
-        "font-light": "#FFFFFF", // Main white text
-        "font-secondary": "#E0E0E0", // Secondary text
-        "font-muted": "#BDBDBD", // Tertiary/muted text
-
-        // Background Colors
-        "bg-dark": "#212121",
-        "bg-main": "#1A1A1A",
-        "bg-darker": "#121212",
-
-        // UI Element Colors - Updated for New Palette
-        button: {
-          primary: {
-            bg: "#EE9B00",
-            text: "#1C1F2B",
-            hover: "#CA6702",
-            disabled: "#383C4B",
-          },
-          secondary: {
-            bg: "#005F73",
-            text: "#FFFFFF",
-            hover: "#0A9396",
-            disabled: "#383C4B",
-          },
-          accent: {
-            bg: "#EE9B00",
-            text: "#1C1F2B",
-            hover: "#CA6702",
-          },
-          ghost: {
-            bg: "transparent",
-            text: "#FFFFFF",
-            hover: "#2A2E3B",
-          },
-          outline: {
-            border: "#EE9B00",
-            bg: "#1A1A1A",
-            text: "#EE9B00",
-            hoverBg: "#2A2E3B",
-          },
-        },
-        card: {
-          default: {
-            bg: "#2A2E3B",
-            border: "#383C4B",
-            text: "#FFFFFF",
-          },
-          highlight: {
-            bg: "#2A2E3B",
-            border: "#EE9B00",
-            text: "#FFFFFF",
-          },
-          info: {
-            bg: "#1C1F2B",
-            border: "#005F73",
-            text: "#FFFFFF",
-          },
-        },
-        nav: {
-          bg: "#121212",
-          text: "#FFFFFF",
-          hover: "#EE9B00",
-        },
-        footer: {
-          bg: "#121212",
-          text: "#E0E0E0",
-          hover: "#EE9B00",
-        },
-        modal: {
-          bg: "#1A1A1A",
-          border: "#383C4B",
-          text: "#FFFFFF",
-        },
-        tooltip: {
-          bg: "#2A2E3B",
-          border: "#EE9B00",
-          text: "#FFFFFF",
-        },
-        input: {
-          bg: "#212121",
-          border: "#383C4B",
-          placeholder: "#BDBDBD",
-          text: "#FFFFFF",
-          focus: {
-            border: "#EE9B00",
-            ring: "#EE9B00",
-          },
-          error: {
-            border: "#BB3E03",
-            ring: "#BB3E03",
-            text: "#FFBABA",
-            placeholder: "#E4AFAF",
-          },
-        },
-        badge: {
-          active: {
-            bg: "#117A65",
-            border: "#1ABC9C",
-            text: "#FFFFFF",
-          },
-          info: {
-            bg: "#2C3E50",
-            border: "#4B6EF5",
-            text: "#F0F0F0",
-          },
-          warning: {
-            bg: "#5E4C25",
-            border: "#F39C12",
-            text: "#F4B942",
-          },
-          error: {
-            bg: "#3A1E1E",
-            border: "#E74C3C",
-            text: "#E74C3C",
-          },
-        },
-        error: "#E74C3C",
-        warning: "#F39C12",
-        success: "#16A085",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
@@ -320,53 +308,150 @@ module.exports = {
           "42%": { transform: "scale(1.3)" },
           "70%": { transform: "scale(1)" },
         },
-        neonPulse: {
-          "0%, 100%": {
-            textShadow: "0 0 5px #16A085, 0 0 10px #16A085, 0 0 15px #16A085",
+        keyframes: {
+          slideInUp: {
+            "0%": {
+              transform: "translateY(100px)",
+              opacity: "0",
+            },
+            "100%": {
+              transform: "translateY(0)",
+              opacity: "1",
+            },
           },
-          "50%": {
-            textShadow: "0 0 10px #1ABC9C, 0 0 20px #1ABC9C, 0 0 30px #1ABC9C",
+          slideInDown: {
+            "0%": {
+              transform: "translateY(-100px)",
+              opacity: "0",
+            },
+            "100%": {
+              transform: "translateY(0)",
+              opacity: "1",
+            },
+          },
+          slideInLeft: {
+            "0%": {
+              transform: "translateX(-100px)",
+              opacity: "0",
+            },
+            "100%": {
+              transform: "translateX(0)",
+              opacity: "1",
+            },
+          },
+          slideInRight: {
+            "0%": {
+              transform: "translateX(100px)",
+              opacity: "0",
+            },
+            "100%": {
+              transform: "translateX(0)",
+              opacity: "1",
+            },
+          },
+          fadeIn: {
+            "0%": {
+              opacity: "0",
+            },
+            "100%": {
+              opacity: "1",
+            },
+          },
+          fadeInScale: {
+            "0%": {
+              opacity: "0",
+              transform: "scale(0.9)",
+            },
+            "100%": {
+              opacity: "1",
+              transform: "scale(1)",
+            },
+          },
+          bounceGentle: {
+            "0%, 100%": {
+              transform: "translateY(0)",
+            },
+            "50%": {
+              transform: "translateY(-10px)",
+            },
+          },
+          pulseSoft: {
+            "0%, 100%": {
+              opacity: "1",
+            },
+            "50%": {
+              opacity: "0.7",
+            },
+          },
+          float: {
+            "0%, 100%": {
+              transform: "translateY(0px)",
+            },
+            "50%": {
+              transform: "translateY(-20px)",
+            },
+          },
+          gradient: {
+            "0%, 100%": {
+              backgroundPosition: "0% 50%",
+            },
+            "50%": {
+              backgroundPosition: "100% 50%",
+            },
+          },
+          progressBar: {
+            "0%": {
+              width: "0%",
+            },
+          },
+          shimmer: {
+            "0%": {
+              transform: "translateX(-100%)",
+            },
+            "100%": {
+              transform: "translateX(100%)",
+            },
+          },
+          typing: {
+            "0%": {
+              width: "0",
+            },
+            "100%": {
+              width: "100%",
+            },
+          },
+          "blink-caret": {
+            "0%, 50%": {
+              borderColor: "transparent",
+            },
+            "51%, 100%": {
+              borderColor: "#3b82f6",
+            },
+          },
+          glow: {
+            "0%, 100%": {
+              boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)",
+            },
+            "50%": {
+              boxShadow: "0 0 30px rgba(59, 130, 246, 0.5)",
+            },
           },
         },
-        textGlow: {
-          "0%, 100%": {
-            textShadow: "0 0 2px rgba(22, 160, 133, 0.5)",
-          },
-          "50%": {
-            textShadow:
-              "0 0 8px rgba(26, 188, 156, 0.8), 0 0 12px rgba(26, 188, 156, 0.6)",
-          },
+        boxShadow: {
+          modern:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          "modern-hover":
+            "0 10px 25px -3px rgba(0, 0, 0, 0.15), 0 8px 10px -2px rgba(0, 0, 0, 0.1)",
+          "modern-glow": "0 0 20px rgba(59, 130, 246, 0.3)",
+          "orange-glow": "0 0 20px rgba(247, 127, 0, 0.3)",
         },
-      },
-      boxShadow: {
-        financial:
-          "0 4px 6px -1px rgba(22, 160, 133, 0.1), 0 2px 4px -1px rgba(22, 160, 133, 0.06)",
-        "financial-hover":
-          "0 10px 25px -3px rgba(22, 160, 133, 0.15), 0 8px 10px -2px rgba(22, 160, 133, 0.08)",
-        "financial-glow":
-          "0 0 20px rgba(22, 160, 133, 0.3), 0 0 40px rgba(22, 160, 133, 0.15)",
-        "primary-glow":
-          "0 0 20px rgba(26, 188, 156, 0.4), 0 0 40px rgba(26, 188, 156, 0.2)",
-        "accent-glow":
-          "0 0 20px rgba(243, 156, 18, 0.3), 0 0 40px rgba(243, 156, 18, 0.15)",
-        "secondary-glow":
-          "0 0 20px rgba(52, 73, 94, 0.3), 0 0 40px rgba(52, 73, 94, 0.15)",
-        "dark-card":
-          "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
-        "dark-hover":
-          "0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 8px 10px -2px rgba(0, 0, 0, 0.3)",
-        "inner-dark": "inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)",
-        "neon-primary":
-          "0 0 10px rgba(22, 160, 133, 0.5), 0 0 20px rgba(22, 160, 133, 0.3)",
-        "neon-accent":
-          "0 0 10px rgba(243, 156, 18, 0.5), 0 0 20px rgba(243, 156, 18, 0.3)",
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        backgroundImage: {
+          "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+          "gradient-conic":
+            "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        },
       },
     },
+    plugins: [],
   },
-  plugins: [],
 };

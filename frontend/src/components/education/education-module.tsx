@@ -156,7 +156,7 @@ const getDifficultyColor = (difficulty: string) => {
     case "advanced":
       return "bg-error-dark/20 text-error-light border-error-dark/30";
     default:
-      return "bg-primary-500/20 text-primary-300 border-primary-500/30";
+      return "bg-secondary-400/20 text-secondary-600 border-secondary-400/30";
   }
 };
 
@@ -188,7 +188,7 @@ export default function EducationModule() {
     <div className="space-y-6">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="glass-effect border-primary-500/20 card-hover">
+        <Card className="glass-effect border-secondary-400/20 card-hover">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-secondary-500/20 text-secondary-300 rounded-xl border border-secondary-500/30 neon-glow">

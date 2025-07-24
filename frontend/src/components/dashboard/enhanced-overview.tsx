@@ -261,7 +261,7 @@ export default function EnhancedDashboardOverview() {
         <div>
           <h1 className="text-3xl font-bold text-font-light flex items-center space-x-3">
             <span>Fintar Financial Dashboard</span>
-            <Bot className="w-8 h-8 text-primary-400" />
+            <Bot className="w-8 h-8 text-accent-400" />
           </h1>
           <p className="text-font-secondary">
             AI-Powered Financial Management •{" "}
@@ -290,12 +290,12 @@ export default function EnhancedDashboardOverview() {
           return (
             <Card
               key={index}
-              className="glass-effect border-primary-light/20 hover:border-primary-light/40 transition-all duration-300"
+              className="glass-effect border-secondary-400/20 hover:border-secondary-400/40 transition-all duration-300"
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between space-y-0">
                   <div className="flex items-center space-x-2">
-                    <Icon className="w-4 h-4 text-primary-400" />
+                    <Icon className="w-4 h-4 text-accent-400" />
                     <p className="text-sm font-medium text-font-secondary">
                       {metric.title}
                     </p>
@@ -321,10 +321,10 @@ export default function EnhancedDashboardOverview() {
       </div>
 
       {/* Enhanced Quick Actions */}
-      <Card className="glass-effect border-primary-light/20">
+      <Card className="glass-effect border-secondary-400/20">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Sparkles className="w-5 h-5 text-primary-400" />
+            <Sparkles className="w-5 h-5 text-accent-400" />
             <span>AI-Powered Quick Actions</span>
           </CardTitle>
         </CardHeader>
@@ -332,10 +332,10 @@ export default function EnhancedDashboardOverview() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <Button
               variant="outline"
-              className="h-auto py-4 flex flex-col space-y-2 hover:border-primary-400 hover:bg-primary-dark/5"
+              className="h-auto py-4 flex flex-col space-y-2 hover:border-accent-400 hover:bg-accent-400/5"
               onClick={() => handleQuickAction("financial-analysis")}
             >
-              <BarChart3 className="w-6 h-6 text-primary-400" />
+              <BarChart3 className="w-6 h-6 text-accent-400" />
               <span className="text-sm">AI Financial Analysis</span>
             </Button>
             <Button
@@ -375,10 +375,10 @@ export default function EnhancedDashboardOverview() {
       </Card>
 
       {/* AI Insights Section */}
-      <Card className="glass-effect border-primary-light/20">
+      <Card className="glass-effect border-secondary-400/20">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Bot className="w-5 h-5 text-primary-400" />
+            <Bot className="w-5 h-5 text-accent-400" />
             <span>Fintar AI Insights & Recommendations</span>
             <Badge variant="secondary" className="ml-2 text-xs">
               Smart Analytics
@@ -390,14 +390,16 @@ export default function EnhancedDashboardOverview() {
             {mockData.aiInsights.map((insight) => (
               <div
                 key={insight.id}
-                className="p-4 border border-primary-light/20 rounded-lg bg-primary-dark/5 hover:bg-primary-dark/10 transition-all duration-300"
+                className="p-4 border border-secondary-400/20 rounded-lg bg-secondary-400/5 hover:bg-secondary-400/10 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold text-font-light text-sm">
                     {insight.title}
                   </h4>
                   <Badge
-                    className={`text-xs ${getConfidenceColor(insight.confidence)} border-0`}
+                    className={`text-xs ${getConfidenceColor(
+                      insight.confidence
+                    )} border-0`}
                   >
                     {insight.confidence}
                   </Badge>
@@ -415,9 +417,9 @@ export default function EnhancedDashboardOverview() {
                         insight.impact.startsWith("+")
                           ? "text-green-400"
                           : insight.impact.startsWith("-") &&
-                              insight.impact.includes("Risk")
-                            ? "text-green-400"
-                            : "text-red-400"
+                            insight.impact.includes("Risk")
+                          ? "text-green-400"
+                          : "text-red-400"
                       }`}
                     >
                       {insight.impact}
@@ -439,7 +441,7 @@ export default function EnhancedDashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Enhanced Recent Activities */}
-        <Card className="glass-effect border-primary-light/20">
+        <Card className="glass-effect border-secondary-400/20">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Recent AI Activities</span>
@@ -474,7 +476,7 @@ export default function EnhancedDashboardOverview() {
         </Card>
 
         {/* Enhanced Upcoming Tasks */}
-        <Card className="glass-effect border-primary-light/20">
+        <Card className="glass-effect border-secondary-400/20">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>AI-Suggested Tasks</span>

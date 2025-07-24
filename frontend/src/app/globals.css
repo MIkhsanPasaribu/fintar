@@ -1,33 +1,85 @@
 @import "tailwindcss";
 
-/* Modern Light Finance Theme - Clean and Professional */
+/* Modern Finance Theme - Cream, Teal Blue, Gold & Black */
 :root {
-  /* Light theme variables only */
-  --background: 255 255 255;
-  --foreground: 0 0 0;
-  --card: 248 249 250;
-  --card-foreground: 0 0 0;
-  --popover: 255 255 255;
-  --popover-foreground: 0 0 0;
-  --primary: 247 127 0;
-  --primary-foreground: 255 255 255;
-  --secondary: 238 155 0;
-  --secondary-foreground: 0 0 0;
-  --muted: 245 245 245;
-  --muted-foreground: 115 115 115;
-  --accent: 34 197 94;
-  --accent-foreground: 255 255 255;
-  --destructive: 239 68 68;
-  --destructive-foreground: 255 255 255;
-  --border: 229 229 229;
-  --input: 229 229 229;
-  --ring: 247 127 0;
-  --neutral: 229 229 229;
-  --neutral-foreground: 0 0 0;
-  --success: 34 197 94;
-  --warning: 238 155 0;
-  --error: 239 68 68;
-  --info: 59 130 246;
+  /* Modern Finance Light Theme Variables */
+  --background: 252 248 221; /* #FCF8DD - main cream background */
+  --foreground: 13 13 13; /* #0D0D0D - main heading text */
+  --card: 249 242 199; /* #F9F2C7 - medium cream card bg */
+  --card-foreground: 26 26 26; /* #1A1A1A - sub heading text */
+  --popover: 245 230 211; /* #F5E6D3 - light tan modal/surface */
+  --popover-foreground: 13 13 13; /* #0D0D0D - main text */
+
+  /* Primary Colors - Teal Blues */
+  --primary: 0 128 157; /* #00809D - primary teal blue */
+  --primary-foreground: 252 248 221; /* #FCF8DD - cream text on teal */
+  --secondary: 0 107 132; /* #006B84 - deep teal */
+  --secondary-foreground: 252 248 221; /* #FCF8DD - cream text */
+
+  /* Accent Colors - Gold */
+  --accent: 255 215 0; /* #FFD700 - bright gold (primary CTA) */
+  --accent-foreground: 28 28 28; /* #1C1C1C - dark text on gold */
+  --muted: 249 242 199; /* #F9F2C7 - medium cream */
+  --muted-foreground: 102 102 102; /* #666666 - metadata text */
+
+  /* Status Colors */
+  --destructive: 220 20 60; /* #DC143C - crimson (danger) */
+  --destructive-foreground: 252 248 221; /* #FCF8DD - cream text */
+  --success: 46 139 87; /* #2E8B57 - sea green */
+  --success-foreground: 252 248 221; /* #FCF8DD - cream text */
+  --warning: 255 165 0; /* #FFA500 - orange gold */
+  --warning-foreground: 28 28 28; /* #1C1C1C - dark text */
+  --info: 65 105 225; /* #4169E1 - royal blue */
+  --info-foreground: 252 248 221; /* #FCF8DD - cream text */
+
+  /* Border and Input */
+  --border: 211 175 55; /* #D3AF37 - antique gold borders */
+  --input: 249 242 199; /* #F9F2C7 - medium cream input bg */
+  --ring: 0 128 157; /* #00809D - teal focus rings */
+
+  /* Neutral Grays */
+  --neutral: 232 213 196; /* #E8D5C4 - warm gray */
+  --neutral-foreground: 77 77 77; /* #4D4D4D - description text */
+
+  /* Text Color Variables */
+  --text-primary: 13 13 13; /* #0D0D0D - main heading */
+  --text-secondary: 26 26 26; /* #1A1A1A - sub heading */
+  --text-body: 38 38 38; /* #262626 - body text */
+  --text-paragraph: 51 51 51; /* #333333 - paragraph text */
+  --text-subtitle: 64 64 64; /* #404040 - subtitle */
+  --text-description: 77 77 77; /* #4D4D4D - description */
+  --text-caption: 89 89 89; /* #595959 - caption */
+  --text-metadata: 102 102 102; /* #666666 - metadata */
+  --text-placeholder: 115 115 115; /* #737373 - placeholder */
+  --text-disabled: 128 128 128; /* #808080 - disabled text */
+  --text-hint: 140 140 140; /* #8C8C8C - hint text */
+  --text-helper: 153 153 153; /* #999999 - helper text */
+
+  /* Specialized Text */
+  --text-financial: 47 79 79; /* #2F4F4F - financial data */
+  --text-important: 28 58 58; /* #1C3A3A - important numbers */
+  --text-positive: 85 107 47; /* #556B2F - positive values */
+  --text-negative: 139 0 0; /* #8B0000 - negative values */
+  --text-currency: 139 69 19; /* #8B4513 - currency symbol */
+  --text-percentage: 0 128 157; /* #006B84 - percentage */
+  --text-datetime: 47 79 79; /* #2F4F4F - date/time */
+  --text-featured: 211 175 55; /* #D3AF37 - highlighted/featured */
+
+  /* Link Colors */
+  --link-default: 0 128 157; /* #00809D - link default */
+  --link-hover: 0 107 132; /* #006B84 - link hover */
+  --link-visited: 79 163 184; /* #4FA3B8 - link visited */
+  --link-active: 211 175 55; /* #D3AF37 - link active */
+
+  /* Data Visualization */
+  --chart-1: 0 128 157; /* #00809D */
+  --chart-2: 255 215 0; /* #FFD700 */
+  --chart-3: 46 139 87; /* #2E8B57 */
+  --chart-4: 211 175 55; /* #D3AF37 */
+  --chart-5: 79 163 184; /* #4FA3B8 */
+  --chart-6: 160 82 45; /* #A0522D */
+  --chart-7: 255 140 0; /* #FF8C00 */
+  --chart-8: 139 69 19; /* #8B4513 */
 }
 
 body {
