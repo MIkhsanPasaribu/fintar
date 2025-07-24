@@ -10,6 +10,8 @@ datasource db {
   url      = env("DIRECT_URL")
 }
 
+// @rls:enable
+// @rls:policy("users_policy", "USING (auth.uid() = id)", "WITH CHECK (auth.uid() = id)")
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
@@ -58,6 +60,9 @@ model UserProfile {
   @@map("user_profiles")
 }
 
+// @rls:enable
+// @rls:policy("consultant_read_policy", "USING (true)", "WITH CHECK (false)")
+// @rls:policy("consultant_write_policy", "USING (auth.uid() IN (SELECT id FROM users WHERE role = 'ADMIN'))", "WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'ADMIN'))")
 model Consultant {
   id              String   @id @default(cuid())
   email           String   @unique
@@ -86,6 +91,9 @@ model Consultant {
   @@map("consultants")
 }
 
+// @rls:enable
+// @rls:policy("consultation_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("consultation_consultant_policy", "USING (auth.uid() IN (SELECT id FROM users WHERE role = 'CONSULTANT' OR role = 'ADMIN'))", "WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'CONSULTANT' OR role = 'ADMIN'))")
 model Consultation {
   id            String             @id @default(cuid())
   userId        String
@@ -108,6 +116,8 @@ model Consultation {
   @@map("consultations")
 }
 
+// @rls:enable
+// @rls:policy("financial_data_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
 model FinancialData {
   id           String          @id @default(cuid())
   userId       String
@@ -129,6 +139,8 @@ model FinancialData {
   @@map("financial_data")
 }
 
+// @rls:enable
+// @rls:policy("chat_session_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
 model ChatSession {
   id        String      @id @default(cuid())
   userId    String
@@ -145,6 +157,8 @@ model ChatSession {
   @@map("chat_sessions")
 }
 
+// @rls:enable
+// @rls:policy("chat_message_policy", "USING (EXISTS (SELECT 1 FROM chat_sessions WHERE id = sessionId AND userId = auth.uid()))", "WITH CHECK (EXISTS (SELECT 1 FROM chat_sessions WHERE id = sessionId AND userId = auth.uid()))")
 model ChatMessage {
   id          String      @id @default(cuid())
   sessionId   String
@@ -158,6 +172,9 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
+// @rls:enable
+// @rls:policy("booking_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("booking_consultant_policy", "USING (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))", "WITH CHECK (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))")
 model Booking {
   id           String        @id @default(cuid())
   userId       String
@@ -177,6 +194,9 @@ model Booking {
   @@map("bookings")
 }
 
+// @rls:enable
+// @rls:policy("review_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("review_read_policy", "USING (true)", "WITH CHECK (false)")
 model Review {
   id           String   @id @default(cuid())
   userId       String
@@ -191,6 +211,8 @@ model Review {
   @@map("reviews")
 }
 
+// @rls:enable
+// @rls:policy("notification_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
 model Notification {
   id        String             @id @default(cuid())
   userId    String
