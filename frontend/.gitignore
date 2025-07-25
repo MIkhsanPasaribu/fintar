@@ -1,0 +1,103 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Next.js build output
+.next/
+out/
+
+# Nuxt.js build / generate output
+.nuxt/
+dist/
+
+# Temporary folders
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Prisma
+prisma/migrations/**/migration.sql
+
+# Docker
+.docker/
+
+# Uploads
+uploads/
+static/uploads/
+
+# Backend specific
+backend/dist/
+backend/uploads/
+
+# Frontend specific
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Database data
+database/data/
+database/postgres_data/
+database/mongodb_data/
+database/redis_data/
