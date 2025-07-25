@@ -63,8 +63,9 @@ export class AuthService {
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await this.usersService.create({
         email,
+        username: email.split("@")[0], // Generate username from email
         password: hashedPassword,
-        name,
+        firstName: name || email.split("@")[0],
         supabaseId: supabaseUser.user?.id,
       });
 

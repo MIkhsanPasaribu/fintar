@@ -1,94 +1,274 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // User Types
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: "user" | "admin" | "consultant";
-  avatar?: string;
+  username: string;
+  firstName: string;
+  lastName: string;
   phone?: string;
+  avatar?: string;
+  isVerified: boolean;
+  role: "CLIENT" | "CONSULTANT" | "ADMIN";
+  preferences?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
 }
 
+// Consultant Types
+export interface Consultant {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  avatar?: string;
+  specialization: string[];
+  experience: number;
+  rating: number;
+  hourlyRate: number;
+  isActive: boolean;
+  bio?: string;
+  certifications?: string[];
+  languages?: string[];
+  timeZone?: string;
+  availability?: Record<string, string[]>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Booking Types
+export interface Booking {
+  id: string;
+  userId: string;
+  consultantId: string;
+  consultant?: Consultant;
+  type: "CONSULTATION" | "FOLLOW_UP" | "EMERGENCY";
+  status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
+  scheduledAt: string;
+  duration: number;
+  price: number;
+  notes?: string;
+  meetingLink?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Financial Data Types
+export interface FinancialData {
+  id: string;
+  userId: string;
+  type: "INCOME" | "EXPENSE" | "INVESTMENT" | "DEBT" | "ASSET";
+  category: string;
+  amount: number;
+  currency: string;
+  description?: string;
+  date: Date;
+  recurring?: boolean;
+  frequency?: string;
+  tags?: string[];
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Transaction Types
 export interface Transaction {
   id: string;
   userId: string;
-  amount: number;
-  type: "income" | "expense";
-  category: string;
+  type: "income" | "expense" | "investment" | "transfer";
+  category?: string;
   description: string;
-  date: Date;
-  recurring?: boolean;
-  recurringPeriod?: "weekly" | "monthly" | "yearly";
+  amount: number;
+  date: string;
+  accountId?: string;
+  tags?: string[];
+  metadata?: {
+    location?: string;
+    notes?: string;
+    attachments?: string[];
+    recurring?: boolean;
+    recurringPeriod?: "daily" | "weekly" | "monthly" | "yearly";
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface Budget {
+export interface TransactionCategory {
+  id: string;
+  name: string;
+  type: "income" | "expense" | "investment";
+  color: string;
+  icon?: string;
+  parentId?: string;
+  isActive: boolean;
+}
+
+export interface Account {
   id: string;
   userId: string;
-  category: string;
-  limit: number;
-  spent: number;
-  period: "weekly" | "monthly" | "yearly";
+  name: string;
+  type: "checking" | "savings" | "investment" | "credit" | "cash";
+  balance: number;
+  currency: string;
+  isActive: boolean;
+  metadata?: {
+    bankName?: string;
+    accountNumber?: string;
+    description?: string;
+  };
   createdAt: Date;
+  updatedAt: Date;
+}
+
+// Chat Types
+export interface ChatSession {
+  id: string;
+  userId: string;
+  title?: string;
+  type?:
+    | "GENERAL"
+    | "FINANCIAL_ADVICE"
+    | "INVESTMENT_HELP"
+    | "DEBT_ASSISTANCE"
+    | "BUDGET_PLANNING";
+  status?: "ACTIVE" | "ARCHIVED" | "EXPIRED";
+  metadata?: Record<string, any>;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  sessionId: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  createdAt: string;
+  metadata?: Record<string, any>;
+}
+
+// AI Types
+export interface AIAnalysisResult {
+  analysisId: string;
+  summary: string;
+  recommendations: string[];
+  riskLevel: "low" | "medium" | "high";
+  confidence: number;
+  generatedAt: Date;
+  metadata?: Record<string, any>;
+}
+
+export interface AICapabilities {
+  features: string[];
+  models: string[];
+  languages: string[];
+  maxTokens: number;
+  supportedFormats: string[];
+}
+
+// Form Types
+export interface LoginFormData {
+  email: string;
+  password: string;
+  remember?: boolean;
+}
+
+export interface RegisterFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  phone?: string;
+  agreeToTerms: boolean;
+}
+
+// API Response Types
+export interface ApiResponse<T = any> {
+  data?: T;
+  error?: string;
+  message?: string;
+  fallback?: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// Dashboard Types
+export interface DashboardStats {
+  totalIncome: number;
+  totalExpenses: number;
+  totalSavings: number;
+  totalInvestments: number;
+  monthlyGrowth: number;
+  financialHealthScore: number;
 }
 
 export interface FinancialGoal {
   id: string;
   userId: string;
-  title: string;
+  name: string;
+  target: number;
+  current: number;
+  category?: string;
+  targetDate?: string;
   description?: string;
-  targetAmount: number;
-  currentAmount: number;
-  deadline: Date;
-  category: "emergency" | "investment" | "savings" | "debt" | "other";
-  priority: "low" | "medium" | "high";
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// Dashboard Types
-export interface DashboardData {
-  totalIncome: number;
-  totalExpenses: number;
-  balance: number;
-  monthlyIncome: number;
-  monthlyExpenses: number;
-  budgetUsage: BudgetUsage[];
-  recentTransactions: Transaction[];
-  financialGoals: FinancialGoal[];
-  cashflowData: CashflowData[];
-}
-
-export interface BudgetUsage {
-  category: string;
-  limit: number;
-  spent: number;
-  percentage: number;
-}
-
-export interface CashflowData {
-  month: string;
-  income: number;
-  expenses: number;
-  balance: number;
-}
-
-// AI Chat Types
-export interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
-
-export interface ChatSession {
+// Notification Types
+export interface Notification {
   id: string;
   userId: string;
-  messages: ChatMessage[];
-  topic: string;
+  type:
+    | "BOOKING_CONFIRMATION"
+    | "CONSULTATION_REMINDER"
+    | "NEW_MESSAGE"
+    | "SYSTEM_UPDATE";
+  title: string;
+  message: string;
+  isRead: boolean;
+  metadata?: Record<string, any>;
   createdAt: Date;
-  updatedAt: Date;
+}
+
+// Review Types
+export interface Review {
+  id: string;
+  userId: string;
+  consultantId: string;
+  rating: number;
+  comment?: string;
+  createdAt: Date;
+  user?: {
+    firstName: string;
+    lastName: string;
+    avatar?: string;
+  };
+}
+
+// UI Component Types
+export interface SelectOption {
+  value: string | number;
+  label: string;
+  disabled?: boolean;
+}
+
+export interface ToastMessage {
+  id: string;
+  title: string;
+  description: string;
+  variant: "success" | "danger" | "warning" | "info";
+  duration?: number;
 }
 
 // Education Types
@@ -96,112 +276,78 @@ export interface EducationContent {
   id: string;
   title: string;
   description: string;
-  content: string;
-  type: "article" | "video" | "quiz";
+  type: "ARTICLE" | "VIDEO" | "QUIZ" | "INTERACTIVE";
   category: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
   duration: number; // in minutes
-  points: number;
+  content: string;
   thumbnail?: string;
   videoUrl?: string;
-  createdAt: Date;
+  author: string;
+  rating: number;
+  totalRatings: number;
+  tags: string[];
+  isPublished: boolean;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  // User-specific fields
+  isCompleted?: boolean;
+  progress?: number;
+  isBookmarked?: boolean;
+  userRating?: number;
 }
 
-export interface Quiz {
+export interface LearningPath {
   id: string;
   title: string;
-  questions: QuizQuestion[];
+  description: string;
   category: string;
-  points: number;
-  duration: number;
+  level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+  totalSteps: number;
+  estimatedDuration: number;
+  thumbnail?: string;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+  // User-specific fields
+  completedSteps?: number;
+  progress?: number;
+  enrolledAt?: string;
+  completedAt?: string;
+  steps: LearningStep[];
 }
 
-export interface QuizQuestion {
+export interface LearningStep {
   id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
+  pathId: string;
+  contentId: string;
+  content: EducationContent;
+  order: number;
+  isRequired: boolean;
+  // User-specific fields
+  isCompleted?: boolean;
+  completedAt?: string;
 }
 
-export interface UserProgress {
-  id: string;
+export interface EducationProgress {
   userId: string;
   contentId: string;
-  completed: boolean;
-  score?: number;
-  timeSpent: number;
-  completedAt?: Date;
+  progress: number; // 0-100
+  timeSpent: number; // in minutes
+  lastAccessedAt: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Consultation Types
-export interface Consultation {
+export interface Certificate {
   id: string;
   userId: string;
-  consultantId: string;
-  topic: string;
-  description: string;
-  status: "pending" | "scheduled" | "ongoing" | "completed" | "cancelled";
-  scheduledAt: Date;
-  duration: number;
-  price: number;
-  notes?: string;
-  rating?: number;
-  feedback?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Consultant {
-  id: string;
-  name: string;
-  email: string;
-  specialties: string[];
-  experience: number;
-  rating: number;
-  pricePerHour: number;
-  availability: ConsultantAvailability[];
-  avatar?: string;
-  bio: string;
-  credentials: string[];
-}
-
-export interface ConsultantAvailability {
-  dayOfWeek: number; // 0-6 (Sunday-Saturday)
-  startTime: string; // "09:00"
-  endTime: string; // "17:00"
-}
-
-// API Response Types
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-// Chart Data Types
-export interface ChartData {
-  labels: string[];
-  datasets: ChartDataset[];
-}
-
-export interface ChartDataset {
-  label: string;
-  data: number[];
-  backgroundColor?: string | string[];
-  borderColor?: string | string[];
-  borderWidth?: number;
-}
-
-// Notification Types
-export interface Notification {
-  id: string;
-  userId: string;
-  title: string;
-  message: string;
-  type: "info" | "success" | "warning" | "error";
-  read: boolean;
-  actionUrl?: string;
-  createdAt: Date;
+  pathId: string;
+  learningPath: LearningPath;
+  issueDate: string;
+  certificateNumber: string;
+  isVerified: boolean;
+  pdfUrl?: string;
 }

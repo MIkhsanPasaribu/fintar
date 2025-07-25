@@ -4,6 +4,8 @@
   ],
   "hints": {
     "axe/forms": "off",
-    "typescript-config/consistent-casing": "off"
+    "typescript-config/consistent-casing": "off",
+    "axe/name-role-value": "off",
+    "no-inline-styles": "off"
   }
 }

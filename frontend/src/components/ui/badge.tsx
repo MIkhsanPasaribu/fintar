@@ -1,41 +1,45 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+"use client";
 
 import { cn } from "@/lib/utils";
 
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-offset-2 transform hover:scale-105",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-secondary-400 border-secondary-400 text-primary-50 shadow-lg",
-        secondary:
-          "bg-primary-100 border-accent-500 text-text-body hover:bg-primary-200",
-        destructive:
-          "bg-danger-400 border-danger-400 text-primary-50 shadow-lg",
-        outline:
-          "text-secondary-400 border-secondary-400 hover:bg-secondary-50",
-        success:
-          "bg-supporting-400 border-supporting-400 text-primary-50 shadow-lg",
-        warning: "bg-accent-600 border-accent-600 text-text-primary shadow-lg",
-        info: "bg-info-400 border-info-400 text-primary-50 shadow-lg",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
-
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  );
+interface BadgeProps {
+  children: React.ReactNode;
+  variant?: "primary" | "secondary" | "success" | "warning" | "danger" | "info";
+  size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
-export { Badge, badgeVariants };
+const variantClasses = {
+  primary: "bg-primary-100 text-primary-700 border-primary-200",
+  secondary: "bg-neutral-100 text-neutral-700 border-neutral-200",
+  success: "bg-success-100 text-success-700 border-success-200",
+  warning: "bg-warning-100 text-warning-700 border-warning-200",
+  danger: "bg-danger-100 text-danger-700 border-danger-200",
+  info: "bg-info-100 text-info-700 border-info-200",
+};
+
+const sizeClasses = {
+  sm: "px-2 py-1 text-xs",
+  md: "px-3 py-1 text-sm",
+  lg: "px-4 py-2 text-base",
+};
+
+export default function Badge({
+  children,
+  variant = "primary",
+  size = "sm",
+  className,
+}: BadgeProps) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center font-medium rounded-full border",
+        variantClasses[variant],
+        sizeClasses[size],
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}

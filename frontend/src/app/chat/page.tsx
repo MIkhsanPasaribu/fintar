@@ -1,27 +1,211 @@
-import Layout from "@/components/layout/layout";
-import { Card } from "@/components/ui/card";
-import AIChatInterface from "@/components/chat/ai-chat";
+"use client";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
+import { useAuth } from "@/hooks/use-auth";
+import { chatApi } from "@/lib/api";
+import { ChatSession, ChatMessage } from "@/types";
+import ChatSidebar from "@/components/chat/chat-sidebar";
+import ChatInterface from "@/components/chat/chat-interface";
+import { Loader2 } from "lucide-react";
 
 export default function ChatPage() {
-  return (
-    <Layout>
-      <div className="p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-font-light">
-              AI Financial Assistant
-            </h1>
-            <p className="text-font-secondary text-lg">
-              Dapatkan saran keuangan personal 24/7 dari AI yang memahami
-              kondisi finansial Anda
-            </p>
-          </div>
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { addToast } = useToast();
 
-          <Card className="glass-effect border-secondary-400/20">
-            <AIChatInterface />
-          </Card>
-        </div>
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(
+    null
+  );
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSessions, setIsLoadingSessions] = useState(true);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  // Load user sessions
+  const loadSessions = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      setIsLoadingSessions(true);
+      const response = await chatApi.getUserSessions(user.id);
+      const userSessions = (response.data || []) as ChatSession[];
+      setSessions(userSessions);
+    } catch (error) {
+      console.error("Failed to load sessions:", error);
+      addToast({
+        title: "Error",
+        description: "Failed to load chat sessions",
+        variant: "danger",
+      });
+    } finally {
+      setIsLoadingSessions(false);
+    }
+  }, [user?.id, addToast]);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadSessions();
+    }
+  }, [user?.id, loadSessions]);
+
+  // Load messages for current session
+  const loadMessages = useCallback(
+    async (sessionId: string) => {
+      try {
+        setIsLoading(true);
+        const response = await chatApi.getChatHistory(sessionId);
+        const sessionMessages = (response.data || []) as ChatMessage[];
+        setMessages(sessionMessages);
+      } catch (error) {
+        console.error("Failed to load messages:", error);
+        addToast({
+          title: "Error",
+          description: "Failed to load chat history",
+          variant: "danger",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [addToast]
+  );
+
+  const handleNewSession = async () => {
+    if (!user?.id) return;
+
+    try {
+      const response = await chatApi.generateSession();
+      const sessionData = response.data as {
+        sessionId: string;
+        title?: string;
+      };
+      const newSession: ChatSession = {
+        id: sessionData.sessionId,
+        title: sessionData.title || "New Chat",
+        userId: user.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isActive: true,
+      };
+
+      setSessions((prev) => [newSession, ...prev]);
+      setCurrentSession(newSession);
+      setMessages([]);
+    } catch (error) {
+      console.error("Failed to create new session:", error);
+      addToast({
+        title: "Error",
+        description: "Failed to create new chat session",
+        variant: "danger",
+      });
+    }
+  };
+
+  const handleSelectSession = (session: ChatSession) => {
+    setCurrentSession(session);
+    loadMessages(session.id);
+  };
+
+  const handleSendMessage = async (content: string) => {
+    if (!currentSession || !user?.id) return;
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      content,
+      role: "user",
+      sessionId: currentSession.id,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await chatApi.sendMessage({
+        sessionId: currentSession.id,
+        message: content,
+        userId: user.id,
+      });
+
+      const responseData = response.data as {
+        response?: string;
+        message?: string;
+      };
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: responseData.response || responseData.message || "No response",
+        role: "assistant",
+        sessionId: currentSession.id,
+        createdAt: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      addToast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "danger",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading spinner while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
-    </Layout>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <ChatSidebar
+        sessions={sessions}
+        currentSession={currentSession}
+        onSelectSession={handleSelectSession}
+        onNewSession={handleNewSession}
+        isLoading={isLoadingSessions}
+      />
+
+      <div className="flex-1 flex flex-col">
+        {currentSession ? (
+          <ChatInterface
+            session={currentSession}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+          />
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="text-center">
+              <h3 className="text-lg font-medium mb-2">
+                Welcome to Fintar Chat
+              </h3>
+              <p className="text-sm">
+                Select a chat session or create a new one to get started
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

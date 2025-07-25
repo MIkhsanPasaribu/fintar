@@ -246,161 +246,161 @@ fintar/
 
 **Primary Colors:**
 
-- `#FCF8DD` — main cream background
-- `#F9F2C7` — medium cream
-- `#F6EBB1` — deep cream
+- `#FFFFFF` — main white background
+- `#FAFBFC` — light gray white
+- `#F5F7FA` — soft gray white
 
 **Secondary Colors:**
 
-- `#00809D` — primary teal blue
-- `#006B84` — deep teal
-- `#4FA3B8` — light teal
-- `#7EC8E3` — sky teal
+- `#003D82` — deep navy blue
+- `#0052CC` — primary blue
+- `#0066FF` — bright blue
+- `#4A90E2` — sky blue
 
 **Accent Colors:**
 
-- `#FFD700` — bright gold (primary cta)
-- `#D3AF37` — antique gold
-- `#FFA500` — orange gold
-- `#FF8C00` — dark orange
+- `#FFB800` — golden yellow (primary cta)
+- `#F5A623` — hover gold
+- `#1976D2` — action blue
+- `#2196F3` — light action blue
 
 **Supporting Colors:**
 
-- `#2E8B57` — sea green (success)
-- `#3CB371` — medium sea green
-- `#8B4513` — saddle brown
-- `#A0522D` — sienna brown
+- `#00C853` — green (success)
+- `#4CAF50` — medium green
+- `#546E7A` — blue gray
+- `#78909C` — light blue gray
 
 **Alert Colors:**
 
-- `#DC143C` — crimson (danger)
-- `#FF6347` — tomato (warning)
-- `#32CD32` — lime green (success)
-- `#4169E1` — royal blue (info)
+- `#D32F2F` — red (danger)
+- `#FF9800` — orange (warning)
+- `#4CAF50` — green (success)
+- `#2196F3` — blue (info)
 
 **Neutral Colors:**
 
-- `#F5E6D3` — light tan
-- `#E8D5C4` — warm gray
-- `#D4C5B9` — taupe
-- `#C8B8A6` — mushroom
+- `#F8F9FA` — light background
+- `#E9ECEF` — border gray
+- `#DEE2E6` — divider gray
+- `#CED4DA` — disabled gray
 
 ### 📝 FONT COLORS (Comprehensive)
 
 **Primary Text:**
 
-- `#0D0D0D` — main heading (h1, h2)
-- `#1A1A1A` — sub heading (h3, h4)
-- `#262626` — body text
-- `#333333` — paragraph text
+- `#0A1628` — main heading (h1, h2)
+- `#1A237E` — sub heading (h3, h4)
+- `#283593` — body text
+- `#37474F` — paragraph text
 
 **Secondary Text:**
 
-- `#404040` — subtitle
-- `#4D4D4D` — description
-- `#595959` — caption
-- `#666666` — metadata
+- `#455A64` — subtitle
+- `#546E7A` — description
+- `#607D8B` — caption
+- `#78909C` — metadata
 
 **Tertiary Text:**
 
-- `#737373` — placeholder
-- `#808080` — disabled text
-- `#8C8C8C` — hint text
-- `#999999` — helper text
+- `#90A4AE` — placeholder
+- `#B0BEC5` — disabled text
+- `#CFD8DC` — hint text
+- `#ECEFF1` — light helper text
 
 **Specialized Text:**
 
-- `#2F4F4F` — financial data
-- `#1C3A3A` — important numbers
-- `#556B2F` — positive values
-- `#8B0000` — negative values
+- `#003D82` — financial data
+- `#0052CC` — important numbers
+- `#00C853` — positive values
+- `#D32F2F` — negative values
 
 **Link & Interactive:**
 
-- `#00809D` — link default
-- `#006B84` — link hover
-- `#4FA3B8` — link visited
-- `#D3AF37` — link active
+- `#0052CC` — link default
+- `#003D82` — link hover
+- `#4A90E2` — link visited
+- `#FFB800` — link active
 
 **Status Text:**
 
-- `#2E8B57` — success message
-- `#DC143C` — error message
-- `#FF8C00` — warning message
-- `#4169E1` — info message
+- `#00C853` — success message
+- `#D32F2F` — error message
+- `#FF9800` — warning message
+- `#2196F3` — info message
 
 **Data Text:**
 
-- `#1C1C1C` — table header
-- `#333333` — table content
-- `#666666` — table secondary
-- `#999999` — table tertiary
+- `#0A1628` — table header
+- `#37474F` — table content
+- `#607D8B` — table secondary
+- `#90A4AE` — table tertiary
 
 **Special Context:**
 
-- `#8B4513` — currency symbol
-- `#006B84` — percentage
-- `#2F4F4F` — date/time
-- `#D3AF37` — highlighted/featured
+- `#003D82` — currency symbol
+- `#0052CC` — percentage
+- `#455A64` — date/time
+- `#FFB800` — highlighted/featured
 
 ### 🎨 Komponen UI (Light Theme)
 
 **Button Variants:**
 
-- Primary: `#FFD700` (bg) + `#1C1C1C` (text)
-- Secondary: `#00809D` (bg) + `#FCF8DD` (text)
-- Success: `#2E8B57` (bg) + `#FCF8DD` (text)
-- Warning: `#FFA500` (bg) + `#1C1C1C` (text)
-- Danger: `#DC143C` (bg) + `#FCF8DD` (text)
+- Primary: `#0052CC` (bg) + `#FFFFFF` (text)
+- Secondary: `#FFB800` (bg) + `#0A1628` (text)
+- Success: `#00C853` (bg) + `#FFFFFF` (text)
+- Warning: `#FF9800` (bg) + `#FFFFFF` (text)
+- Danger: `#D32F2F` (bg) + `#FFFFFF` (text)
 
 **Card Types:**
 
-- Default: `#F9F2C7` (bg) + `#D3AF37` (border)
-- Premium: `#F5E6D3` (bg) + `#FFD700` (border)
-- Info: `#7EC8E3` (bg) + `#00809D` (border)
-- Success: `#E8F5E9` (bg) + `#2E8B57` (border)
+- Default: `#FFFFFF` (bg) + `#E9ECEF` (border)
+- Premium: `#F5F7FA` (bg) + `#FFB800` (border)
+- Info: `#E3F2FD` (bg) + `#2196F3` (border)
+- Success: `#E8F5E9` (bg) + `#4CAF50` (border)
 
 **Navigation:**
 
-- Main Nav: `#006B84` (bg) + `#FCF8DD` (text)
-- Sub Nav: `#4FA3B8` (bg) + `#1C1C1C` (text)
-- Active: `#FFD700` (accent)
-- Hover: `#FFA500` (highlight)
+- Main Nav: `#003D82` (bg) + `#FFFFFF` (text)
+- Sub Nav: `#0052CC` (bg) + `#FFFFFF` (text)
+- Active: `#FFB800` (accent)
+- Hover: `#0066FF` (highlight)
 
 **Data Visualization:**
 
-- Chart 1: `#00809D`
-- Chart 2: `#FFD700`
-- Chart 3: `#2E8B57`
-- Chart 4: `#D3AF37`
-- Chart 5: `#4FA3B8`
-- Chart 6: `#A0522D`
-- Chart 7: `#FF8C00`
-- Chart 8: `#8B4513`
+- Chart 1: `#003D82`
+- Chart 2: `#0052CC`
+- Chart 3: `#2196F3`
+- Chart 4: `#4A90E2`
+- Chart 5: `#FFB800`
+- Chart 6: `#4CAF50`
+- Chart 7: `#FF9800`
+- Chart 8: `#78909C`
 
 ### 💼 Special Finance Elements:
 
 **Portfolio Status:**
 
-- Excellent: `#2E8B57` + `#32CD32`
-- Good: `#00809D` + `#4FA3B8`
-- Average: `#FFA500` + `#FFD700`
-- Poor: `#A0522D` + `#8B4513`
-- Critical: `#DC143C` + `#FF6347`
+- Excellent: `#00C853` + `#4CAF50`
+- Good: `#0052CC` + `#2196F3`
+- Average: `#FFB800` + `#F5A623`
+- Poor: `#FF9800` + `#F57C00`
+- Critical: `#D32F2F` + `#B71C1C`
 
 **Account Types:**
 
-- Gold: `linear-gradient(135deg, #FFD700, #D3AF37)`
-- Platinum: `linear-gradient(135deg, #E5E5E5, #B8B8B8)`
-- Diamond: `linear-gradient(135deg, #B9F2FF, #7EC8E3)`
-- Standard: `#00809D`
+- Gold: `linear-gradient(135deg, #FFB800, #F5A623)`
+- Platinum: `linear-gradient(135deg, #546E7A, #78909C)`
+- Diamond: `linear-gradient(135deg, #2196F3, #0052CC)`
+- Standard: `#0052CC`
 
 **Market Indicators:**
 
-- Bull Market: `#2E8B57`
-- Bear Market: `#DC143C`
-- Neutral: `#696969`
-- Volatile: `#FF8C00`
+- Bull Market: `#00C853`
+- Bear Market: `#D32F2F`
+- Neutral: `#78909C`
+- Volatile: `#FF9800`
 
 ## AI Prompt Guidelines (Google Gemini)
 

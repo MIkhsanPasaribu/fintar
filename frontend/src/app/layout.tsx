@@ -1,22 +1,45 @@
 import type { Metadata } from "next";
-
-// These styles apply to every route in the application
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/toast";
+import { AuthProvider } from "@/hooks/use-auth";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Fintar - AI Financial Empowerment Platform",
+  title: "Fintar - AI-Powered Financial Empowerment Platform",
   description:
-    "Platform keuangan berbasis AI untuk literasi finansial dan konsultasi finansial 24/7",
+    "Platform pemberdayaan finansial berbasis AI yang membantu individu dan UKM mengelola keuangan, meningkatkan literasi finansial, dan mencapai kebebasan finansial.",
+  keywords:
+    "fintech, financial planning, AI assistant, investment, budgeting, Indonesia",
+  authors: [{ name: "Fintar Team" }],
+  openGraph: {
+    title: "Fintar - AI-Powered Financial Empowerment Platform",
+    description: "Platform pemberdayaan finansial berbasis AI untuk Indonesia",
+    type: "website",
+    locale: "id_ID",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fintar - AI-Powered Financial Empowerment Platform",
+    description: "Platform pemberdayaan finansial berbasis AI untuk Indonesia",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="id">
+      <body className={inter.className}>
+        <AuthProvider>
+          <ToastProvider>
+            <div className="min-h-screen bg-background">{children}</div>
+          </ToastProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

@@ -17,7 +17,7 @@ import { SupabaseModule } from "./common/supabase/supabase.module";
       envFilePath: ".env",
     }),
     PrismaModule,
-    MongoModule,
+    // MongoModule, // Temporarily disabled due to MongoDB Atlas connection issues
     SupabaseModule,
     AuthModule,
     UsersModule,
