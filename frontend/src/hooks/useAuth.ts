@@ -58,6 +58,7 @@ export function useAuth() {
       const mockUser: User = {
         id: "user1",
         email,
+        username: email.split("@")[0], // Generate username from email
         firstName: "John",
         lastName: "Doe",
         isVerified: true,
@@ -113,6 +114,7 @@ export function useAuth() {
       const newUser: User = {
         id: "new-user",
         email: userData.email,
+        username: userData.email.split("@")[0], // Generate username from email
         firstName: userData.firstName,
         lastName: userData.lastName,
         isVerified: false,

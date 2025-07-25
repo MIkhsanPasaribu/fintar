@@ -6,8 +6,7 @@ import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/hooks/use-auth";
 import { chatApi } from "@/lib/api";
 import { ChatSession, ChatMessage } from "@/types";
-import ChatSidebar from "@/components/chat/chat-sidebar";
-import ChatInterface from "@/components/chat/chat-interface";
+import { ChatSidebar, ChatInterface } from "@/components/chat";
 import { Loader2 } from "lucide-react";
 
 export default function ChatPage() {
@@ -44,7 +43,7 @@ export default function ChatPage() {
       addToast({
         title: "Error",
         description: "Failed to load chat sessions",
-        variant: "danger",
+        variant: "destructive",
       });
     } finally {
       setIsLoadingSessions(false);
@@ -70,7 +69,7 @@ export default function ChatPage() {
         addToast({
           title: "Error",
           description: "Failed to load chat history",
-          variant: "danger",
+          variant: "destructive",
         });
       } finally {
         setIsLoading(false);
@@ -105,7 +104,7 @@ export default function ChatPage() {
       addToast({
         title: "Error",
         description: "Failed to create new chat session",
-        variant: "danger",
+        variant: "destructive",
       });
     }
   };
@@ -154,7 +153,7 @@ export default function ChatPage() {
       addToast({
         title: "Error",
         description: "Failed to send message",
-        variant: "danger",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

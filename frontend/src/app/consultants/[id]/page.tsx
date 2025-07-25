@@ -12,18 +12,35 @@ import {
   CardBody,
   Badge,
   Avatar,
+  AvatarImage,
+  AvatarFallback,
   LoadingSpinner,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
-import BookingForm from "@/components/booking/booking-form";
-import ReviewCard from "@/components/consultants/review-card";
+import { BookingForm } from "@/components/booking";
+import { ReviewCard } from "@/components/consultants";
 import { Consultant, Review } from "@/types";
 import { consultantApi, bookingApi } from "@/lib/api";
-import { useToast } from "@/components/ui/toast";
+// import { useToast } from "@/components/ui/toast";
 import { formatCurrency } from "@/lib/utils";
+
+// Temporary mock useToast
+const useToast = () => ({
+  addToast: ({
+    title,
+    description,
+    variant,
+  }: {
+    title: string;
+    description: string;
+    variant: string;
+  }) => {
+    console.log(`Toast: ${title} - ${description} (${variant})`);
+  },
+});
 
 const StarIcon = () => (
   <svg className="w-4 h-4 fill-current text-accent" viewBox="0 0 20 20">
@@ -89,7 +106,7 @@ export default function ConsultantDetailPage() {
       addToast({
         title: "Error",
         description: "Gagal memuat detail konsultan",
-        variant: "danger",
+        variant: "destructive",
       });
 
       // Fallback data
@@ -170,7 +187,7 @@ export default function ConsultantDetailPage() {
       addToast({
         title: "Booking Berhasil",
         description: "Konsultasi Anda telah dijadwalkan",
-        variant: "success",
+        variant: "default",
       });
       setShowBookingForm(false);
     } catch (error) {
@@ -178,7 +195,7 @@ export default function ConsultantDetailPage() {
       addToast({
         title: "Error",
         description: "Gagal membuat booking",
-        variant: "danger",
+        variant: "destructive",
       });
     }
   };
@@ -367,13 +384,16 @@ export default function ConsultantDetailPage() {
             {/* Consultant Card */}
             <Card>
               <CardBody className="text-center">
-                <Avatar
-                  src={consultant.avatar}
-                  firstName={consultant.firstName}
-                  lastName={consultant.lastName}
-                  size="xl"
-                  className="mx-auto mb-4"
-                />
+                <Avatar className="mx-auto mb-4 h-16 w-16">
+                  <AvatarImage
+                    src={consultant.avatar}
+                    alt={`${consultant.firstName} ${consultant.lastName}`}
+                  />
+                  <AvatarFallback>
+                    {consultant.firstName?.charAt(0)}
+                    {consultant.lastName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
 
                 <h2 className="text-xl font-bold text-text-primary mb-2">
                   {consultant.firstName} {consultant.lastName}
@@ -398,9 +418,9 @@ export default function ConsultantDetailPage() {
                 <Button
                   onClick={() => setShowBookingForm(true)}
                   className="w-full"
-                  icon={<CalendarIcon />}
                   disabled={!consultant.isActive}
                 >
+                  <CalendarIcon />
                   {consultant.isActive ? "Book Konsultasi" : "Tidak Tersedia"}
                 </Button>
               </CardBody>

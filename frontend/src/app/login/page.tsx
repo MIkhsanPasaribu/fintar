@@ -113,7 +113,7 @@ export default function LoginPage() {
         description: `Selamat datang, ${
           data.user.firstName || data.user.email
         }!`,
-        variant: "success",
+        variant: "default",
       });
 
       // Store token and user data

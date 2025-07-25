@@ -1,143 +1,125 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Search, UserPlus } from "lucide-react";
 import { ChatSession } from "@/types";
-import { formatDate } from "@/lib/utils";
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
   currentSession: ChatSession | null;
   onSelectSession: (session: ChatSession) => void;
   onNewSession: () => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
-const PlusIcon = () => (
-  <svg
-    className="w-5 h-5"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 4v16m8-8H4"
-    />
-  </svg>
-);
-
-const ChatIcon = () => (
-  <svg
-    className="w-4 h-4"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-    />
-  </svg>
-);
-
-export default function ChatSidebar({
+export function ChatSidebar({
   sessions,
   currentSession,
   onSelectSession,
   onNewSession,
-  isLoading = false,
+  isLoading,
 }: ChatSidebarProps) {
-  const getChatTypeLabel = (type?: string) => {
-    if (!type) return "Umum";
-    const labels = {
-      GENERAL: "Umum",
-      FINANCIAL_ADVICE: "Konsultasi Keuangan",
-      INVESTMENT_HELP: "Bantuan Investasi",
-      BUDGET_PLANNING: "Perencanaan Anggaran",
-      DEBT_ASSISTANCE: "Bantuan Utang",
-    };
-    return labels[type as keyof typeof labels] || type;
-  };
+  const contacts = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      lastMessage: "Looking forward to our session!",
+      time: "2 min ago",
+      isOnline: true,
+      unreadCount: 2,
+      avatar:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b524?w=100&h=100&fit=crop&crop=face",
+    },
+    {
+      id: 2,
+      name: "David Chen",
+      lastMessage: "Thanks for the financial advice",
+      time: "1 hour ago",
+      isOnline: false,
+      unreadCount: 0,
+      avatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    },
+    {
+      id: 3,
+      name: "Maria Rodriguez",
+      lastMessage: "Can we reschedule?",
+      time: "3 hours ago",
+      isOnline: true,
+      unreadCount: 1,
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+    },
+  ];
 
   return (
-    <div className="w-80 bg-white border-r border-neutral-200 flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-neutral-200">
-        <Button onClick={onNewSession} className="w-full" icon={<PlusIcon />}>
-          Chat Baru
-        </Button>
-      </div>
+    <Card className="h-full border-r">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold">Messages</h2>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={onNewSession}
+            disabled={isLoading}
+          >
+            <UserPlus className="h-4 w-4" />
+          </Button>
+        </div>
 
-      {/* Sessions List */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-2">
-          {isLoading ? (
-            <div className="text-center py-8">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-text-metadata">Loading sessions...</p>
-            </div>
-          ) : sessions.length > 0 ? (
-            sessions.map((session) => (
-              <motion.div
-                key={session.id}
-                whileHover={{ x: 4 }}
-                onClick={() => onSelectSession(session)}
-                className={`cursor-pointer rounded-lg p-3 mb-2 transition-colors ${
-                  currentSession?.id === session.id
-                    ? "bg-primary-50 border-primary-200 border"
-                    : "hover:bg-neutral-50"
-                }`}
-              >
-                <div className="flex items-start space-x-3">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      currentSession?.id === session.id
-                        ? "bg-primary text-white"
-                        : "bg-neutral-100 text-text-metadata"
-                    }`}
-                  >
-                    <ChatIcon />
-                  </div>
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input
+            type="text"
+            placeholder="Search conversations..."
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-text-primary truncate">
-                      {session.title || "Chat Tanpa Judul"}
-                    </h3>
-                    <p className="text-xs text-text-metadata mt-1">
-                      {getChatTypeLabel(session.type)}
-                    </p>
-                    <p className="text-xs text-text-metadata">
-                      {formatDate(session.updatedAt)}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ChatIcon />
+        <div className="space-y-3">
+          {contacts.map((contact) => (
+            <div
+              key={contact.id}
+              className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <div className="relative">
+                <Avatar>
+                  <AvatarImage src={contact.avatar} alt={contact.name} />
+                  <AvatarFallback>{contact.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {contact.isOnline && (
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                )}
               </div>
-              <p className="text-text-metadata">Belum ada riwayat chat</p>
-              <p className="text-sm text-text-description mt-1">
-                Mulai percakapan baru dengan AI
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-neutral-200">
-        <div className="text-xs text-text-metadata">
-          <p>💡 Tips: Gunakan bahasa yang jelas untuk hasil terbaik</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {contact.name}
+                  </p>
+                  <p className="text-xs text-gray-500">{contact.time}</p>
+                </div>
+                <p className="text-sm text-gray-500 truncate">
+                  {contact.lastMessage}
+                </p>
+              </div>
+
+              {contact.unreadCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {contact.unreadCount}
+                </Badge>
+              )}
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

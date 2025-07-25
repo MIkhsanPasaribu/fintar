@@ -11,6 +11,8 @@ import {
   CardBody,
   Badge,
   Avatar,
+  AvatarImage,
+  AvatarFallback,
   LoadingSpinner,
 } from "@/components/ui";
 import { Booking } from "@/types";
@@ -89,7 +91,7 @@ export default function BookingDetailPage() {
       addToast({
         title: "Error",
         description: "Gagal memuat detail booking",
-        variant: "danger",
+        variant: "destructive",
       });
 
       // Fallback data
@@ -134,13 +136,13 @@ export default function BookingDetailPage() {
       addToast({
         title: "Reschedule Request",
         description: "Permintaan reschedule telah dikirim ke konsultan",
-        variant: "success",
+        variant: "default",
       });
     } catch (error) {
       addToast({
         title: "Error",
         description: "Gagal melakukan reschedule",
-        variant: "danger",
+        variant: "destructive",
       });
     }
   };
@@ -154,13 +156,13 @@ export default function BookingDetailPage() {
       addToast({
         title: "Booking Dibatalkan",
         description: "Booking telah berhasil dibatalkan",
-        variant: "success",
+        variant: "default",
       });
     } catch (error) {
       addToast({
         title: "Error",
         description: "Gagal membatalkan booking",
-        variant: "danger",
+        variant: "destructive",
       });
     }
   };
@@ -181,7 +183,7 @@ export default function BookingDetailPage() {
       case "COMPLETED":
         return <Badge variant="primary">Selesai</Badge>;
       case "CANCELLED":
-        return <Badge variant="danger">Dibatalkan</Badge>;
+        return <Badge variant="destructive">Dibatalkan</Badge>;
       default:
         return <Badge variant="secondary">{booking.status}</Badge>;
     }
@@ -329,21 +331,18 @@ export default function BookingDetailPage() {
                   {canJoin() && (
                     <Button
                       onClick={handleJoinMeeting}
-                      icon={<VideoIcon />}
                       className="flex-1 min-w-0"
                     >
-                      Gabung Meeting
+                      <VideoIcon />
+                      <span className="ml-2">Gabung Meeting</span>
                     </Button>
                   )}
 
                   {canModify() && (
                     <>
-                      <Button
-                        variant="outline"
-                        onClick={handleReschedule}
-                        icon={<EditIcon />}
-                      >
-                        Reschedule
+                      <Button variant="outline" onClick={handleReschedule}>
+                        <EditIcon />
+                        <span className="ml-2">Reschedule</span>
                       </Button>
 
                       <Button
@@ -376,13 +375,16 @@ export default function BookingDetailPage() {
                 </h3>
 
                 <div className="text-center">
-                  <Avatar
-                    src={booking.consultant?.avatar}
-                    firstName={booking.consultant?.firstName}
-                    lastName={booking.consultant?.lastName}
-                    size="xl"
-                    className="mx-auto mb-4"
-                  />
+                  <Avatar className="mx-auto mb-4 h-16 w-16">
+                    <AvatarImage
+                      src={booking.consultant?.avatar}
+                      alt={`${booking.consultant?.firstName} ${booking.consultant?.lastName}`}
+                    />
+                    <AvatarFallback>
+                      {booking.consultant?.firstName?.charAt(0)}
+                      {booking.consultant?.lastName?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
 
                   <h4 className="font-semibold text-text-primary">
                     {booking.consultant?.firstName}{" "}

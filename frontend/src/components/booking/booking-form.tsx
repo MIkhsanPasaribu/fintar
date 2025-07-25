@@ -1,19 +1,40 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Input, Select, Textarea, Modal } from "@/components/ui";
-import { Consultant } from "@/types";
-import { formatCurrency } from "@/lib/utils";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+} from "@/components/ui";
+import { X, Calendar, Clock, User } from "lucide-react";
+
+interface Consultant {
+  id: string;
+  firstName: string;
+  lastName: string;
+  hourlyRate: number;
+}
 
 interface BookingFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (bookingData: any) => void;
+  onSubmit: (data: BookingFormData) => void;
   consultant: Consultant;
+}
+
+interface BookingFormData {
+  consultantId: string;
+  date: string;
+  time: string;
+  duration: number;
+  notes: string;
+  contactEmail: string;
+  contactPhone: string;
 }
 
 export default function BookingForm({
@@ -22,235 +43,242 @@ export default function BookingForm({
   onSubmit,
   consultant,
 }: BookingFormProps) {
-  const [formData, setFormData] = useState({
-    type: "CONSULTATION",
-    scheduledDate: "",
-    scheduledTime: "",
+  const [formData, setFormData] = useState<BookingFormData>({
+    consultantId: consultant.id,
+    date: "",
+    time: "",
     duration: 60,
     notes: "",
+    contactEmail: "",
+    contactPhone: "",
   });
-  const [loading, setLoading] = useState(false);
 
-  const typeOptions = [
-    { value: "CONSULTATION", label: "Konsultasi" },
-    { value: "FOLLOW_UP", label: "Follow-up" },
-    { value: "EMERGENCY", label: "Darurat" },
-  ];
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const durationOptions = [
-    { value: "30", label: "30 menit" },
-    { value: "60", label: "60 menit" },
-    { value: "90", label: "90 menit" },
-    { value: "120", label: "120 menit" },
-  ];
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  const handleInputChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    try {
+      await onSubmit(formData);
+      setFormData({
+        consultantId: consultant.id,
+        date: "",
+        time: "",
+        duration: 60,
+        notes: "",
+        contactEmail: "",
+        contactPhone: "",
+      });
+    } catch (error) {
+      console.error("Booking submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const calculatePrice = () => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const calculateTotal = () => {
     const hours = formData.duration / 60;
     return consultant.hourlyRate * hours;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const scheduledAt = new Date(
-        `${formData.scheduledDate}T${formData.scheduledTime}`
-      );
-
-      const bookingData = {
-        consultantId: consultant.id,
-        type: formData.type,
-        scheduledAt: scheduledAt.toISOString(),
-        duration: formData.duration,
-        price: calculatePrice(),
-        notes: formData.notes,
-      };
-
-      await onSubmit(bookingData);
-      onClose();
-    } catch (error) {
-      console.error("Booking submission error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Generate available time slots based on consultant availability
-  const getAvailableTimeSlots = () => {
-    const selectedDate = new Date(formData.scheduledDate);
-    const dayName = selectedDate.toLocaleDateString("en-US", {
-      weekday: "long",
-    }).toLowerCase();
-
-    const availability =
-      consultant.availability?.[
-        dayName as keyof typeof consultant.availability
-      ];
-    if (!availability) return [];
-
-    interface TimeSlot {
-      value: string;
-      label: string;
-    }
-
-    const timeSlots: TimeSlot[] = [];
-    availability.forEach((timeRange) => {
-      const [startTime, endTime] = timeRange.split("-");
-      // Generate 30-minute slots
-      let current = startTime;
-      while (current < endTime) {
-        timeSlots.push({ value: current, label: current });
-        // Add 30 minutes
-        const [hours, minutes] = current.split(":").map(Number);
-        const newMinutes = minutes + 30;
-        const newHours = hours + Math.floor(newMinutes / 60);
-        current = `${newHours.toString().padStart(2, "0")}:${(newMinutes % 60)
-          .toString()
-          .padStart(2, "0")}`;
-        if (current >= endTime) break;
-      }
-    });
-
-    return timeSlots;
-  };
-
-  const availableTimeSlots = formData.scheduledDate
-    ? getAvailableTimeSlots()
-    : [];
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <Modal isOpen={isOpen} onClose={onClose} size="lg">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-text-primary mb-6">
-              Book Konsultasi
-            </h2>
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-black/50"
+          onClick={onClose}
+        />
 
-            {/* Consultant Info */}
-            <div className="bg-neutral-50 rounded-lg p-4 mb-6">
-              <div className="flex items-center space-x-4">
-                <img
-                  src={consultant.avatar}
-                  alt={`${consultant.firstName} ${consultant.lastName}`}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-                <div>
-                  <h3 className="font-semibold text-text-primary">
-                    {consultant.firstName} {consultant.lastName}
-                  </h3>
-                  <p className="text-text-description">
-                    {consultant.experience} tahun pengalaman
-                  </p>
-                  <div className="text-success font-semibold">
-                    {formatCurrency(consultant.hourlyRate)}/jam
+        {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          className="relative z-10 w-full max-w-md mx-4"
+        >
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl">Book Konsultasi</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onClose}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-sm text-text-description">
+                dengan {consultant.firstName} {consultant.lastName}
+              </p>
+            </CardHeader>
+
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Date Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="date" className="flex items-center space-x-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>Tanggal</span>
+                  </Label>
+                  <Input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    required
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
+
+                {/* Time Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="time" className="flex items-center space-x-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Waktu</span>
+                  </Label>
+                  <Input
+                    id="time"
+                    name="time"
+                    type="time"
+                    value={formData.time}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                {/* Duration */}
+                <div className="space-y-2">
+                  <Label htmlFor="duration">Durasi (menit)</Label>
+                  <select
+                    id="duration"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    required
+                  >
+                    <option value={30}>30 menit</option>
+                    <option value={60}>60 menit</option>
+                    <option value={90}>90 menit</option>
+                    <option value={120}>120 menit</option>
+                  </select>
+                </div>
+
+                {/* Contact Email */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="contactEmail"
+                    className="flex items-center space-x-2"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Email Kontak</span>
+                  </Label>
+                  <Input
+                    id="contactEmail"
+                    name="contactEmail"
+                    type="email"
+                    value={formData.contactEmail}
+                    onChange={handleInputChange}
+                    placeholder="email@example.com"
+                    required
+                  />
+                </div>
+
+                {/* Contact Phone */}
+                <div className="space-y-2">
+                  <Label htmlFor="contactPhone">Nomor Telepon</Label>
+                  <Input
+                    id="contactPhone"
+                    name="contactPhone"
+                    type="tel"
+                    value={formData.contactPhone}
+                    onChange={handleInputChange}
+                    placeholder="+62812345678"
+                    required
+                  />
+                </div>
+
+                {/* Notes */}
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Catatan (Opsional)</Label>
+                  <textarea
+                    id="notes"
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleInputChange}
+                    placeholder="Jelaskan topik yang ingin didiskusikan..."
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    rows={3}
+                  />
+                </div>
+
+                {/* Price Summary */}
+                <div className="bg-muted p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-text-description">
+                      {formData.duration} menit ×{" "}
+                      {formatCurrency(consultant.hourlyRate)}/jam
+                    </span>
+                    <span className="font-bold text-lg text-primary">
+                      {formatCurrency(calculateTotal())}
+                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Booking Type */}
-              <Select
-                label="Jenis Konsultasi"
-                options={typeOptions}
-                value={formData.type}
-                onChange={(e) => handleInputChange("type", e.target.value)}
-                required
-              />
-
-              {/* Date and Time */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Tanggal"
-                  type="date"
-                  value={formData.scheduledDate}
-                  onChange={(e) =>
-                    handleInputChange("scheduledDate", e.target.value)
-                  }
-                  min={new Date().toISOString().split("T")[0]}
-                  required
-                />
-                <Select
-                  label="Waktu"
-                  options={availableTimeSlots}
-                  value={formData.scheduledTime}
-                  onChange={(e) =>
-                    handleInputChange("scheduledTime", e.target.value)
-                  }
-                  disabled={!formData.scheduledDate}
-                  placeholder={
-                    formData.scheduledDate
-                      ? "Pilih waktu"
-                      : "Pilih tanggal terlebih dahulu"
-                  }
-                  required
-                />
-              </div>
-
-              {/* Duration */}
-              <Select
-                label="Durasi"
-                options={durationOptions}
-                value={formData.duration}
-                onChange={(e) =>
-                  handleInputChange("duration", parseInt(e.target.value))
-                }
-                required
-              />
-
-              {/* Notes */}
-              <Textarea
-                label="Catatan"
-                placeholder="Jelaskan topik atau kebutuhan konsultasi Anda..."
-                value={formData.notes}
-                onChange={(e) => handleInputChange("notes", e.target.value)}
-                rows={3}
-              />
-
-              {/* Price Summary */}
-              <div className="bg-primary-50 rounded-lg p-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-text-description">Total Biaya:</span>
-                  <span className="text-xl font-bold text-primary">
-                    {formatCurrency(calculatePrice())}
-                  </span>
+                {/* Submit Button */}
+                <div className="flex space-x-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onClose}
+                    className="flex-1"
+                    disabled={isSubmitting}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Memproses..." : "Book Sekarang"}
+                  </Button>
                 </div>
-                <p className="text-sm text-text-metadata mt-2">
-                  {formData.duration} menit ×{" "}
-                  {formatCurrency(consultant.hourlyRate)}/jam
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex space-x-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1"
-                  loading={loading}
-                  disabled={!formData.scheduledDate || !formData.scheduledTime}
-                >
-                  Konfirmasi Booking
-                </Button>
-              </div>
-            </form>
-          </div>
-        </Modal>
-      )}
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }

@@ -1,194 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Button,
-  Input,
-  Select,
-  Textarea,
   Card,
   CardBody,
   Avatar,
+  AvatarImage,
+  AvatarFallback,
 } from "@/components/ui";
-import { useToast } from "@/components/ui/toast";
-
-const EditIcon = () => (
-  <svg
-    className="w-4 h-4"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-    />
-  </svg>
-);
-
-const SaveIcon = () => (
-  <svg
-    className="w-4 h-4"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M5 13l4 4L19 7"
-    />
-  </svg>
-);
 
 export default function ProfilePage() {
-  const { addToast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [profileData, setProfileData] = useState({
-    firstName: "Budi",
-    lastName: "Santoso",
-    email: "budi@example.com",
-    phone: "+6281234567890",
-    dateOfBirth: "1990-05-15",
-    gender: "MALE",
-    occupation: "Software Engineer",
-    incomeRange: "10000000-15000000",
-    maritalStatus: "MARRIED",
-    dependents: "2",
-    address: {
-      street: "Jl. Merdeka No. 123",
-      city: "Jakarta",
-      province: "DKI Jakarta",
-      postalCode: "12345",
-    },
-    financialGoals: ["HOUSE_PURCHASE", "RETIREMENT"],
-    riskTolerance: "MODERATE",
-    investmentExperience: "BEGINNER",
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    if (field.startsWith("address.")) {
-      const addressField = field.split(".")[1];
-      setProfileData((prev) => ({
-        ...prev,
-        address: { ...prev.address, [addressField]: value },
-      }));
-    } else {
-      setProfileData((prev) => ({ ...prev, [field]: value }));
-    }
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      addToast({
-        title: "Profil Disimpan",
-        description: "Perubahan profil Anda telah tersimpan",
-        variant: "success",
-      });
-      setIsEditing(false);
-    } catch (error) {
-      addToast({
-        title: "Error",
-        description: "Gagal menyimpan perubahan",
-        variant: "danger",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const genderOptions = [
-    { value: "MALE", label: "Laki-laki" },
-    { value: "FEMALE", label: "Perempuan" },
-    { value: "OTHER", label: "Lainnya" },
-  ];
-
-  const incomeRangeOptions = [
-    { value: "0-5000000", label: "< Rp 5 Juta" },
-    { value: "5000000-10000000", label: "Rp 5 - 10 Juta" },
-    { value: "10000000-15000000", label: "Rp 10 - 15 Juta" },
-    { value: "15000000-25000000", label: "Rp 15 - 25 Juta" },
-    { value: "25000000+", label: "> Rp 25 Juta" },
-  ];
-
-  const maritalStatusOptions = [
-    { value: "SINGLE", label: "Lajang" },
-    { value: "MARRIED", label: "Menikah" },
-    { value: "DIVORCED", label: "Bercerai" },
-    { value: "WIDOWED", label: "Janda/Duda" },
-  ];
-
-  const riskToleranceOptions = [
-    { value: "LOW", label: "Konservatif (Risiko Rendah)" },
-    { value: "MODERATE", label: "Moderat (Risiko Sedang)" },
-    { value: "HIGH", label: "Agresif (Risiko Tinggi)" },
-    { value: "AGGRESSIVE", label: "Sangat Agresif" },
-  ];
-
-  const investmentExperienceOptions = [
-    { value: "BEGINNER", label: "Pemula" },
-    { value: "INTERMEDIATE", label: "Menengah" },
-    { value: "ADVANCED", label: "Lanjutan" },
-  ];
-
-  const provinceOptions = [
-    { value: "DKI Jakarta", label: "DKI Jakarta" },
-    { value: "Jawa Barat", label: "Jawa Barat" },
-    { value: "Jawa Tengah", label: "Jawa Tengah" },
-    { value: "Jawa Timur", label: "Jawa Timur" },
-    { value: "Banten", label: "Banten" },
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="container mx-auto p-6 max-w-4xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-text-primary">
-                Profil Saya
-              </h1>
-              <p className="text-text-description mt-2">
-                Kelola informasi pribadi dan preferensi keuangan Anda
-              </p>
-            </div>
-            <div className="flex space-x-3">
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditing(false)}
-                    disabled={loading}
-                  >
-                    Batal
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    loading={loading}
-                    icon={<SaveIcon />}
-                  >
-                    Simpan
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={() => setIsEditing(true)} icon={<EditIcon />}>
-                  Edit Profil
-                </Button>
-              )}
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">
+            Profil Pengguna
+          </h1>
+          <p className="text-text-description">
+            Kelola informasi pribadi dan preferensi akun Anda
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -196,203 +32,62 @@ export default function ProfilePage() {
           <div className="lg:col-span-1">
             <Card>
               <CardBody className="text-center">
-                <Avatar
-                  src="https://randomuser.me/api/portraits/men/1.jpg"
-                  firstName={profileData.firstName}
-                  lastName={profileData.lastName}
-                  size="xl"
-                  className="mx-auto mb-4"
-                />
+                <Avatar className="mx-auto mb-4 h-16 w-16">
+                  <AvatarImage
+                    src="https://randomuser.me/api/portraits/men/1.jpg"
+                    alt="John Doe"
+                  />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
                 <h3 className="text-lg font-semibold text-text-primary">
-                  {profileData.firstName} {profileData.lastName}
+                  John Doe
                 </h3>
-                <p className="text-text-metadata">{profileData.occupation}</p>
+                <p className="text-text-metadata">Premium Member</p>
                 <p className="text-sm text-text-description mt-2">
                   Bergabung sejak Januari 2024
                 </p>
-
-                {isEditing && (
-                  <Button variant="outline" size="sm" className="mt-4">
-                    Ganti Foto
-                  </Button>
-                )}
               </CardBody>
             </Card>
           </div>
 
-          {/* Profile Form */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Personal Information */}
+          {/* Profile Details */}
+          <div className="lg:col-span-2">
             <Card>
               <CardBody>
                 <h3 className="text-lg font-semibold text-text-primary mb-4">
                   Informasi Pribadi
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Nama Depan"
-                    value={profileData.firstName}
-                    onChange={(e) =>
-                      handleInputChange("firstName", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Nama Belakang"
-                    value={profileData.lastName}
-                    onChange={(e) =>
-                      handleInputChange("lastName", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Email"
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Nomor Telepon"
-                    value={profileData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Tanggal Lahir"
-                    type="date"
-                    value={profileData.dateOfBirth}
-                    onChange={(e) =>
-                      handleInputChange("dateOfBirth", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Select
-                    label="Jenis Kelamin"
-                    options={genderOptions}
-                    value={profileData.gender}
-                    onChange={(e) =>
-                      handleInputChange("gender", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Pekerjaan"
-                    value={profileData.occupation}
-                    onChange={(e) =>
-                      handleInputChange("occupation", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Select
-                    label="Status Pernikahan"
-                    options={maritalStatusOptions}
-                    value={profileData.maritalStatus}
-                    onChange={(e) =>
-                      handleInputChange("maritalStatus", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Input
-                    label="Jumlah Tanggungan"
-                    type="number"
-                    value={profileData.dependents}
-                    onChange={(e) =>
-                      handleInputChange("dependents", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                </div>
-              </CardBody>
-            </Card>
-
-            {/* Address */}
-            <Card>
-              <CardBody>
-                <h3 className="text-lg font-semibold text-text-primary mb-4">
-                  Alamat
-                </h3>
                 <div className="space-y-4">
-                  <Textarea
-                    label="Alamat Lengkap"
-                    value={profileData.address.street}
-                    onChange={(e) =>
-                      handleInputChange("address.street", e.target.value)
-                    }
-                    disabled={!isEditing}
-                    rows={2}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Input
-                      label="Kota"
-                      value={profileData.address.city}
-                      onChange={(e) =>
-                        handleInputChange("address.city", e.target.value)
-                      }
-                      disabled={!isEditing}
-                    />
-                    <Select
-                      label="Provinsi"
-                      options={provinceOptions}
-                      value={profileData.address.province}
-                      onChange={(e) =>
-                        handleInputChange("address.province", e.target.value)
-                      }
-                      disabled={!isEditing}
-                    />
-                    <Input
-                      label="Kode Pos"
-                      value={profileData.address.postalCode}
-                      onChange={(e) =>
-                        handleInputChange("address.postalCode", e.target.value)
-                      }
-                      disabled={!isEditing}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-text-description">Nama</p>
+                      <p className="font-medium">John Doe</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-text-description">Email</p>
+                      <p className="font-medium">john.doe@email.com</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-text-description">Telepon</p>
+                      <p className="font-medium">+62 812 3456 7890</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-text-description">Status</p>
+                      <p className="font-medium">Premium Member</p>
+                    </div>
                   </div>
-                </div>
-              </CardBody>
-            </Card>
-
-            {/* Financial Profile */}
-            <Card>
-              <CardBody>
-                <h3 className="text-lg font-semibold text-text-primary mb-4">
-                  Profil Keuangan
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Select
-                    label="Rentang Pendapatan (per bulan)"
-                    options={incomeRangeOptions}
-                    value={profileData.incomeRange}
-                    onChange={(e) =>
-                      handleInputChange("incomeRange", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Select
-                    label="Toleransi Risiko"
-                    options={riskToleranceOptions}
-                    value={profileData.riskTolerance}
-                    onChange={(e) =>
-                      handleInputChange("riskTolerance", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
-                  <Select
-                    label="Pengalaman Investasi"
-                    options={investmentExperienceOptions}
-                    value={profileData.investmentExperience}
-                    onChange={(e) =>
-                      handleInputChange("investmentExperience", e.target.value)
-                    }
-                    disabled={!isEditing}
-                  />
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-text-description">
+                      Halaman profil lengkap akan tersedia setelah implementasi
+                      form components selesai.
+                    </p>
+                  </div>
                 </div>
               </CardBody>
             </Card>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -203,7 +203,7 @@ export default function RegisterPage() {
       addToast({
         title: "Registrasi Berhasil",
         description: "Akun Anda telah berhasil dibuat",
-        variant: "success",
+        variant: "default",
       });
 
       // Store token if provided

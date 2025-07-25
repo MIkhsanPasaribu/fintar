@@ -1,73 +1,27 @@
 "use client";
 
-import { forwardRef } from "react";
+import * as React from "react";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
 
-interface ProgressProps {
-  value: number;
-  max?: number;
-  variant?: "primary" | "success" | "warning" | "danger" | "info";
-  size?: "sm" | "md" | "lg";
-  showLabel?: boolean;
-  className?: string;
-}
+const Progress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+>(({ className, value, ...props }, ref) => (
+  <ProgressPrimitive.Root
+    ref={ref}
+    className={cn(
+      "relative h-4 w-full overflow-hidden rounded-full bg-neutral-200",
+      className
+    )}
+    {...props}
+  >
+    <ProgressPrimitive.Indicator
+      className="h-full w-full flex-1 bg-primary transition-all"
+      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+    />
+  </ProgressPrimitive.Root>
+));
+Progress.displayName = ProgressPrimitive.Root.displayName;
 
-const Progress = forwardRef<HTMLDivElement, ProgressProps>(
-  (
-    {
-      value,
-      max = 100,
-      variant = "primary",
-      size = "md",
-      showLabel = false,
-      className,
-      ...props
-    },
-    ref
-  ) => {
-    const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-
-    const sizeClasses = {
-      sm: "h-2",
-      md: "h-3",
-      lg: "h-4",
-    };
-
-    const variantClasses = {
-      primary: "bg-[#0052CC]",
-      success: "bg-[#00C853]",
-      warning: "bg-[#FF9800]",
-      danger: "bg-[#D32F2F]",
-      info: "bg-[#2196F3]",
-    };
-
-    return (
-      <div className={cn("w-full", className)} ref={ref} {...props}>
-        <div
-          className={cn(
-            "w-full bg-[#E9ECEF] rounded-full overflow-hidden",
-            sizeClasses[size]
-          )}
-        >
-          <div
-            className={cn(
-              "h-full transition-all duration-300 ease-out rounded-full",
-              variantClasses[variant]
-            )}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
-        {showLabel && (
-          <div className="flex justify-between items-center mt-1 text-xs text-[#78909C]">
-            <span>{value}</span>
-            <span>{max}</span>
-          </div>
-        )}
-      </div>
-    );
-  }
-);
-
-Progress.displayName = "Progress";
-
-export default Progress;
+export { Progress };
