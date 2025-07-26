@@ -30,15 +30,30 @@ export class UsersService {
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
-      // Fallback to Supabase if available
+      // Fallback to Supabase if available and primary database fails
       if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .insert([createUserDto])
-          .select()
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .insert([
+              {
+                ...createUserDto,
+                // Don't store plain password in Supabase fallback
+                password: await bcrypt.hash(createUserDto.password, 10),
+              },
+            ])
+            .select()
+            .single();
+          if (supabaseError) throw supabaseError;
+          const { password, ...userWithoutPassword } = data;
+          return userWithoutPassword;
+        } catch (supabaseError) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          const supabaseErrorMsg = supabaseError instanceof Error ? supabaseError.message : String(supabaseError);
+          throw new Error(
+            `Both primary database and Supabase failed: ${errorMsg}, ${supabaseErrorMsg}`
+          );
+        }
       }
       throw error;
     }

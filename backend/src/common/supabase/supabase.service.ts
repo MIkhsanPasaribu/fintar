@@ -11,7 +11,8 @@ export class SupabaseService implements OnModuleInit {
   constructor(private configService: ConfigService) {}
 
   async onModuleInit() {
-    const supabaseUrl = this.configService.get<string>("DATABASE_URL");
+    // Use SUPABASE_URL instead of DATABASE_URL for Supabase client
+    const supabaseUrl = this.configService.get<string>("SUPABASE_URL");
     const supabaseKey = this.configService.get<string>("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
@@ -20,7 +21,7 @@ export class SupabaseService implements OnModuleInit {
         "Supabase integration is disabled: Missing credentials. " +
           "Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables to enable Supabase features."
       );
-      return; 
+      return;
     }
 
     try {
@@ -30,7 +31,8 @@ export class SupabaseService implements OnModuleInit {
       this.logger.log("Supabase client initialized successfully");
     } catch (error) {
       this.isAvailable = false;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(
         `Failed to initialize Supabase client: ${errorMessage}`
       );
