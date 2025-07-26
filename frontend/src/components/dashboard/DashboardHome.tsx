@@ -1,21 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   TrendingUp,
-  DollarSign,
   Target,
-  PiggyBank,
   ArrowUpRight,
   ArrowDownRight,
-  Calendar,
-  Users,
   Sparkles,
-  Bell,
+  CreditCard,
+  Wallet,
 } from "lucide-react";
-import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { Line, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,7 +22,6 @@ import {
   Tooltip,
   Legend,
   ArcElement,
-  BarElement,
 } from "chart.js";
 
 // Register Chart.js components
@@ -38,46 +33,118 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement,
-  BarElement
+  ArcElement
 );
 
 const DashboardHome = () => {
-  const [timeframe, setTimeframe] = useState("month");
-
-  // Mock data
+  // Enhanced mock data with Indonesian context
   const summaryCards = [
     {
-      title: "Total Balance",
-      value: "Rp 45,250,000",
+      title: "Total Saldo",
+      value: "Rp 45.250.000",
       change: "+12.5%",
       trend: "up",
-      icon: DollarSign,
+      icon: Wallet,
       color: "blue",
+      description: "Total aset keuangan Anda",
     },
     {
-      title: "Monthly Income",
-      value: "Rp 8,500,000",
+      title: "Pendapatan Bulanan",
+      value: "Rp 8.500.000",
       change: "+5.2%",
       trend: "up",
       icon: TrendingUp,
       color: "green",
+      description: "Pendapatan bulan ini",
     },
     {
-      title: "Monthly Expenses",
-      value: "Rp 6,200,000",
+      title: "Pengeluaran Bulanan",
+      value: "Rp 6.200.000",
       change: "-8.1%",
       trend: "down",
-      icon: ArrowDownRight,
+      icon: CreditCard,
       color: "red",
+      description: "Pengeluaran bulan ini",
     },
     {
-      title: "Savings Goal",
+      title: "Target Menabung",
       value: "78%",
       change: "+15%",
       trend: "up",
       icon: Target,
       color: "purple",
+      description: "Progress target tabungan",
+    },
+  ];
+
+  // AI Insights
+  const aiInsights = [
+    {
+      id: 1,
+      type: "recommendation",
+      title: "Optimalisasi Pengeluaran",
+      message:
+        "Anda bisa menghemat Rp 300.000/bulan dengan mengurangi spending di kategori food & dining sebesar 15%.",
+      priority: "high",
+      action: "Lihat Detail",
+    },
+    {
+      id: 2,
+      type: "opportunity",
+      title: "Peluang Investasi",
+      message:
+        "Berdasarkan profil risiko Anda, reksa dana saham bisa memberikan return 12-15% annually.",
+      priority: "medium",
+      action: "Explore",
+    },
+    {
+      id: 3,
+      type: "alert",
+      title: "Budget Alert",
+      message:
+        "Pengeluaran kategori entertainment sudah mencapai 85% dari budget bulanan.",
+      priority: "high",
+      action: "Atur Ulang",
+    },
+  ];
+
+  // Recent transactions
+  const recentTransactions = [
+    {
+      id: 1,
+      type: "expense",
+      category: "Food & Dining",
+      description: "Warung Padang Sederhana",
+      amount: -45000,
+      date: "2025-01-26",
+      time: "12:30",
+    },
+    {
+      id: 2,
+      type: "income",
+      category: "Salary",
+      description: "Gaji Bulanan",
+      amount: 8500000,
+      date: "2025-01-25",
+      time: "09:00",
+    },
+    {
+      id: 3,
+      type: "expense",
+      category: "Transportation",
+      description: "Grab to Office",
+      amount: -25000,
+      date: "2025-01-25",
+      time: "08:15",
+    },
+    {
+      id: 4,
+      type: "expense",
+      category: "Shopping",
+      description: "Tokopedia - Baju Kerja",
+      amount: -275000,
+      date: "2025-01-24",
+      time: "20:45",
     },
   ];
 
@@ -86,14 +153,14 @@ const DashboardHome = () => {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
-        label: "Income",
+        label: "Pendapatan",
         data: [8200000, 8500000, 8100000, 8800000, 8500000, 8700000],
         borderColor: "#10B981",
         backgroundColor: "rgba(16, 185, 129, 0.1)",
         tension: 0.4,
       },
       {
-        label: "Expenses",
+        label: "Pengeluaran",
         data: [6500000, 6200000, 6800000, 6100000, 6200000, 5900000],
         borderColor: "#EF4444",
         backgroundColor: "rgba(239, 68, 68, 0.1)",
@@ -104,23 +171,21 @@ const DashboardHome = () => {
 
   const expenseBreakdownData = {
     labels: [
-      "Food",
+      "Food & Dining",
       "Transportation",
+      "Shopping",
       "Entertainment",
       "Bills",
-      "Shopping",
-      "Others",
     ],
     datasets: [
       {
-        data: [1800000, 1200000, 800000, 1500000, 600000, 300000],
+        data: [2100000, 800000, 1200000, 600000, 1500000],
         backgroundColor: [
           "#3B82F6",
           "#10B981",
           "#F59E0B",
           "#EF4444",
           "#8B5CF6",
-          "#6B7280",
         ],
         borderWidth: 0,
       },
@@ -158,34 +223,38 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">
-            Welcome back! Here&apos;s your financial overview.
-          </p>
+    <div className="space-y-8">
+      {/* Welcome Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl p-8 text-white shadow-xl"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+              Selamat Datang Kembali! 👋
+            </h1>
+            <p className="text-blue-100 text-lg">
+              Berikut ringkasan keuangan Anda hari ini
+            </p>
+            <p className="text-blue-200 text-sm mt-1">
+              {new Date().toLocaleDateString("id-ID", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+            <button className="px-6 py-3 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-colors flex items-center space-x-2 font-medium shadow-lg">
+              <Sparkles className="h-5 w-5" />
+              <span>AI Insights</span>
+            </button>
+          </div>
         </div>
-
-        <div className="flex items-center space-x-3 mt-4 sm:mt-0">
-          <select
-            value={timeframe}
-            onChange={(e) => setTimeframe(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="quarter">This Quarter</option>
-            <option value="year">This Year</option>
-          </select>
-
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
-            <Sparkles className="h-4 w-4" />
-            <span>AI Insights</span>
-          </button>
-        </div>
-      </div>
+      </motion.div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -195,15 +264,27 @@ const DashboardHome = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+            className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           >
-            <div className="flex items-center justify-between">
-              <div className={`p-3 rounded-lg bg-${card.color}-100`}>
-                <card.icon className={`h-6 w-6 text-${card.color}-600`} />
+            <div className="flex items-center justify-between mb-4">
+              <div
+                className={`p-3 rounded-xl bg-gradient-to-r ${
+                  card.color === "blue"
+                    ? "from-blue-500 to-cyan-500"
+                    : card.color === "green"
+                    ? "from-emerald-500 to-teal-500"
+                    : card.color === "red"
+                    ? "from-red-500 to-pink-500"
+                    : "from-purple-500 to-indigo-500"
+                }`}
+              >
+                <card.icon className="h-6 w-6 text-white" />
               </div>
               <div
-                className={`flex items-center space-x-1 text-sm ${
-                  card.trend === "up" ? "text-green-600" : "text-red-600"
+                className={`flex items-center space-x-1 text-sm font-semibold px-2 py-1 rounded-full ${
+                  card.trend === "up"
+                    ? "text-green-700 bg-green-100"
+                    : "text-red-700 bg-red-100"
                 }`}
               >
                 {card.trend === "up" ? (
@@ -215,39 +296,97 @@ const DashboardHome = () => {
               </div>
             </div>
 
-            <div className="mt-4">
-              <h3 className="text-sm font-medium text-gray-600">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600 mb-1">
                 {card.title}
               </h3>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
-                {card.value}
-              </p>
+              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+              <p className="text-xs text-gray-500 mt-1">{card.description}</p>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Charts Section */}
+      {/* AI Insights Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
+      >
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+            <Sparkles className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">
+              AI Financial Insights
+            </h3>
+            <p className="text-gray-600">
+              Rekomendasi personal berdasarkan analisis AI
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {aiInsights.map((insight) => (
+            <div
+              key={insight.id}
+              className={`p-4 rounded-xl border-l-4 ${
+                insight.priority === "high"
+                  ? "border-red-500 bg-red-50"
+                  : "border-blue-500 bg-blue-50"
+              }`}
+            >
+              <div className="flex items-start justify-between mb-2">
+                <h4 className="font-semibold text-gray-900 text-sm">
+                  {insight.title}
+                </h4>
+                <span
+                  className={`px-2 py-1 text-xs rounded-full ${
+                    insight.priority === "high"
+                      ? "bg-red-200 text-red-800"
+                      : "bg-blue-200 text-blue-800"
+                  }`}
+                >
+                  {insight.priority === "high" ? "Urgent" : "Info"}
+                </span>
+              </div>
+              <p className="text-gray-700 text-sm mb-3 leading-relaxed">
+                {insight.message}
+              </p>
+              <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                {insight.action} →
+              </button>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Charts and Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Income vs Expenses */}
+        {/* Income vs Expenses Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+          transition={{ delay: 0.5 }}
+          className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Income vs Expenses
-            </h3>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <div className="flex items-center space-x-1">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">
+                Pendapatan vs Pengeluaran
+              </h3>
+              <p className="text-gray-600 text-sm">Trend 6 bulan terakhir</p>
+            </div>
+            <div className="flex items-center space-x-4 text-sm">
+              <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span>Income</span>
+                <span className="text-gray-600">Pendapatan</span>
               </div>
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span>Expenses</span>
+                <span className="text-gray-600">Pengeluaran</span>
               </div>
             </div>
           </div>
@@ -257,164 +396,98 @@ const DashboardHome = () => {
           </div>
         </motion.div>
 
-        {/* Expense Breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">
-            Expense Breakdown
-          </h3>
-
-          <div className="h-80">
-            <Doughnut data={expenseBreakdownData} options={doughnutOptions} />
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Quick Actions & Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Quick Actions */}
+        {/* Recent Transactions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">
-            Quick Actions
-          </h3>
-
-          <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
-              <PiggyBank className="h-8 w-8 text-gray-400 group-hover:text-blue-500 mx-auto mb-2" />
-              <span className="text-sm font-medium text-gray-600 group-hover:text-blue-600">
-                Add Expense
-              </span>
-            </button>
-
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors group">
-              <TrendingUp className="h-8 w-8 text-gray-400 group-hover:text-green-500 mx-auto mb-2" />
-              <span className="text-sm font-medium text-gray-600 group-hover:text-green-600">
-                Set Goal
-              </span>
-            </button>
-
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors group">
-              <Users className="h-8 w-8 text-gray-400 group-hover:text-purple-500 mx-auto mb-2" />
-              <span className="text-sm font-medium text-gray-600 group-hover:text-purple-600">
-                Book Consultant
-              </span>
-            </button>
-
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors group">
-              <Sparkles className="h-8 w-8 text-gray-400 group-hover:text-orange-500 mx-auto mb-2" />
-              <span className="text-sm font-medium text-gray-600 group-hover:text-orange-600">
-                AI Analysis
-              </span>
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Recent Activity */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+          className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Recent Activity
+            <h3 className="text-xl font-semibold text-gray-900">
+              Transaksi Terbaru
             </h3>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-              View All
+            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              Lihat Semua
             </button>
           </div>
 
           <div className="space-y-4">
-            {[
-              {
-                type: "expense",
-                description: "Grocery Shopping",
-                amount: "-Rp 450,000",
-                time: "2 hours ago",
-              },
-              {
-                type: "income",
-                description: "Salary Deposit",
-                amount: "+Rp 8,500,000",
-                time: "1 day ago",
-              },
-              {
-                type: "goal",
-                description: "Emergency Fund Goal Updated",
-                amount: "+15%",
-                time: "2 days ago",
-              },
-              {
-                type: "consultation",
-                description: "Meeting with Ahmad Wijaya",
-                amount: "Completed",
-                time: "3 days ago",
-              },
-            ].map((activity, index) => (
+            {recentTransactions.slice(0, 5).map((transaction) => (
               <div
-                key={index}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                key={transaction.id}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center space-x-3">
                   <div
                     className={`p-2 rounded-lg ${
-                      activity.type === "expense"
-                        ? "bg-red-100"
-                        : activity.type === "income"
+                      transaction.type === "income"
                         ? "bg-green-100"
-                        : activity.type === "goal"
-                        ? "bg-blue-100"
-                        : "bg-purple-100"
+                        : "bg-red-100"
                     }`}
                   >
-                    {activity.type === "expense" && (
+                    {transaction.type === "income" ? (
+                      <ArrowUpRight className="h-4 w-4 text-green-600" />
+                    ) : (
                       <ArrowDownRight className="h-4 w-4 text-red-600" />
                     )}
-                    {activity.type === "income" && (
-                      <ArrowUpRight className="h-4 w-4 text-green-600" />
-                    )}
-                    {activity.type === "goal" && (
-                      <Target className="h-4 w-4 text-blue-600" />
-                    )}
-                    {activity.type === "consultation" && (
-                      <Users className="h-4 w-4 text-purple-600" />
-                    )}
                   </div>
-
                   <div>
-                    <p className="font-medium text-gray-900">
-                      {activity.description}
+                    <p className="font-medium text-gray-900 text-sm">
+                      {transaction.description}
                     </p>
-                    <p className="text-sm text-gray-500">{activity.time}</p>
+                    <p className="text-gray-500 text-xs">
+                      {transaction.category} • {transaction.time}
+                    </p>
                   </div>
                 </div>
-
-                <span
-                  className={`font-semibold ${
-                    activity.amount.startsWith("-")
-                      ? "text-red-600"
-                      : activity.amount.startsWith("+")
-                      ? "text-green-600"
-                      : "text-gray-600"
-                  }`}
-                >
-                  {activity.amount}
-                </span>
+                <div className="text-right">
+                  <p
+                    className={`font-bold text-sm ${
+                      transaction.type === "income"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {transaction.type === "income" ? "+" : ""}
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                    }).format(Math.abs(transaction.amount))}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    {new Date(transaction.date).toLocaleDateString("id-ID")}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </motion.div>
       </div>
+
+      {/* Expense Breakdown Chart */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">
+              Breakdown Pengeluaran
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Distribusi pengeluaran bulan ini
+            </p>
+          </div>
+        </div>
+
+        <div className="h-80">
+          <Doughnut data={expenseBreakdownData} options={doughnutOptions} />
+        </div>
+      </motion.div>
     </div>
   );
 };
