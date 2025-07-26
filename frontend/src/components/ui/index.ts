@@ -1,5 +1,5 @@
 // Modern Radix UI based components
-export { Button } from "./button";
+export { Button } from "./tombol";
 export {
   Card,
   CardHeader,
@@ -8,7 +8,7 @@ export {
   CardDescription,
   CardContent,
   CardBody,
-} from "./card";
+} from "./kartu";
 export { Input } from "./input";
 export { Badge } from "./badge";
 export { Avatar, AvatarImage, AvatarFallback } from "./avatar";

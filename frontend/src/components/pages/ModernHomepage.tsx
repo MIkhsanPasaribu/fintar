@@ -1,7 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/kartu";
+import { Button } from "@/components/ui/tombol";
 import { Badge } from "@/components/ui/badge";
 import {
   TrendingUp,

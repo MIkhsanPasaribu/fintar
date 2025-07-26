@@ -4,7 +4,7 @@ import React from "react";
 import { EducationOverview } from "@/components/education";
 import { FinancialOverview, TransactionManager } from "@/components/financial";
 import { UserProfileForm, ConsultationBookingForm } from "@/components/forms";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/kartu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ComponentsShowcase() {

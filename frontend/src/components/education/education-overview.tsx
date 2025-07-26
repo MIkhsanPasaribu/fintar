@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/kartu";
+import { Button } from "@/components/ui/tombol";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Clock, Star, TrendingUp, Award, Users } from "lucide-react";
 
