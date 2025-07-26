@@ -23,6 +23,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import AIInsightsWidget from "./AIInsightsWidget";
 
 // Register Chart.js components
 ChartJS.register(
@@ -74,37 +75,6 @@ const DashboardHome = () => {
       icon: Target,
       color: "purple",
       description: "Progress target tabungan",
-    },
-  ];
-
-  // AI Insights
-  const aiInsights = [
-    {
-      id: 1,
-      type: "recommendation",
-      title: "Optimalisasi Pengeluaran",
-      message:
-        "Anda bisa menghemat Rp 300.000/bulan dengan mengurangi spending di kategori food & dining sebesar 15%.",
-      priority: "high",
-      action: "Lihat Detail",
-    },
-    {
-      id: 2,
-      type: "opportunity",
-      title: "Peluang Investasi",
-      message:
-        "Berdasarkan profil risiko Anda, reksa dana saham bisa memberikan return 12-15% annually.",
-      priority: "medium",
-      action: "Explore",
-    },
-    {
-      id: 3,
-      type: "alert",
-      title: "Budget Alert",
-      message:
-        "Pengeluaran kategori entertainment sudah mencapai 85% dari budget bulanan.",
-      priority: "high",
-      action: "Atur Ulang",
     },
   ];
 
@@ -312,55 +282,8 @@ const DashboardHome = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6"
       >
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              AI Financial Insights
-            </h3>
-            <p className="text-gray-600">
-              Rekomendasi personal berdasarkan analisis AI
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {aiInsights.map((insight) => (
-            <div
-              key={insight.id}
-              className={`p-4 rounded-xl border-l-4 ${
-                insight.priority === "high"
-                  ? "border-red-500 bg-red-50"
-                  : "border-blue-500 bg-blue-50"
-              }`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <h4 className="font-semibold text-gray-900 text-sm">
-                  {insight.title}
-                </h4>
-                <span
-                  className={`px-2 py-1 text-xs rounded-full ${
-                    insight.priority === "high"
-                      ? "bg-red-200 text-red-800"
-                      : "bg-blue-200 text-blue-800"
-                  }`}
-                >
-                  {insight.priority === "high" ? "Urgent" : "Info"}
-                </span>
-              </div>
-              <p className="text-gray-700 text-sm mb-3 leading-relaxed">
-                {insight.message}
-              </p>
-              <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                {insight.action} →
-              </button>
-            </div>
-          ))}
-        </div>
+        <AIInsightsWidget />
       </motion.div>
 
       {/* Charts and Transactions */}

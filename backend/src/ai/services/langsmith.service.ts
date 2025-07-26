@@ -32,11 +32,19 @@ export class LangSmithService {
   private readonly config: AiConfig;
   private readonly client: Client | null = null;
   private readonly traces: TraceData[] = [];
+  private readonly langsmithEnabled: boolean = false;
 
   constructor(private configService: ConfigService) {
     this.config = createAiConfig(configService);
 
-    if (this.config.langsmith.tracingEnabled && this.config.langsmith.apiKey) {
+    // Only enable LangSmith if explicitly configured and API key is valid
+    if (
+      this.config.langsmith.tracingEnabled &&
+      this.config.langsmith.apiKey &&
+      this.config.langsmith.apiKey.length > 10 &&
+      !this.config.langsmith.apiKey.includes("your-") &&
+      !this.config.langsmith.apiKey.includes("placeholder")
+    ) {
       try {
         this.client = new Client({
           apiKey: this.config.langsmith.apiKey,
@@ -47,13 +55,21 @@ export class LangSmithService {
         process.env.LANGCHAIN_API_KEY = this.config.langsmith.apiKey;
         process.env.LANGCHAIN_PROJECT = this.config.langsmith.projectName;
 
+        this.langsmithEnabled = true;
         this.logger.log("LangSmith tracing initialized successfully");
       } catch (error) {
         this.logger.error("Failed to initialize LangSmith:", error);
-        this.logger.warn("Continuing without LangSmith tracing");
+        this.logger.warn("Continuing with local tracing only");
+        this.langsmithEnabled = false;
       }
     } else {
-      this.logger.log("LangSmith tracing disabled or API key not provided");
+      this.logger.log("LangSmith tracing disabled - using local tracing only");
+      this.langsmithEnabled = false;
+
+      // Disable LangSmith environment variables
+      process.env.LANGCHAIN_TRACING_V2 = "false";
+      delete process.env.LANGCHAIN_API_KEY;
+      delete process.env.LANGCHAIN_PROJECT;
     }
   }
 
@@ -70,23 +86,34 @@ export class LangSmithService {
     const traceId = `${sessionId}-${Date.now()}`;
 
     try {
-      if (this.client) {
-        // Create run in LangSmith
-        await this.client.createRun({
-          name: operation,
-          run_type: "chain",
-          inputs: { input, metadata },
-          project_name: this.config.langsmith.projectName,
-          extra: {
-            sessionId,
-            userId,
-            timestamp: new Date().toISOString(),
-            tags: ["fintar-ai", operation, `user:${userId}`],
-          },
-        });
+      // Only try LangSmith if properly enabled
+      if (this.langsmithEnabled && this.client) {
+        try {
+          // Create run in LangSmith
+          await this.client.createRun({
+            name: operation,
+            run_type: "chain",
+            inputs: { input, metadata },
+            project_name: this.config.langsmith.projectName,
+            extra: {
+              sessionId,
+              userId,
+              timestamp: new Date().toISOString(),
+              tags: ["fintar-ai", operation, `user:${userId}`],
+            },
+          });
+          this.logger.debug(`LangSmith trace started: ${traceId}`);
+        } catch (langsmithError) {
+          const errorMessage =
+            langsmithError instanceof Error
+              ? langsmithError.message
+              : "Unknown error";
+          this.logger.warn(`LangSmith trace failed: ${errorMessage}`);
+          // Continue with local tracing even if LangSmith fails
+        }
       }
 
-      // Store trace locally for backup
+      // Always store trace locally for backup/fallback
       const trace: TraceData = {
         sessionId,
         userId,
@@ -135,13 +162,24 @@ export class LangSmithService {
         trace.success = success;
         if (error) trace.error = error;
 
-        if (this.client) {
-          // Update run in LangSmith
-          await this.client.updateRun(traceId, {
-            outputs: { output, success, error },
-            end_time: trace.endTime.toISOString(),
-            error: error || undefined,
-          });
+        // Only try LangSmith if properly enabled
+        if (this.langsmithEnabled && this.client) {
+          try {
+            // Update run in LangSmith
+            await this.client.updateRun(traceId, {
+              outputs: { output, success, error },
+              end_time: trace.endTime.toISOString(),
+              error: error || undefined,
+            });
+            this.logger.debug(`LangSmith trace updated: ${traceId}`);
+          } catch (langsmithError) {
+            const errorMessage =
+              langsmithError instanceof Error
+                ? langsmithError.message
+                : "Unknown error";
+            this.logger.warn(`LangSmith trace update failed: ${errorMessage}`);
+            // Continue with local tracing even if LangSmith fails
+          }
         }
 
         this.logger.debug(
@@ -165,19 +203,28 @@ export class LangSmithService {
     level: "info" | "warn" | "error" = "info"
   ): Promise<void> {
     try {
-      if (this.client) {
-        await this.client.createRun({
-          name: event,
-          run_type: "tool",
-          inputs: { data },
-          project_name: this.config.langsmith.projectName,
-          extra: {
-            traceId,
-            timestamp: new Date().toISOString(),
-            level,
-            tags: ["fintar-ai", "event", level],
-          },
-        });
+      // Only try LangSmith if properly enabled
+      if (this.langsmithEnabled && this.client) {
+        try {
+          await this.client.createRun({
+            name: event,
+            run_type: "tool",
+            inputs: { data },
+            project_name: this.config.langsmith.projectName,
+            extra: {
+              traceId,
+              timestamp: new Date().toISOString(),
+              level,
+              tags: ["fintar-ai", "event", level],
+            },
+          });
+        } catch (langsmithError) {
+          const errorMessage =
+            langsmithError instanceof Error
+              ? langsmithError.message
+              : "Unknown error";
+          this.logger.warn(`LangSmith event logging failed: ${errorMessage}`);
+        }
       }
 
       this.logger.log(

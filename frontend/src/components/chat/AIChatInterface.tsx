@@ -11,34 +11,23 @@ import {
   Calculator,
   Target,
   BookOpen,
+  AlertCircle,
+  RefreshCw,
+  Trash2,
 } from "lucide-react";
-
-interface Message {
-  id: string;
-  content: string;
-  sender: "user" | "ai";
-  timestamp: Date;
-  suggestions?: string[];
-}
+import { useAIChat } from "@/hooks/useAIChat";
 
 const AIChatInterface = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content:
-        "Halo! Saya Fintar AI, asisten keuangan pribadi Anda. Saya siap membantu Anda dengan perencanaan keuangan, investasi, dan tips menabung. Ada yang bisa saya bantu hari ini?",
-      sender: "ai",
-      timestamp: new Date(),
-      suggestions: [
-        "Bagaimana cara membuat budget bulanan?",
-        "Investasi apa yang cocok untuk pemula?",
-        "Tips menabung untuk dana darurat",
-        "Analisis pengeluaran saya bulan ini",
-      ],
-    },
-  ]);
+  const {
+    messages,
+    isLoading,
+    error,
+    sendMessage,
+    clearChat,
+    sendQuickAction,
+    isConnected,
+  } = useAIChat();
   const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
 
   const quickActions = [
     {
@@ -67,113 +56,90 @@ const AIChatInterface = () => {
     },
   ];
 
-  const handleSendMessage = async (content: string) => {
-    if (!content.trim()) return;
+  const handleSendMessage = async (content?: string) => {
+    const messageToSend = content || inputMessage;
+    if (!messageToSend.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content,
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    await sendMessage(messageToSend);
     setInputMessage("");
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: generateAIResponse(content),
-        sender: "ai",
-        timestamp: new Date(),
-        suggestions: generateSuggestions(content),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-      setIsTyping(false);
-    }, 1500);
-  };
-
-  const generateAIResponse = (userInput: string): string => {
-    const lowerInput = userInput.toLowerCase();
-
-    if (lowerInput.includes("budget") || lowerInput.includes("anggaran")) {
-      return "Untuk membuat budget yang efektif, saya sarankan menggunakan aturan 50/30/20:\n\n💰 50% untuk kebutuhan pokok (makanan, transport, tagihan)\n🎯 30% untuk keinginan (hiburan, shopping)\n💎 20% untuk tabungan dan investasi\n\nDengan gaji Anda, alokasi idealnya:\n- Kebutuhan: Rp 4.250.000\n- Keinginan: Rp 2.550.000\n- Tabungan: Rp 1.700.000\n\nApakah Anda ingin saya buatkan detail budget per kategori?";
-    }
-
-    if (lowerInput.includes("investasi") || lowerInput.includes("invest")) {
-      return "📈 Untuk pemula, saya rekomendasikan investasi bertahap:\n\n1. **Dana Darurat** (3-6 bulan pengeluaran)\n   - Deposito atau tabungan berjangka\n   - Risiko rendah, likuiditas tinggi\n\n2. **Reksadana Campuran** \n   - Mulai Rp 100.000/bulan\n   - Diversifikasi otomatis\n\n3. **Saham Blue Chip**\n   - Setelah punya dana darurat\n   - Perusahaan stabil seperti BBCA, TLKM\n\nMulai dengan yang mana dulu?";
-    }
-
-    if (lowerInput.includes("menabung") || lowerInput.includes("tabung")) {
-      return "💰 Tips menabung yang efektif:\n\n✅ **Bayar Diri Sendiri Dulu**\n   Set auto-debit ke rekening tabungan\n\n✅ **Gunakan Metode 52 Minggu**\n   Minggu 1: Rp 10.000\n   Minggu 2: Rp 20.000, dst.\n\n✅ **Pisahkan Rekening**\n   1 rekening untuk pengeluaran harian\n   1 rekening khusus tabungan\n\n✅ **Track Pengeluaran**\n   Catat setiap pengeluaran selama 1 bulan\n\nMau saya buatkan target tabungan spesifik?";
-    }
-
-    return "Terima kasih atas pertanyaannya! Sebagai AI assistant keuangan, saya dapat membantu Anda dengan:\n\n📊 Analisis keuangan personal\n💡 Saran investasi dan tabungan\n📈 Perencanaan financial goals\n💰 Tips mengelola budget\n🎯 Strategi mencapai target keuangan\n\nApa aspek keuangan yang ingin Anda diskusikan lebih lanjut?";
-  };
-
-  const generateSuggestions = (userInput: string): string[] => {
-    const lowerInput = userInput.toLowerCase();
-
-    if (lowerInput.includes("budget")) {
-      return [
-        "Detail budget per kategori pengeluaran",
-        "Cara tracking budget harian",
-        "Aplikasi budget yang recommended",
-      ];
-    }
-
-    if (lowerInput.includes("investasi")) {
-      return [
-        "Cara memulai investasi saham",
-        "Perbandingan reksadana vs saham",
-        "Strategi investasi jangka panjang",
-      ];
-    }
-
-    return [
-      "Tips menghemat pengeluaran bulanan",
-      "Cara meningkatkan passive income",
-      "Perencanaan dana pendidikan anak",
-    ];
   };
 
   const handleQuickAction = (action: string) => {
-    handleSendMessage(action);
+    sendQuickAction(action);
   };
 
-  return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] bg-white rounded-xl shadow-sm border border-gray-200">
-      {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">
-              Fintar AI Co-Pilot
-            </h2>
-            <p className="text-sm text-gray-600">
-              Your 24/7 Financial Assistant
-            </p>
-          </div>
-        </div>
+  const formatTimestamp = (timestamp: Date) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(timestamp);
+  };
 
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 text-green-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium">Online</span>
+  if (!isConnected) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Tidak dapat terhubung
+          </h3>
+          <p className="text-gray-600">
+            Silakan login terlebih dahulu untuk menggunakan AI Chat.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-full max-h-[calc(100vh-200px)]">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-white/20 rounded-lg">
+              <Bot className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Fintar AI Assistant</h2>
+              <p className="text-blue-100 text-sm">
+                Asisten Keuangan Pintar 24/7
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={clearChat}
+              className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+              title="Clear Chat"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm">Online</span>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+          <div className="flex">
+            <AlertCircle className="h-5 w-5 text-red-400" />
+            <div className="ml-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quick Actions */}
-      {messages.length === 1 && (
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">
-            Quick Actions
+      {messages.length <= 1 && (
+        <div className="p-6 bg-gray-50">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Mulai dengan aksi cepat:
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {quickActions.map((action, index) => (
@@ -183,14 +149,18 @@ const AIChatInterface = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => handleQuickAction(action.action)}
-                className="flex items-center space-x-3 p-4 text-left border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left"
               >
-                <div className="p-2 bg-gray-100 group-hover:bg-blue-100 rounded-lg transition-colors">
-                  <action.icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                  <action.icon className="h-5 w-5" />
                 </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{action.label}</h4>
-                  <p className="text-sm text-gray-600">{action.description}</p>
+                <div>
+                  <div className="font-medium text-gray-900">
+                    {action.label}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {action.description}
+                  </div>
                 </div>
               </motion.button>
             ))}
@@ -198,77 +168,91 @@ const AIChatInterface = () => {
         </div>
       )}
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {messages.map((message) => (
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {messages.map((message, index) => (
           <motion.div
             key={message.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
             className={`flex ${
               message.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <div
-              className={`flex max-w-3xl ${
-                message.sender === "user" ? "flex-row-reverse" : "flex-row"
+              className={`flex items-start space-x-3 max-w-3xl ${
+                message.sender === "user"
+                  ? "flex-row-reverse space-x-reverse"
+                  : ""
               }`}
             >
               {/* Avatar */}
               <div
-                className={`flex-shrink-0 ${
-                  message.sender === "user" ? "ml-3" : "mr-3"
+                className={`p-2 rounded-lg ${
+                  message.sender === "user"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-600"
                 }`}
               >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    message.sender === "user"
-                      ? "bg-blue-600"
-                      : "bg-gradient-to-br from-purple-500 to-pink-500"
-                  }`}
-                >
-                  {message.sender === "user" ? (
-                    <User className="w-4 h-4 text-white" />
-                  ) : (
-                    <Bot className="w-4 h-4 text-white" />
-                  )}
-                </div>
+                {message.sender === "user" ? (
+                  <User className="h-5 w-5" />
+                ) : (
+                  <Bot className="h-5 w-5" />
+                )}
               </div>
 
               {/* Message Content */}
-              <div
-                className={`flex flex-col ${
-                  message.sender === "user" ? "items-end" : "items-start"
-                }`}
-              >
+              <div className="flex-1">
                 <div
-                  className={`px-4 py-3 rounded-2xl ${
+                  className={`p-4 rounded-xl ${
                     message.sender === "user"
                       ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-900"
+                      : message.messageType === "error"
+                      ? "bg-red-50 text-red-900 border border-red-200"
+                      : "bg-white shadow-sm border border-gray-200"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-line">
-                    {message.content}
-                  </p>
+                  <p className="whitespace-pre-wrap">{message.content}</p>
+
+                  {/* Message Type Indicator */}
+                  {message.messageType === "financial_analysis" && (
+                    <div className="mt-2 flex items-center space-x-1 text-blue-600">
+                      <TrendingUp className="h-4 w-4" />
+                      <span className="text-xs font-medium">
+                        Analisis Keuangan
+                      </span>
+                    </div>
+                  )}
+
+                  {message.messageType === "advice" && (
+                    <div className="mt-2 flex items-center space-x-1 text-green-600">
+                      <Sparkles className="h-4 w-4" />
+                      <span className="text-xs font-medium">Saran AI</span>
+                    </div>
+                  )}
                 </div>
 
-                <span className="text-xs text-gray-500 mt-1">
-                  {message.timestamp.toLocaleTimeString()}
-                </span>
+                {/* Timestamp */}
+                <div className="mt-1 text-xs text-gray-500">
+                  {formatTimestamp(message.timestamp)}
+                </div>
 
                 {/* Suggestions */}
-                {message.suggestions && message.sender === "ai" && (
+                {message.suggestions && message.suggestions.length > 0 && (
                   <div className="mt-3 space-y-2">
-                    {message.suggestions.map((suggestion, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSendMessage(suggestion)}
-                        className="block text-sm text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
+                    <p className="text-sm text-gray-600">Saran pertanyaan:</p>
+                    <div className="space-y-1">
+                      {message.suggestions.map((suggestion, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleSendMessage(suggestion)}
+                          className="block w-full text-left p-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -277,27 +261,26 @@ const AIChatInterface = () => {
         ))}
 
         {/* Typing Indicator */}
-        {isTyping && (
+        {isLoading && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-start"
           >
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-white" />
+            <div className="flex items-start space-x-3 max-w-3xl">
+              <div className="p-2 bg-gray-100 text-gray-600 rounded-lg">
+                <Bot className="h-5 w-5" />
               </div>
-              <div className="bg-gray-100 px-4 py-3 rounded-2xl">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.1s" }}
-                  ></div>
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.2s" }}
-                  ></div>
+              <div className="bg-white shadow-sm border border-gray-200 p-4 rounded-xl">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    AI sedang mengetik...
+                  </span>
                 </div>
               </div>
             </div>
@@ -305,34 +288,39 @@ const AIChatInterface = () => {
         )}
       </div>
 
-      {/* Input */}
-      <div className="p-6 border-t border-gray-200">
-        <div className="flex space-x-4">
+      {/* Input Area */}
+      <div className="border-t border-gray-200 p-4 bg-white rounded-b-xl">
+        <div className="flex items-center space-x-3">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) =>
-              e.key === "Enter" && handleSendMessage(inputMessage)
-            }
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
             placeholder="Tanyakan tentang keuangan Anda..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={isTyping}
+            disabled={isLoading}
+            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
           <button
-            onClick={() => handleSendMessage(inputMessage)}
-            disabled={!inputMessage.trim() || isTyping}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+            onClick={() => handleSendMessage()}
+            disabled={!inputMessage.trim() || isLoading}
+            className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
-            <Send className="w-4 h-4" />
-            <span>Send</span>
+            {isLoading ? (
+              <RefreshCw className="h-5 w-5 animate-spin" />
+            ) : (
+              <Send className="h-5 w-5" />
+            )}
           </button>
         </div>
-
-        <p className="text-xs text-gray-500 mt-2">
-          💡 Fintar AI dapat membantu perencanaan keuangan, investasi, dan tips
-          menabung
-        </p>
+        <div className="mt-2 text-xs text-gray-500 text-center">
+          Fintar AI menggunakan Google Gemini untuk memberikan saran keuangan
+          yang akurat
+        </div>
       </div>
     </div>
   );

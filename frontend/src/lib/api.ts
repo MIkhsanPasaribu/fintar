@@ -30,7 +30,7 @@ class ApiClient {
     }
 
     try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, {
+      const response = await fetch(`${this.baseURL}/api/v1${endpoint}`, {
         ...options,
         headers: {
           ...defaultHeaders,

@@ -17,7 +17,9 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  TestTube,
 } from "lucide-react";
+import NotificationSystem from "./NotificationSystem";
 
 interface SidebarProps {
   isCollapsed?: boolean;
@@ -56,6 +58,13 @@ const Sidebar = ({
     {
       title: "Financial Tools",
       items: [
+        {
+          label: "Financial Analysis",
+          href: "/financial-analysis",
+          icon: TrendingUp,
+          description: "AI-powered analysis",
+          badge: "AI",
+        },
         {
           label: "Budget Tracker",
           href: "/dashboard/budget",
@@ -102,6 +111,13 @@ const Sidebar = ({
           icon: BookOpen,
           description: "Financial literacy",
         },
+        {
+          label: "Testing Suite",
+          href: "/testing",
+          icon: TestTube,
+          description: "System diagnostics",
+          badge: "DEV",
+        },
       ],
     },
   ];
@@ -143,16 +159,20 @@ const Sidebar = ({
               </div>
             )}
 
-            <button
-              onClick={onToggle}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-gray-500" />
-              ) : (
-                <ChevronLeft className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
+            <div className="flex items-center space-x-2">
+              {!isCollapsed && <NotificationSystem />}
+
+              <button
+                onClick={onToggle}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {isCollapsed ? (
+                  <ChevronRight className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <ChevronLeft className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
