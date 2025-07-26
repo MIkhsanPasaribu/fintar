@@ -29,19 +29,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing auth token on mount
-    const token = localStorage.getItem("auth_token");
-    const userData = localStorage.getItem("user_data");
+    // For development - auto-login with mock user
+    const mockUser: User = {
+      id: "1",
+      email: "demo@fintar.com",
+      username: "demo_user",
+      firstName: "Demo",
+      lastName: "User",
+      phone: "+62812345678",
+      avatar: undefined,
+      isVerified: true,
+      role: "CLIENT",
+      preferences: {},
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    if (token && userData) {
-      try {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-      } catch (error) {
-        console.error("Failed to parse user data:", error);
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user_data");
+    // Check if we're on client side
+    if (typeof window !== "undefined") {
+      // Check for existing auth token on mount
+      const token = localStorage.getItem("auth_token");
+      const userData = localStorage.getItem("user_data");
+
+      if (token && userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+        } catch (error) {
+          console.error("Failed to parse user data:", error);
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("user_data");
+          // Set mock user for development
+          setUser(mockUser);
+          localStorage.setItem("auth_token", "mock_token");
+          localStorage.setItem("user_data", JSON.stringify(mockUser));
+        }
+      } else {
+        // Set mock user for development
+        setUser(mockUser);
+        localStorage.setItem("auth_token", "mock_token");
+        localStorage.setItem("user_data", JSON.stringify(mockUser));
       }
+    } else {
+      // Server-side fallback
+      setUser(null);
     }
 
     setIsLoading(false);
@@ -63,14 +94,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const data = await response.json();
 
-    localStorage.setItem("auth_token", data.token);
-    localStorage.setItem("user_data", JSON.stringify(data.user));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("user_data", JSON.stringify(data.user));
+    }
     setUser(data.user);
   };
 
   const logout = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user_data");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
+    }
     setUser(null);
   };
 
@@ -78,7 +113,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem("user_data", JSON.stringify(updatedUser));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user_data", JSON.stringify(updatedUser));
+      }
     }
   };
 

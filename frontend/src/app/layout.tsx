@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ToastProvider } from "@/components/ui/toast";
 import { AuthProvider } from "@/hooks/use-auth";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,9 +34,7 @@ export default function RootLayout({
     <html lang="id">
       <body className={inter.className}>
         <AuthProvider>
-          <ToastProvider>
-            <div className="min-h-screen bg-background">{children}</div>
-          </ToastProvider>
+          <div className="min-h-screen bg-gray-50">{children}</div>
         </AuthProvider>
       </body>
     </html>
