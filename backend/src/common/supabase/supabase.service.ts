@@ -1,115 +1,253 @@
-import { Injectable, OnModuleInit, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
-export class SupabaseService implements OnModuleInit {
-  private supabase: SupabaseClient | null = null;
-  private isAvailable = false;
+export class SupabaseService {
   private readonly logger = new Logger(SupabaseService.name);
+  private supabase: SupabaseClient;
 
-  constructor(private configService: ConfigService) {}
-
-  async onModuleInit() {
-    // Use SUPABASE_URL instead of DATABASE_URL for Supabase client
+  constructor(private configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>("SUPABASE_URL");
     const supabaseKey = this.configService.get<string>("SUPABASE_ANON_KEY");
 
     if (!supabaseUrl || !supabaseKey) {
-      this.isAvailable = false;
       this.logger.warn(
-        "Supabase integration is disabled: Missing credentials. " +
-          "Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables to enable Supabase features."
+        "Supabase configuration is missing - service will be disabled"
       );
+      // Don't throw error, just log warning and continue
       return;
     }
 
     try {
-      this.logger.log("Initializing Supabase client...");
-      this.supabase = createClient(supabaseUrl, supabaseKey);
-      this.isAvailable = true;
+      this.supabase = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: false,
+        },
+        global: {
+          fetch: (url, options) => {
+            const timeoutSignal = AbortSignal.timeout(10000); // Reduced to 10 seconds
+            return fetch(url, {
+              ...options,
+              signal: timeoutSignal,
+            });
+          },
+        },
+      });
       this.logger.log("Supabase client initialized successfully");
     } catch (error) {
-      this.isAvailable = false;
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(
-        `Failed to initialize Supabase client: ${errorMessage}`
-      );
+      this.logger.error("Failed to initialize Supabase client:", error);
+      // Don't throw error, just log and continue without Supabase
     }
   }
 
-  getClient(): SupabaseClient {
-    if (!this.isAvailable || !this.supabase) {
-      throw new Error(
-        "Supabase client is not available. Check if credentials are properly configured."
-      );
+  async signIn(email: string, password: string, retries = 3) {
+    if (!this.supabase) {
+      throw new Error("Supabase client is not initialized");
     }
-    return this.supabase;
+
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        this.logger.log(`Sign in attempt ${attempt} for email: ${email}`);
+
+        const { data, error } = await this.supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          this.logger.error(`Supabase auth error: ${error.message}`);
+
+          // Handle specific auth errors that shouldn't be retried
+          if (
+            error.message.includes("Invalid login credentials") ||
+            error.message.includes("Invalid API key") ||
+            error.message.includes("Email not confirmed")
+          ) {
+            throw new Error(`Authentication failed: ${error.message}`);
+          }
+
+          throw new Error(`Authentication failed: ${error.message}`);
+        }
+
+        this.logger.log(`Sign in successful for email: ${email}`);
+        return data;
+      } catch (error) {
+        this.logger.error(`Sign in attempt ${attempt} failed:`, error);
+
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        // Don't retry for these specific errors
+        if (
+          errorMessage.includes("Invalid login credentials") ||
+          errorMessage.includes("Invalid API key") ||
+          errorMessage.includes("Email not confirmed")
+        ) {
+          throw error;
+        }
+
+        if (attempt === retries) {
+          if (
+            errorMessage.includes("UND_ERR_CONNECT_TIMEOUT") ||
+            errorMessage.includes("fetch failed") ||
+            errorMessage.includes("timeout")
+          ) {
+            throw new Error(
+              "Supabase connection timeout. Please try again later."
+            );
+          }
+          throw new Error(
+            `Authentication service unavailable after ${retries} attempts`
+          );
+        }
+
+        // Wait before retry (exponential backoff)
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, attempt) * 1000)
+        );
+      }
+    }
   }
 
-  isSupabaseAvailable(): boolean {
-    return this.isAvailable;
+  async signUp(email: string, password: string, retries = 3) {
+    if (!this.supabase) {
+      throw new Error("Supabase client is not initialized");
+    }
+
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        this.logger.log(`Sign up attempt ${attempt} for email: ${email}`);
+
+        const { data, error } = await this.supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          this.logger.error(`Supabase signup error: ${error.message}`);
+
+          // Handle specific signup errors that shouldn't be retried
+          if (
+            error.message.includes("User already registered") ||
+            error.message.includes("Invalid API key") ||
+            error.message.includes("Invalid email") ||
+            error.message.includes("Password should be")
+          ) {
+            throw new Error(`Registration failed: ${error.message}`);
+          }
+
+          throw new Error(`Registration failed: ${error.message}`);
+        }
+
+        this.logger.log(`Sign up successful for email: ${email}`);
+        return data;
+      } catch (error) {
+        this.logger.error(`Sign up attempt ${attempt} failed:`, error);
+
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        // Don't retry for these specific errors
+        if (
+          errorMessage.includes("User already registered") ||
+          errorMessage.includes("Invalid API key") ||
+          errorMessage.includes("Invalid email") ||
+          errorMessage.includes("Password should be")
+        ) {
+          throw error;
+        }
+
+        if (attempt === retries) {
+          if (
+            errorMessage.includes("UND_ERR_CONNECT_TIMEOUT") ||
+            errorMessage.includes("fetch failed") ||
+            errorMessage.includes("timeout")
+          ) {
+            throw new Error(
+              "Supabase connection timeout. Please try again later."
+            );
+          }
+          throw new Error(
+            `Registration service unavailable after ${retries} attempts`
+          );
+        }
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, attempt) * 1000)
+        );
+      }
+    }
   }
 
-  // Auth methods
-  async signUp(email: string, password: string) {
-    if (!this.isSupabaseAvailable()) {
-      throw new Error("Supabase authentication is not available");
+  async healthCheck(): Promise<boolean> {
+    if (!this.supabase) {
+      return false;
     }
-    return await this.supabase.auth.signUp({
-      email,
-      password,
-    });
-  }
 
-  async signIn(email: string, password: string) {
-    if (!this.isSupabaseAvailable()) {
-      throw new Error("Supabase authentication is not available");
+    try {
+      // Simple health check by attempting to get session
+      const { data } = await this.supabase.auth.getSession();
+      return true;
+    } catch (error) {
+      this.logger.error("Supabase health check failed:", error);
+      return false;
     }
-    return await this.supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
   }
 
   async signOut() {
-    if (!this.isSupabaseAvailable()) {
-      throw new Error("Supabase authentication is not available");
+    if (!this.supabase) {
+      throw new Error("Supabase client is not initialized");
     }
-    return await this.supabase.auth.signOut();
+
+    try {
+      const { error } = await this.supabase.auth.signOut();
+      if (error) {
+        this.logger.error(`Supabase sign out error: ${error.message}`);
+        throw new Error(`Sign out failed: ${error.message}`);
+      }
+      this.logger.log("User signed out successfully");
+    } catch (error) {
+      this.logger.error("Sign out failed:", error);
+      throw error;
+    }
   }
 
-  async getUser(accessToken: string) {
-    if (!this.isSupabaseAvailable()) {
-      throw new Error("Supabase authentication is not available");
+  // Database operations methods
+  isSupabaseAvailable(): boolean {
+    try {
+      const supabaseUrl = this.configService.get<string>("SUPABASE_URL");
+      const supabaseKey = this.configService.get<string>("SUPABASE_ANON_KEY");
+      return !!(supabaseUrl && supabaseKey && this.supabase);
+    } catch (error) {
+      this.logger.error("Supabase availability check failed:", error);
+      return false;
     }
-    return await this.supabase.auth.getUser(accessToken);
   }
 
-  // Database methods
   from(table: string) {
+    if (!this.supabase) {
+      throw new Error("Supabase client is not initialized");
+    }
     return this.supabase.from(table);
   }
 
-  // Storage methods
-  async uploadFile(bucket: string, path: string, file: File) {
-    return await this.supabase.storage.from(bucket).upload(path, file);
-  }
+  // Additional utility methods for database operations
+  async testConnection(): Promise<boolean> {
+    if (!this.supabase) {
+      return false;
+    }
 
-  async downloadFile(bucket: string, path: string) {
-    return await this.supabase.storage.from(bucket).download(path);
-  }
+    try {
+      const { data, error } = await this.supabase
+        .from("users")
+        .select("count", { count: "exact", head: true });
 
-  async deleteFile(bucket: string, path: string) {
-    return await this.supabase.storage.from(bucket).remove([path]);
-  }
-
-  // Real-time subscriptions
-  async subscribe(table: string, callback: (payload: any) => void) {
-    return this.supabase
-      .channel("custom-all-channel")
-      .on("postgres_changes", { event: "*", schema: "public", table }, callback)
-      .subscribe();
+      return !error;
+    } catch (error) {
+      this.logger.error("Supabase connection test failed:", error);
+      return false;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../common/prisma/prisma.service";
 import { SupabaseService } from "../common/supabase/supabase.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -9,6 +9,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {}
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly supabaseService: SupabaseService
@@ -30,29 +32,42 @@ export class UsersService {
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
-      // Fallback to Supabase if available and primary database fails
-      if (this.supabaseService.isSupabaseAvailable()) {
-        try {
-          const { data, error: supabaseError } = await this.supabaseService
-            .from("users")
-            .insert([
-              {
-                ...createUserDto,
-                // Don't store plain password in Supabase fallback
-                password: await bcrypt.hash(createUserDto.password, 10),
-              },
-            ])
-            .select()
-            .single();
-          if (supabaseError) throw supabaseError;
-          const { password, ...userWithoutPassword } = data;
-          return userWithoutPassword;
-        } catch (supabaseError) {
-          const errorMsg = error instanceof Error ? error.message : String(error);
-          const supabaseErrorMsg = supabaseError instanceof Error ? supabaseError.message : String(supabaseError);
-          throw new Error(
-            `Both primary database and Supabase failed: ${errorMsg}, ${supabaseErrorMsg}`
-          );
+      this.logger.error("Primary database creation failed:", error);
+
+      // Check if it's a permission error
+      if (error instanceof Error && error.message.includes("permission denied")) {
+        this.logger.warn(
+          "Database permission denied, using Supabase fallback for user creation"
+        );
+
+        // Fallback to Supabase if available and primary database fails
+        if (this.supabaseService.isSupabaseAvailable()) {
+          try {
+            const { data, error: supabaseError } = await this.supabaseService
+              .from("users")
+              .insert([
+                {
+                  ...createUserDto,
+                  // Don't store plain password in Supabase fallback
+                  password: await bcrypt.hash(createUserDto.password, 10),
+                },
+              ])
+              .select()
+              .single();
+            if (supabaseError) throw supabaseError;
+            const { password, ...userWithoutPassword } = data;
+            return userWithoutPassword;
+          } catch (supabaseError) {
+            const errorMsg =
+              error instanceof Error ? error.message : String(error);
+            const supabaseErrorMsg =
+              supabaseError instanceof Error
+                ? supabaseError.message
+                : String(supabaseError);
+            throw new Error(
+              `Both primary database and Supabase failed: ${errorMsg}, ${supabaseErrorMsg}`
+            );
+          }
         }
       }
       throw error;
@@ -79,13 +94,22 @@ export class UsersService {
       });
       return users;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .select("*");
-        if (supabaseError) throw supabaseError;
-        return data;
+      this.logger.error("Primary database findAll failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error && error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .select("*");
+          if (supabaseError) throw supabaseError;
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
+        }
       }
       throw error;
     }
@@ -112,15 +136,24 @@ export class UsersService {
       });
       return user;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .select("*")
-          .eq("id", id)
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
+      this.logger.error("Primary database findOne failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error && error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .select("*")
+            .eq("id", id)
+            .single();
+          if (supabaseError) throw supabaseError;
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
+        }
       }
       throw error;
     }
@@ -133,17 +166,26 @@ export class UsersService {
       });
       return user;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .select("*")
-          .eq("email", email)
-          .single();
-        if (supabaseError && supabaseError.code !== "PGRST116") {
-          throw supabaseError;
+      this.logger.error("Primary database findByEmail failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error && error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .select("*")
+            .eq("email", email)
+            .single();
+          if (supabaseError && supabaseError.code !== "PGRST116") {
+            throw supabaseError;
+          }
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
         }
-        return data;
       }
       throw error;
     }
@@ -176,16 +218,25 @@ export class UsersService {
       });
       return user;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .update(updateUserDto)
-          .eq("id", id)
-          .select()
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
+      this.logger.error("Primary database update failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error && error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .update(updateUserDto)
+            .eq("id", id)
+            .select()
+            .single();
+          if (supabaseError) throw supabaseError;
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
+        }
       }
       throw error;
     }
@@ -198,20 +249,29 @@ export class UsersService {
       });
       return { success: true };
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("users")
-          .delete()
-          .eq("id", id);
-        if (supabaseError) throw supabaseError;
-        return data;
+      this.logger.error("Primary database remove failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error && error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .delete()
+            .eq("id", id);
+          if (supabaseError) throw supabaseError;
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
+        }
       }
       throw error;
     }
   }
 
-  // User profile and settings
+  // User profile and settings - simplified error handling
   async getUserProfile(userId: string) {
     try {
       const profile = await this.prismaService.userProfile.findUnique({
@@ -219,17 +279,9 @@ export class UsersService {
       });
       return profile;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("user_profiles")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
-      }
-      throw error;
+      this.logger.error("getUserProfile failed:", error);
+      // For now, just return null if database is unavailable
+      return null;
     }
   }
 
@@ -245,24 +297,12 @@ export class UsersService {
       });
       return profile;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("user_profiles")
-          .upsert({
-            user_id: userId,
-            ...profileData,
-          })
-          .select()
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
-      }
-      throw error;
+      this.logger.error("updateUserProfile failed:", error);
+      throw new Error("Profile update unavailable due to database issues");
     }
   }
 
-  // User preferences
+  // User preferences - simplified error handling
   async getUserPreferences(userId: string) {
     try {
       const user = await this.prismaService.user.findUnique({
@@ -271,17 +311,8 @@ export class UsersService {
       });
       return user?.preferences || {};
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("user_preferences")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
-      }
-      throw error;
+      this.logger.error("getUserPreferences failed:", error);
+      return {};
     }
   }
 
@@ -294,20 +325,8 @@ export class UsersService {
       });
       return user.preferences;
     } catch (error) {
-      // Fallback to Supabase
-      if (this.supabaseService.isSupabaseAvailable()) {
-        const { data, error: supabaseError } = await this.supabaseService
-          .from("user_preferences")
-          .upsert({
-            user_id: userId,
-            ...preferences,
-          })
-          .select()
-          .single();
-        if (supabaseError) throw supabaseError;
-        return data;
-      }
-      throw error;
+      this.logger.error("updateUserPreferences failed:", error);
+      throw new Error("Preferences update unavailable due to database issues");
     }
   }
 }
