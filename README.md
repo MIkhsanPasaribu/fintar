@@ -1,6 +1,6 @@
-# 🏦 Fintar - AI-Powered Financial Empowerment Platform
+# 🏦 Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI
 
-Fintar adalah platform keuangan berbasis AI yang dirancang khusus untuk memberdayakan masyarakat Indonesia dalam mengelola keuangan pribadi, investasi, dan perencanaan finansial.
+Fintar adalah platform keuangan berbasis AI yang dirancang khusus untuk memberdayakan keluarga Indonesia dan UMKM dalam mengelola keuangan dengan cerdas, meningkatkan literasi finansial, dan mencapai kebebasan finansial melalui teknologi AI terdepan.
 
 ## 🚀 Struktur Proyek
 

@@ -2,23 +2,23 @@
 
 ## Overview
 
-Fintar's AI system is built using LangChain v0.3 with **Google Gemini** as the primary LLM provider, LangSmith for monitoring, and LangGraph for workflow orchestration. The system provides comprehensive financial advisory, business consultation, and intelligent chat capabilities powered by Google's advanced AI models.
+Fintar's AI system adalah solusi optimalisasi finansial pintar berbasis AI yang dibangun menggunakan LangChain v0.3, LangSmith untuk monitoring, dan LangGraph untuk workflow orchestration. Sistem ini menyediakan komprehensif financial advisory, business consultation, dan intelligent chat capabilities untuk keluarga dan UMKM Indonesia.
 
 ## Architecture
 
 ### Core Components
 
-1. **LangChain Service** - Core AI functionality with Google Gemini integration
-2. **LangSmith Service** - Monitoring, tracing, and analytics
-3. **LangGraph Service** - Workflow orchestration and agent coordination
-4. **Agent Services** - Specialized AI agents for different domains
+1. **LangChain Service** - Core AI functionality dengan integrasi model AI terdepan
+2. **LangSmith Service** - Monitoring, tracing, dan analytics
+3. **LangGraph Service** - Workflow orchestration dan agent coordination
+4. **Agent Services** - Specialized AI agents untuk berbagai domain finansial
 
-### LLM Provider: Google Gemini
+### AI Model Configuration
 
-- **Model**: Gemini 1.5 Pro (configurable)
-- **Advantages**: Large context window (8192 tokens), advanced reasoning, multimodal capabilities
-- **Cost-effective**: More affordable than OpenAI GPT-4
-- **Indonesian Language Support**: Better understanding of Indonesian financial context
+- **Model**: Menggunakan model AI terdepan yang dapat dikonfigurasi
+- **Keunggulan**: Large context window, advanced reasoning, multimodal capabilities
+- **Cost-effective**: Optimasi biaya untuk solusi UMKM dan keluarga
+- **Indonesian Language Support**: Pemahaman mendalam konteks finansial Indonesia
 
 ### Agent Architecture
 

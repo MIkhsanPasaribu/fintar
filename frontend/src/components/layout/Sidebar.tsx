@@ -50,7 +50,7 @@ const Sidebar = ({
           label: "AI Co-Pilot",
           href: "/chat",
           icon: Sparkles,
-          description: "24/7 AI assistant",
+          description: "Asisten AI Finansial Cerdas",
           badge: "AI",
         },
       ],
@@ -62,7 +62,7 @@ const Sidebar = ({
           label: "Financial Analysis",
           href: "/financial-analysis",
           icon: TrendingUp,
-          description: "AI-powered analysis",
+          description: "Analisis Finansial AI",
           badge: "AI",
         },
         {

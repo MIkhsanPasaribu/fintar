@@ -52,7 +52,9 @@ async function bootstrap() {
   // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle("Fintar API")
-    .setDescription("AI-powered Financial Empowerment Platform API")
+    .setDescription(
+      "Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI - REST API"
+    )
     .setVersion("1.0")
     .addBearerAuth()
     .build();

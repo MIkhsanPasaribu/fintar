@@ -202,7 +202,7 @@ export class FinancialAiAgentService {
         responseId,
         advice,
         confidence,
-        sources: ["Fintar AI Financial Advisor"],
+        sources: ["Fintar AI - Solusi Finansial Cerdas"],
         followUpQuestions,
         generatedAt: new Date(),
       };

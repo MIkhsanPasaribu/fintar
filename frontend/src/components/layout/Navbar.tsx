@@ -51,7 +51,7 @@ const Navbar = () => {
       label: "AI Co-Pilot",
       href: "/chat",
       icon: Sparkles,
-      description: "24/7 AI assistant",
+      description: "Asisten AI Finansial Cerdas",
     },
     {
       label: "Budget Tracker",

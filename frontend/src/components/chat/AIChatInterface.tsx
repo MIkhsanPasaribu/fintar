@@ -318,8 +318,8 @@ const AIChatInterface = () => {
           </button>
         </div>
         <div className="mt-2 text-xs text-gray-500 text-center">
-          Fintar AI menggunakan Google Gemini untuk memberikan saran keuangan
-          yang akurat
+          Fintar AI - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM
+          Berbasis AI
         </div>
       </div>
     </div>

@@ -206,7 +206,7 @@ const DashboardHome = () => {
               Selamat Datang Kembali! 👋
             </h1>
             <p className="text-blue-100 text-lg">
-              Berikut ringkasan keuangan Anda hari ini
+              Fintar AI siap membantu optimalisasi finansial Anda
             </p>
             <p className="text-blue-200 text-sm mt-1">
               {new Date().toLocaleDateString("id-ID", {

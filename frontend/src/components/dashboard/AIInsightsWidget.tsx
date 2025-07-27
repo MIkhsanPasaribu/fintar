@@ -209,9 +209,9 @@ const AIInsightsWidget = () => {
               <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">AI Financial Insights</h3>
+              <h3 className="text-xl font-bold">Fintar AI Insights</h3>
               <p className="text-purple-100 text-sm">
-                Powered by Google Gemini
+                Solusi AI Finansial Terdepan
               </p>
             </div>
           </div>

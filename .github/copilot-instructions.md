@@ -4,7 +4,7 @@
 
 ## 🔰 Project Overview
 
-**Fintar (Finance Pintar)**
+**Fintar : Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI**
 Kategori: _Finance Consulting and Management_
 
 Fintar adalah AI-based Financial Empowerment Platform yang dirancang untuk membantu individu dan UKM mengelola keuangan mereka, meningkatkan literasi keuangan, dan menerima konsultasi keuangan bertenaga AI.

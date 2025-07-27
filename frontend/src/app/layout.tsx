@@ -6,22 +6,27 @@ import { AuthProvider } from "@/hooks/use-auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Fintar - AI-Powered Financial Empowerment Platform",
+  title:
+    "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
   description:
-    "Platform pemberdayaan finansial berbasis AI yang membantu individu dan UKM mengelola keuangan, meningkatkan literasi finansial, dan mencapai kebebasan finansial.",
+    "Fintar adalah platform pemberdayaan finansial berbasis AI yang membantu keluarga dan UMKM Indonesia mengelola keuangan dengan cerdas, meningkatkan literasi finansial, dan mencapai kebebasan finansial melalui teknologi AI terdepan.",
   keywords:
-    "fintech, financial planning, AI assistant, investment, budgeting, Indonesia",
+    "fintech Indonesia, perencanaan keuangan keluarga, AI finansial, UMKM, investasi, budgeting, konsultasi keuangan AI, Fintar",
   authors: [{ name: "Fintar Team" }],
   openGraph: {
-    title: "Fintar - AI-Powered Financial Empowerment Platform",
-    description: "Platform pemberdayaan finansial berbasis AI untuk Indonesia",
+    title:
+      "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
+    description:
+      "Solusi finansial cerdas berbasis AI untuk keluarga dan UMKM Indonesia",
     type: "website",
     locale: "id_ID",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fintar - AI-Powered Financial Empowerment Platform",
-    description: "Platform pemberdayaan finansial berbasis AI untuk Indonesia",
+    title:
+      "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
+    description:
+      "Solusi finansial cerdas berbasis AI untuk keluarga dan UMKM Indonesia",
   },
 };
 

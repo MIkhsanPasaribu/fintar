@@ -168,7 +168,7 @@ function generateFallbackResponse(message: string): string {
     return "Untuk melunasi hutang, gunakan metode 'debt snowball' atau 'debt avalanche'. Snowball: bayar hutang terkecil dulu untuk motivasi. Avalanche: bayar hutang dengan bunga tertinggi dulu untuk efisiensi. Hindari hutang baru dan pertimbangkan sumber pendapatan tambahan.";
   }
 
-  return "Terima kasih atas pertanyaannya! Sebagai Fintar AI Financial Advisor, saya siap membantu Anda dalam perencanaan keuangan, budgeting, investasi, dan strategi menabung. Silakan tanyakan aspek keuangan khusus yang ingin Anda diskusikan.";
+  return "Terima kasih atas pertanyaannya! Sebagai Fintar AI - Solusi Optimalisasi Finansial Pintar, saya siap membantu Anda dalam perencanaan keuangan, budgeting, investasi, dan strategi menabung. Silakan tanyakan aspek keuangan khusus yang ingin Anda diskusikan.";
 }
 
 function generateFallbackSuggestions(message: string): string[] {

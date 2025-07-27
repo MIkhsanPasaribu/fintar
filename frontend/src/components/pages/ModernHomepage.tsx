@@ -172,7 +172,7 @@ export function ModernHomepage() {
                 <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-cyan-100 px-4 py-2 rounded-full">
                   <Sparkles className="h-4 w-4 text-blue-600" />
                   <span className="text-blue-700 text-sm font-medium">
-                    AI-Powered Financial Platform
+                    Solusi AI Finansial Terdepan
                   </span>
                 </div>
                 <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
@@ -185,9 +185,9 @@ export function ModernHomepage() {
                   </span>
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  Platform pemberdayaan finansial berbasis AI yang membantu Anda
-                  mencapai kebebasan finansial dengan perencanaan yang tepat dan
-                  konsultasi ahli.
+                  Fintar: Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM
+                  Berbasis AI. Wujudkan kebebasan finansial dengan perencanaan
+                  cerdas dan konsultasi AI terdepan.
                 </p>
               </div>
 
