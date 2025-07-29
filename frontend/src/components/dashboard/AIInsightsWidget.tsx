@@ -10,9 +10,11 @@ import {
   PieChart,
   Target,
   Loader2,
+  Settings,
 } from "lucide-react";
 import AIService, { FinancialAdviceRequest } from "@/lib/ai-api";
 import { useUser } from "@/hooks/useUser";
+import Link from "next/link";
 
 interface AIInsight {
   type: "advice" | "warning" | "opportunity" | "goal";
@@ -20,6 +22,20 @@ interface AIInsight {
   description: string;
   action?: string;
   priority: "high" | "medium" | "low";
+}
+
+interface UserProfile {
+  onboardingCompleted?: boolean;
+  profileCompleted?: boolean;
+  financialDataCompleted?: boolean;
+  monthlyIncome?: number;
+  monthlyExpenses?: number;
+  currentSavings?: number;
+  currentDebt?: number;
+  emergencyFundAmount?: number;
+  age?: number;
+  riskTolerance?: "high" | "medium" | "low";
+  financialGoals?: string[];
 }
 
 const AIInsightsWidget = () => {
@@ -30,122 +46,116 @@ const AIInsightsWidget = () => {
 
   useEffect(() => {
     const loadInsights = async () => {
-      if (user) {
+      if (user && hasRequiredData()) {
         await generateAIInsights();
       }
     };
     loadInsights();
-  }, [user]);
+  }, [user?.id, user?.profile]);
+
+  const hasRequiredData = (): boolean => {
+    if (!user?.profile) return false;
+
+    const profile = user.profile as UserProfile;
+    return !!(
+      profile.financialDataCompleted &&
+      profile.monthlyIncome &&
+      profile.monthlyExpenses
+    );
+  };
 
   const generateAIInsights = async () => {
-    if (!user) return;
+    if (!user || !hasRequiredData()) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
+      const profile = user.profile as UserProfile;
       const request: FinancialAdviceRequest = {
         userId: user.id,
         sessionId: AIService.generateSessionId(),
         question:
           "Berikan insight keuangan dan rekomendasi berdasarkan profil saya",
         userProfile: {
-          age: user.profile?.age || 28,
-          income: user.profile?.income || 8500000,
-          riskTolerance: user.profile?.riskTolerance || "medium",
-          financialGoals: user.profile?.financialGoals || [
-            "Emergency Fund",
-            "Investment",
-          ],
-          currentSavings: user.profile?.currentSavings || 15000000,
-          monthlyExpenses: user.profile?.monthlyExpenses || 6000000,
+          age: profile.age || 25,
+          income: profile.monthlyIncome || 0,
+          riskTolerance:
+            (profile.riskTolerance as "high" | "medium" | "low") || "medium",
+          financialGoals: profile.financialGoals || [],
+          currentSavings: profile.currentSavings || 0,
+          monthlyExpenses: profile.monthlyExpenses || 0,
         },
       };
 
-      await AIService.getFinancialAdvice(request);
+      const response = await AIService.getFinancialAdvice(request);
 
-      // Convert AI response to insights format
-      const aiInsights = parseAIResponseToInsights();
-      setInsights(aiInsights);
-    } catch {
+      if (response && response.analysis) {
+        const aiInsights = parseAIResponseToInsights(response.analysis);
+        setInsights(aiInsights);
+      } else {
+        setInsights([]);
+      }
+    } catch (err) {
       setError("Gagal memuat AI insights");
-      // Fallback to mock insights
-      setInsights(getMockInsights());
+      console.error("AI Insights error:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const parseAIResponseToInsights = (): AIInsight[] => {
-    // For now, return structured insights based on common financial advice
-    // In a real implementation, you'd parse the AI response more intelligently
-    return [
-      {
-        type: "advice",
-        title: "Emergency Fund Status",
-        description:
-          "Anda sudah memiliki emergency fund yang baik. Pertahankan minimal 6 bulan pengeluaran.",
-        priority: "medium",
-      },
-      {
-        type: "opportunity",
-        title: "Investment Opportunity",
-        description:
-          "Dengan risk tolerance medium, pertimbangkan diversifikasi ke reksa dana saham.",
-        action: "Lihat rekomendasi investasi",
-        priority: "high",
-      },
-      {
-        type: "warning",
-        title: "Budget Optimization",
-        description:
-          "Pengeluaran entertainment bisa dikurangi 20% untuk meningkatkan tabungan.",
-        action: "Optimasi budget",
-        priority: "medium",
-      },
-      {
-        type: "goal",
-        title: "Financial Goal Progress",
-        description: "Anda on-track untuk mencapai target rumah dalam 3 tahun.",
-        priority: "low",
-      },
-    ];
-  };
+  const parseAIResponseToInsights = (
+    analysis: Record<string, unknown>
+  ): AIInsight[] => {
+    // Parse actual AI response to structured insights
+    const insights: AIInsight[] = [];
 
-  const getMockInsights = (): AIInsight[] => {
-    return [
-      {
-        type: "advice",
-        title: "Diversifikasi Portfolio",
-        description:
-          "Pertimbangkan untuk menambah alokasi investasi ke instrumen dengan risiko berbeda.",
-        action: "Lihat rekomendasi",
-        priority: "high",
-      },
-      {
-        type: "warning",
-        title: "Pengeluaran Tinggi",
-        description:
-          "Pengeluaran bulan ini 15% lebih tinggi dari rata-rata. Periksa kategori non-esensial.",
-        action: "Analisis pengeluaran",
-        priority: "medium",
-      },
-      {
-        type: "opportunity",
-        title: "Peluang Investasi",
-        description:
-          "Ada surplus cash flow yang bisa dialokasikan ke investasi jangka panjang.",
-        action: "Mulai investasi",
-        priority: "high",
-      },
-      {
-        type: "goal",
-        title: "Target Dana Darurat",
-        description:
-          "Anda sudah mencapai 80% dari target dana darurat. Excellent progress!",
-        priority: "low",
-      },
-    ];
+    if (Array.isArray(analysis.recommendations)) {
+      analysis.recommendations.forEach(
+        (rec: Record<string, unknown>, index: number) => {
+          insights.push({
+            type: (rec.type as AIInsight["type"]) || "advice",
+            title: (rec.title as string) || `Rekomendasi ${index + 1}`,
+            description:
+              (rec.description as string) || (rec.content as string) || "",
+            action: rec.action as string,
+            priority: (rec.priority as AIInsight["priority"]) || "medium",
+          });
+        }
+      );
+    }
+
+    if (Array.isArray(analysis.warnings) && analysis.warnings.length > 0) {
+      analysis.warnings.forEach((warning: Record<string, unknown>) => {
+        insights.push({
+          type: "warning",
+          title: (warning.title as string) || "Peringatan Keuangan",
+          description:
+            (warning.description as string) ||
+            (warning.content as string) ||
+            "",
+          priority: "high",
+        });
+      });
+    }
+
+    if (
+      Array.isArray(analysis.opportunities) &&
+      analysis.opportunities.length > 0
+    ) {
+      analysis.opportunities.forEach((opp: Record<string, unknown>) => {
+        insights.push({
+          type: "opportunity",
+          title: (opp.title as string) || "Peluang Keuangan",
+          description:
+            (opp.description as string) || (opp.content as string) || "",
+          action: opp.action as string,
+          priority: "medium",
+        });
+      });
+    }
+
+    return insights;
   };
 
   const getInsightIcon = (type: AIInsight["type"]) => {
@@ -189,11 +199,35 @@ const AIInsightsWidget = () => {
         <div className="text-center">
           <Sparkles className="h-12 w-12 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            AI Insights
+            Fintar AI Insights
           </h3>
           <p className="text-gray-600">
             Login untuk melihat insight keuangan personal
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasRequiredData()) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="text-center">
+          <Settings className="h-12 w-12 text-blue-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Lengkapi Profil Finansial
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Isi data keuangan Anda untuk mendapatkan insight AI yang personal
+            dan akurat
+          </p>
+          <Link
+            href="/profile"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Lengkapi Profil
+          </Link>
         </div>
       </div>
     );

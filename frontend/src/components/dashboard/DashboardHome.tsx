@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   TrendingUp,
@@ -24,6 +25,9 @@ import {
   ArcElement,
 } from "chart.js";
 import AIInsightsWidget from "./AIInsightsWidget";
+import OnboardingForm from "../forms/OnboardingForm";
+import { useUser } from "@/hooks/useUser";
+import { usersApi } from "@/lib/api";
 
 // Register Chart.js components
 ChartJS.register(
@@ -38,6 +42,70 @@ ChartJS.register(
 );
 
 const DashboardHome = () => {
+  const { user, refreshUser } = useUser();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      // Check if user needs onboarding
+      if (!user.onboardingCompleted) {
+        setShowOnboarding(true);
+      }
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  const handleOnboardingComplete = async (data: any) => {
+    try {
+      // Call API to save onboarding data
+      const response = await usersApi.createProfile({
+        ...data.personal,
+        ...data.financial,
+      });
+
+      if (response) {
+        // Refresh user data instead of reloading page
+        await refreshUser();
+        setShowOnboarding(false);
+      }
+    } catch (error) {
+      console.error("Error saving onboarding data:", error);
+    }
+  };
+
+  const handleOnboardingSkip = async () => {
+    try {
+      // Call API to mark onboarding as skipped
+      const response = await usersApi.skipOnboarding();
+
+      if (response) {
+        // Refresh user data instead of reloading page
+        await refreshUser();
+        setShowOnboarding(false);
+      }
+    } catch (error) {
+      console.error("Error skipping onboarding:", error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (showOnboarding) {
+    return (
+      <OnboardingForm
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+      />
+    );
+  }
+
   // Enhanced mock data with Indonesian context
   const summaryCards = [
     {

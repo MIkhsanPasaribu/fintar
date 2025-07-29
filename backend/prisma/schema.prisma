@@ -25,7 +25,11 @@ model User {
   isVerified  Boolean  @default(false)
   role        UserRole @default(CLIENT)
   password    String
+  supabaseId  String?  @unique
   preferences Json?
+  onboardingCompleted Boolean @default(false)
+  profileCompleted    Boolean @default(false)
+  financialDataCompleted Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -47,15 +51,39 @@ model UserProfile {
   dateOfBirth       DateTime?
   gender            Gender?
   occupation        String?
-  incomeRange       String?
+  company           String?
+  
+  // Financial Information
+  monthlyIncome     Float?
+  monthlyExpenses   Float?
+  currentSavings    Float?
+  currentDebt       Float?
+  emergencyFundAmount Float?
+  
+  // Investment & Risk
   financialGoals    String[]
   riskTolerance     RiskLevel?
   investmentExperience String?
+  currentInvestments Json?
+  
+  // Personal Information
   maritalStatus     MaritalStatus?
   dependents        Int     @default(0)
-  emergencyFund     Boolean @default(false)
+  educationLevel    String?
+  
+  // Assets & Liabilities
+  assets            Json? // property, vehicles, etc.
+  liabilities       Json? // loans, credit cards, etc.
   insurance         Json?
+  
+  // Contact & Address
   address           Json?
+  phone             String?
+  
+  // Metadata
+  currency          String  @default("IDR")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

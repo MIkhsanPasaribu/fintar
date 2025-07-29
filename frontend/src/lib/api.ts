@@ -69,6 +69,13 @@ class ApiClient {
     });
   }
 
+  patch<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      method: "PATCH",
+      body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
   delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
@@ -107,6 +114,28 @@ export const usersApi = {
 
   updateUserPreferences: (userId: string, preferences: any) =>
     apiClient.put(`/users/${userId}/preferences`, preferences),
+
+  // User Profile API (new endpoints)
+  createProfile: (profileData: any) =>
+    apiClient.post("/users/profile", profileData),
+
+  getUserProfile: () => apiClient.get("/users/profile"),
+
+  updateUserProfile: (profileData: any) =>
+    apiClient.patch("/users/profile", profileData),
+
+  deleteUserProfile: () => apiClient.delete("/users/profile"),
+
+  // Get current user info
+  getCurrentUser: () => apiClient.get("/users/me"),
+
+  // Onboarding API
+  getOnboardingStatus: () => apiClient.get("/users/onboarding/status"),
+
+  skipOnboarding: () => apiClient.post("/users/onboarding/skip"),
+
+  updateOnboardingStep: (step: string, completed: boolean) =>
+    apiClient.patch(`/users/onboarding/${step}`, { completed }),
 };
 
 // Consultants API
