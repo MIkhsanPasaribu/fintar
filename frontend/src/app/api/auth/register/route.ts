@@ -16,10 +16,18 @@ interface RegisterRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: RegisterRequest = await request.json();
-    
+
     // Validate required fields
-    const { email, username, firstName, lastName, password, confirmPassword, agreeToTerms } = body;
-    
+    const {
+      email,
+      username,
+      firstName,
+      lastName,
+      password,
+      confirmPassword,
+      agreeToTerms,
+    } = body;
+
     if (!email || !username || !firstName || !lastName || !password) {
       return NextResponse.json(
         { error: "Semua field wajib diisi" },
@@ -59,6 +67,9 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      // Combine firstName and lastName into name for backend
+      const name = `${firstName} ${lastName}`.trim();
+
       // Call backend API
       const response = await fetch(`${BACKEND_URL}/api/v1/auth/register`, {
         method: "POST",
@@ -67,10 +78,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           email,
-          username,
-          firstName,
-          lastName,
-          phone: body.phone,
+          name,
           password,
         }),
       });
@@ -93,10 +101,9 @@ export async function POST(request: NextRequest) {
         },
         token: userData.token,
       });
-
     } catch (backendError) {
       console.error("Backend registration error:", backendError);
-      
+
       // Fallback registration logic for development
       return NextResponse.json({
         message: "Registrasi berhasil (mode development)",
@@ -111,7 +118,6 @@ export async function POST(request: NextRequest) {
         warning: "Backend unavailable, using fallback authentication",
       });
     }
-
   } catch (error) {
     console.error("Registration API error:", error);
     return NextResponse.json(

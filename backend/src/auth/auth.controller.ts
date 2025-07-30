@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Logger,
 } from "@nestjs/common";
+import { IsEmail, IsString, MinLength, MaxLength } from "class-validator";
 import { AuthService } from "./auth.service";
 
 interface LoginDto {
@@ -14,9 +15,17 @@ interface LoginDto {
   password: string;
 }
 
-interface RegisterDto {
+class RegisterDto {
+  @IsEmail({}, { message: "Email must be a valid email address" })
   email: string;
+
+  @IsString({ message: "Password must be a string" })
+  @MinLength(6, { message: "Password must be at least 6 characters long" })
   password: string;
+
+  @IsString({ message: "Name must be a string" })
+  @MinLength(2, { message: "Name must be at least 2 characters long" })
+  @MaxLength(50, { message: "Name must be less than 50 characters" })
   name: string;
 }
 

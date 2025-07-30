@@ -35,7 +35,10 @@ export class UsersService {
       this.logger.error("Primary database creation failed:", error);
 
       // Check if it's a permission error
-      if (error instanceof Error && error.message.includes("permission denied")) {
+      if (
+        error instanceof Error &&
+        error.message.includes("permission denied")
+      ) {
         this.logger.warn(
           "Database permission denied, using Supabase fallback for user creation"
         );
@@ -98,7 +101,8 @@ export class UsersService {
 
       // Fallback to Supabase only for permission errors
       if (
-        error instanceof Error && error.message.includes("permission denied") &&
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
         this.supabaseService.isSupabaseAvailable()
       ) {
         try {
@@ -140,7 +144,8 @@ export class UsersService {
 
       // Fallback to Supabase only for permission errors
       if (
-        error instanceof Error && error.message.includes("permission denied") &&
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
         this.supabaseService.isSupabaseAvailable()
       ) {
         try {
@@ -170,7 +175,8 @@ export class UsersService {
 
       // Fallback to Supabase only for permission errors
       if (
-        error instanceof Error && error.message.includes("permission denied") &&
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
         this.supabaseService.isSupabaseAvailable()
       ) {
         try {
@@ -191,6 +197,39 @@ export class UsersService {
     }
   }
 
+  async findBySupabaseId(supabaseId: string) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { supabaseId },
+      });
+      return user;
+    } catch (error) {
+      this.logger.error("Primary database findBySupabaseId failed:", error);
+
+      // Fallback to Supabase only for permission errors
+      if (
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
+        this.supabaseService.isSupabaseAvailable()
+      ) {
+        try {
+          const { data, error: supabaseError } = await this.supabaseService
+            .from("users")
+            .select("*")
+            .eq("supabaseId", supabaseId)
+            .single();
+          if (supabaseError && supabaseError.code !== "PGRST116") {
+            throw supabaseError;
+          }
+          return data;
+        } catch (supabaseError) {
+          this.logger.error("Supabase fallback also failed:", supabaseError);
+        }
+      }
+      throw error;
+    }
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       // Hash password if it's being updated
@@ -198,9 +237,29 @@ export class UsersService {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
       }
 
+      // Hanya field milik model user yang boleh diupdate di sini
+      const allowedFields = [
+        "email",
+        "username",
+        "firstName",
+        "lastName",
+        "phone",
+        "avatar",
+        "isVerified",
+        "role",
+        "preferences",
+        "password",
+      ];
+      const filteredDto: any = {};
+      for (const key of allowedFields) {
+        if (updateUserDto[key] !== undefined) {
+          filteredDto[key] = updateUserDto[key];
+        }
+      }
+
       const user = await this.prismaService.user.update({
         where: { id },
-        data: updateUserDto,
+        data: filteredDto,
         select: {
           id: true,
           email: true,
@@ -222,7 +281,8 @@ export class UsersService {
 
       // Fallback to Supabase only for permission errors
       if (
-        error instanceof Error && error.message.includes("permission denied") &&
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
         this.supabaseService.isSupabaseAvailable()
       ) {
         try {
@@ -253,7 +313,8 @@ export class UsersService {
 
       // Fallback to Supabase only for permission errors
       if (
-        error instanceof Error && error.message.includes("permission denied") &&
+        error instanceof Error &&
+        error.message.includes("permission denied") &&
         this.supabaseService.isSupabaseAvailable()
       ) {
         try {

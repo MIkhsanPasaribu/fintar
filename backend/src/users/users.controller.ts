@@ -21,19 +21,27 @@ import {
   UpdateUserProfileDto,
   SkipOnboardingDto,
 } from "./dto/user-profile.dto";
+import {
+  PersonalInfoDto,
+  FinancialInfoDto,
+  OnboardingStepDto,
+} from "./dto/onboarding.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @Controller("users")
-@UsePipes(new ValidationPipe())
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(
     private readonly usersService: UsersService,
     private readonly userProfileService: UserProfileService
-  ) {}
+  ) {
+    this.logger.log("UsersController initialized");
+    this.logger.log("Profile endpoint is available at: GET /users/profile");
+  }
 
   @Post()
+  @UsePipes(new ValidationPipe())
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -65,21 +73,11 @@ export class UsersController {
   }
 
   // Profile Management
-  @UseGuards(JwtAuthGuard)
-  @Post("profile")
-  createProfile(
-    @Req() req: any,
-    @Body() createProfileDto: CreateUserProfileDto
-  ) {
-    return this.userProfileService.createProfile(
-      req.user.userId,
-      createProfileDto
-    );
-  }
 
   @UseGuards(JwtAuthGuard)
   @Get("profile")
   async getProfile(@Req() req: any) {
+    this.logger.log("=== GET /users/profile CALLED ===");
     this.logger.log(`[DEBUG] Getting profile for user: ${req.user.userId}`);
     this.logger.log(`[DEBUG] User object: ${JSON.stringify(req.user)}`);
 
@@ -92,6 +90,9 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch("profile")
+  @UsePipes(
+    new ValidationPipe({ whitelist: false, forbidNonWhitelisted: false })
+  )
   updateProfile(
     @Req() req: any,
     @Body() updateProfileDto: UpdateUserProfileDto
@@ -117,8 +118,20 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Post("onboarding/skip")
-  skipOnboarding(@Req() req: any, @Body() skipDto: SkipOnboardingDto) {
+  skipOnboarding(@Req() req: any) {
     return this.userProfileService.skipOnboarding(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("financial-data")
+  submitFinancialInfo(
+    @Req() req: any,
+    @Body() financialInfoDto: FinancialInfoDto
+  ) {
+    return this.userProfileService.submitFinancialInfo(
+      req.user.userId,
+      financialInfoDto
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -126,7 +139,7 @@ export class UsersController {
   updateOnboardingStep(
     @Req() req: any,
     @Param("step") step: string,
-    @Body() body: { completed: boolean }
+    @Body() onboardingStepDto: OnboardingStepDto
   ) {
     if (step !== "profile" && step !== "financial") {
       throw new Error('Invalid step. Must be "profile" or "financial"');
@@ -134,7 +147,7 @@ export class UsersController {
     return this.userProfileService.updateOnboardingStatus(
       req.user.userId,
       step as "profile" | "financial",
-      body.completed
+      onboardingStepDto.completed
     );
   }
 }

@@ -9,6 +9,11 @@ import {
   UpdateUserProfileDto,
   OnboardingStatusDto,
 } from "./dto/user-profile.dto";
+import {
+  PersonalInfoDto,
+  FinancialInfoDto,
+  OnboardingStatusResponseDto,
+} from "./dto/onboarding.dto";
 
 @Injectable()
 export class UserProfileService {
@@ -59,19 +64,29 @@ export class UserProfileService {
   }
 
   async getProfile(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
 
-    if (!user) {
-      throw new NotFoundException("User not found");
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
+
+      console.log("[DEBUG] Looking for profile for userId:", userId);
+
+      const profile = await this.prisma.userProfile.findUnique({
+        where: { userId },
+      });
+
+      console.log("[DEBUG] Profile found:", !!profile);
+      console.log("[DEBUG] Profile data:", profile);
+
+      return profile;
+    } catch (error) {
+      console.error("[ERROR] getProfile failed:", error);
+      throw error;
     }
-
-    const profile = await this.prisma.userProfile.findUnique({
-      where: { userId },
-    });
-
-    return profile;
   }
 
   async updateProfile(userId: string, updateProfileDto: UpdateUserProfileDto) {
@@ -200,7 +215,9 @@ export class UserProfileService {
     return updatedUser;
   }
 
-  async getOnboardingStatus(userId: string): Promise<OnboardingStatusDto> {
+  async getOnboardingStatus(
+    userId: string
+  ): Promise<OnboardingStatusResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -224,6 +241,105 @@ export class UserProfileService {
       hasProfile,
       hasFinancialData,
     };
+  }
+
+  async submitPersonalInfo(userId: string, personalInfoDto: PersonalInfoDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    // Create or update profile with personal info
+    const profile = await this.prisma.userProfile.upsert({
+      where: { userId },
+      update: {
+        ...personalInfoDto,
+        dateOfBirth: personalInfoDto.dateOfBirth
+          ? new Date(personalInfoDto.dateOfBirth)
+          : undefined,
+      },
+      create: {
+        user: {
+          connect: { id: userId },
+        },
+        ...personalInfoDto,
+        dateOfBirth: personalInfoDto.dateOfBirth
+          ? new Date(personalInfoDto.dateOfBirth)
+          : undefined,
+      },
+    });
+
+    // Update user's profile completion status
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        profileCompleted: true,
+        onboardingCompleted: this.checkOnboardingCompletion(
+          true,
+          user.financialDataCompleted || false
+        ),
+      },
+    });
+
+    return profile;
+  }
+
+  async submitFinancialInfo(
+    userId: string,
+    financialInfoDto: FinancialInfoDto
+  ) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    // Update profile with financial info
+    const profile = await this.prisma.userProfile.upsert({
+      where: { userId },
+      update: {
+        monthlyIncome: financialInfoDto.monthlyIncome,
+        monthlyExpenses: financialInfoDto.monthlyExpenses,
+        currentSavings: financialInfoDto.currentSavings,
+        currentDebt: financialInfoDto.currentDebt,
+        emergencyFundAmount: financialInfoDto.emergencyFundAmount,
+        financialGoals: financialInfoDto.financialGoals,
+        riskTolerance: financialInfoDto.riskTolerance,
+        investmentExperience: financialInfoDto.investmentExperience,
+      },
+      create: {
+        user: {
+          connect: { id: userId },
+        },
+        monthlyIncome: financialInfoDto.monthlyIncome,
+        monthlyExpenses: financialInfoDto.monthlyExpenses,
+        currentSavings: financialInfoDto.currentSavings,
+        currentDebt: financialInfoDto.currentDebt,
+        emergencyFundAmount: financialInfoDto.emergencyFundAmount,
+        financialGoals: financialInfoDto.financialGoals,
+        riskTolerance: financialInfoDto.riskTolerance,
+        investmentExperience: financialInfoDto.investmentExperience,
+      },
+    });
+
+    // Update user's financial data completion status
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        financialDataCompleted: true,
+        onboardingCompleted: this.checkOnboardingCompletion(
+          user.profileCompleted || false,
+          true
+        ),
+      },
+    });
+
+    return profile;
   }
 
   private checkOnboardingCompletion(

@@ -26,12 +26,16 @@ export class AuthService {
       if (user && (await bcrypt.compare(password, user.password))) {
         const { password: _, ...result } = user;
         this.logger.log(
-          `User validated successfully via local database: ${email}`
+          `✅ User validated successfully via local database: ${email}`
         );
         return result;
+      } else if (user) {
+        this.logger.warn(`❌ Password mismatch for user: ${email}`);
+      } else {
+        this.logger.warn(`❌ User not found in local database: ${email}`);
       }
     } catch (error) {
-      this.logger.error("Local user validation failed:", error);
+      this.logger.error("❌ Local user validation failed:", error);
 
       // If database is unavailable, fall back to Supabase
       const errorMessage =
@@ -44,10 +48,16 @@ export class AuthService {
         this.logger.warn(
           "Database unavailable, falling back to Supabase authentication"
         );
+      } else {
+        // If it's not a connection issue, don't fallback to Supabase
+        this.logger.warn(
+          "Local auth failed but database is accessible - not using Supabase fallback"
+        );
+        return null;
       }
     }
 
-    // Fallback to Supabase auth if available and local auth fails
+    // Only fallback to Supabase auth if database is completely unavailable
     try {
       // Check if Supabase configuration is available
       if (!this.supabaseService.isSupabaseAvailable()) {
@@ -57,18 +67,52 @@ export class AuthService {
         return null;
       }
 
+      this.logger.log(`⚠️ Trying Supabase fallback for: ${email}`);
       const authResult = await this.supabaseService.signIn(email, password);
 
       if (authResult?.user) {
-        this.logger.log(`User validated successfully via Supabase: ${email}`);
-        return {
-          id: authResult.user.id,
-          email: authResult.user.email,
-          name: authResult.user.user_metadata?.name || authResult.user.email,
-        };
+        this.logger.log(
+          `✅ User validated successfully via Supabase: ${email}`
+        );
+
+        // Check if this Supabase user exists in our local database
+        let localUser = null;
+        try {
+          localUser = await this.usersService.findBySupabaseId(
+            authResult.user.id
+          );
+          if (!localUser) {
+            // Try to find by email as fallback
+            localUser = await this.usersService.findByEmail(email);
+          }
+        } catch (error) {
+          this.logger.warn(
+            "Could not check local database for Supabase user:",
+            error
+          );
+        }
+
+        if (localUser) {
+          // Return local user data
+          return {
+            id: localUser.id, // Use local database ID, not Supabase ID
+            email: localUser.email,
+            name:
+              localUser.firstName ||
+              localUser.username ||
+              authResult.user.email,
+          };
+        } else {
+          // Return Supabase user data if no local record exists
+          return {
+            id: authResult.user.id,
+            email: authResult.user.email,
+            name: authResult.user.user_metadata?.name || authResult.user.email,
+          };
+        }
       }
     } catch (error) {
-      this.logger.error(`Supabase validation failed for ${email}:`, error);
+      this.logger.error(`❌ Supabase validation failed for ${email}:`, error);
 
       const errorMessage =
         error instanceof Error ? error.message : String(error);
