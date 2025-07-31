@@ -1,13 +1,26 @@
 import { useState, useEffect } from "react";
 import { usersApi } from "@/lib/api";
 
+interface UserProfileData {
+  id?: string;
+  email?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  monthlyIncome?: number;
+  riskTolerance?: string;
+  financialGoals?: string[];
+  currentSavings?: number;
+  monthlyExpenses?: number;
+}
+
 interface User {
   id: string;
   email: string;
   name: string;
   firstName?: string;
   lastName?: string;
-  onboardingCompleted?: boolean;
   profileCompleted?: boolean;
   financialDataCompleted?: boolean;
   profile?: {
@@ -17,7 +30,6 @@ interface User {
     financialGoals?: string[];
     currentSavings?: number;
     monthlyExpenses?: number;
-    onboardingCompleted?: boolean;
   };
 }
 
@@ -30,63 +42,54 @@ export const useUser = () => {
       try {
         const token = localStorage.getItem("auth_token");
         if (token) {
-          // Get user data and onboarding status from API
-          const [onboardingStatusResponse, userProfileResponse] =
-            await Promise.allSettled([
-              usersApi.getOnboardingStatus(),
-              usersApi.getUserProfile().catch(() => null), // Don't fail if no profile
-            ]);
+          // Get user profile from API
+          const userProfileResponse = await usersApi
+            .getUserProfile()
+            .catch(() => null);
+          const userProfileData = userProfileResponse as UserProfileData | null;
 
-          // Extract data from settled promises
-          const onboardingStatus =
-            onboardingStatusResponse.status === "fulfilled"
-              ? onboardingStatusResponse.value
-              : {
-                  onboardingCompleted: false,
-                  profileCompleted: false,
-                  financialDataCompleted: false,
-                };
-
-          const userProfile =
-            userProfileResponse.status === "fulfilled" &&
-            userProfileResponse.value
-              ? userProfileResponse.value
-              : null;
-
-          // Create user object with real data
-          const currentUser: User = {
-            id: `user_${Date.now()}`,
-            email: "user@fintar.com",
-            name: "Current User",
-            firstName: "Current",
-            lastName: "User",
-            onboardingCompleted: onboardingStatus.onboardingCompleted,
-            profileCompleted: onboardingStatus.profileCompleted,
-            financialDataCompleted: onboardingStatus.financialDataCompleted,
-            profile: {
-              onboardingCompleted: onboardingStatus.onboardingCompleted,
-              age: userProfile?.dateOfBirth
-                ? Math.floor(
-                    (Date.now() - new Date(userProfile.dateOfBirth).getTime()) /
-                      (365.25 * 24 * 60 * 60 * 1000)
-                  )
-                : 28,
-              income: userProfile?.monthlyIncome || 8500000,
-              riskTolerance:
-                userProfile?.riskTolerance?.toLowerCase() || "medium",
-              financialGoals: userProfile?.financialGoals || [
-                "Emergency Fund",
-                "House Down Payment",
-                "Retirement",
-              ],
-              currentSavings: userProfile?.currentSavings || 15000000,
-              monthlyExpenses: userProfile?.monthlyExpenses || 6000000,
-            },
-          };
-          setUser(currentUser);
+          if (userProfileData) {
+            // Create user object with real data from database only
+            const currentUser: User = {
+              id: userProfileData.id || `user_${Date.now()}`,
+              email: userProfileData.email || "",
+              name: userProfileData.name || userProfileData.firstName || "User",
+              firstName: userProfileData.firstName || "",
+              lastName: userProfileData.lastName || "",
+              profileCompleted: !!(
+                userProfileData.firstName && userProfileData.lastName
+              ),
+              financialDataCompleted: !!(
+                userProfileData.monthlyIncome && userProfileData.monthlyExpenses
+              ),
+              profile: {
+                age: userProfileData?.dateOfBirth
+                  ? Math.floor(
+                      (Date.now() -
+                        new Date(userProfileData.dateOfBirth).getTime()) /
+                        (365.25 * 24 * 60 * 60 * 1000)
+                    )
+                  : undefined,
+                income: userProfileData?.monthlyIncome || undefined,
+                riskTolerance:
+                  (userProfileData?.riskTolerance?.toLowerCase() as
+                    | "low"
+                    | "medium"
+                    | "high") || undefined,
+                financialGoals: userProfileData?.financialGoals || [],
+                currentSavings: userProfileData?.currentSavings || undefined,
+                monthlyExpenses: userProfileData?.monthlyExpenses || undefined,
+              },
+            };
+            setUser(currentUser);
+          } else {
+            // No profile data - user needs to complete profile
+            setUser(null);
+          }
         }
       } catch (error) {
         console.error("Error loading user:", error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -117,64 +120,48 @@ export const useUser = () => {
     try {
       const token = localStorage.getItem("auth_token");
       if (token) {
-        const [onboardingStatusResponse, userProfileResponse] =
-          await Promise.allSettled([
-            usersApi.getOnboardingStatus(),
-            usersApi.getUserProfile().catch(() => null),
-          ]);
+        const userProfileResponse = await usersApi
+          .getUserProfile()
+          .catch(() => null);
+        const userProfileData = userProfileResponse as UserProfileData | null;
 
-        const onboardingStatus =
-          onboardingStatusResponse.status === "fulfilled"
-            ? onboardingStatusResponse.value
-            : {
-                onboardingCompleted: false,
-                profileCompleted: false,
-                financialDataCompleted: false,
-              };
-
-        const userProfile =
-          userProfileResponse.status === "fulfilled" &&
-          userProfileResponse.value
-            ? userProfileResponse.value
-            : null;
-
-        if (user) {
-          setUser({
-            ...user,
-            onboardingCompleted: onboardingStatus.onboardingCompleted,
-            profileCompleted: onboardingStatus.profileCompleted,
-            financialDataCompleted: onboardingStatus.financialDataCompleted,
+        if (userProfileData) {
+          const updatedUser: User = {
+            id: userProfileData.id || user?.id || `user_${Date.now()}`,
+            email: userProfileData.email || user?.email || "",
+            name:
+              userProfileData.name ||
+              userProfileData.firstName ||
+              user?.name ||
+              "User",
+            firstName: userProfileData.firstName || user?.firstName || "",
+            lastName: userProfileData.lastName || user?.lastName || "",
+            profileCompleted: !!(
+              userProfileData.firstName && userProfileData.lastName
+            ),
+            financialDataCompleted: !!(
+              userProfileData.monthlyIncome && userProfileData.monthlyExpenses
+            ),
             profile: {
-              ...user.profile,
-              onboardingCompleted: onboardingStatus.onboardingCompleted,
-              age: userProfile?.dateOfBirth
+              age: userProfileData?.dateOfBirth
                 ? Math.floor(
-                    (Date.now() - new Date(userProfile.dateOfBirth).getTime()) /
+                    (Date.now() -
+                      new Date(userProfileData.dateOfBirth).getTime()) /
                       (365.25 * 24 * 60 * 60 * 1000)
                   )
-                : user.profile?.age || 28,
-              income:
-                userProfile?.monthlyIncome || user.profile?.income || 8500000,
+                : undefined,
+              income: userProfileData?.monthlyIncome || undefined,
               riskTolerance:
-                userProfile?.riskTolerance?.toLowerCase() ||
-                user.profile?.riskTolerance ||
-                "medium",
-              financialGoals: userProfile?.financialGoals ||
-                user.profile?.financialGoals || [
-                  "Emergency Fund",
-                  "House Down Payment",
-                  "Retirement",
-                ],
-              currentSavings:
-                userProfile?.currentSavings ||
-                user.profile?.currentSavings ||
-                15000000,
-              monthlyExpenses:
-                userProfile?.monthlyExpenses ||
-                user.profile?.monthlyExpenses ||
-                6000000,
+                (userProfileData?.riskTolerance?.toLowerCase() as
+                  | "low"
+                  | "medium"
+                  | "high") || undefined,
+              financialGoals: userProfileData?.financialGoals || [],
+              currentSavings: userProfileData?.currentSavings || undefined,
+              monthlyExpenses: userProfileData?.monthlyExpenses || undefined,
             },
-          });
+          };
+          setUser(updatedUser);
         }
       }
     } catch (error) {

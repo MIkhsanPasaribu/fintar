@@ -25,9 +25,7 @@ import {
   ArcElement,
 } from "chart.js";
 import AIInsightsWidget from "./AIInsightsWidget";
-import OnboardingForm from "../forms/OnboardingForm";
 import { useUser } from "@/hooks/useUser";
-import { usersApi } from "@/lib/api";
 
 // Register Chart.js components
 ChartJS.register(
@@ -42,52 +40,39 @@ ChartJS.register(
 );
 
 const DashboardHome = () => {
-  const { user, refreshUser } = useUser();
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
-      // Check if user needs onboarding
-      if (!user.onboardingCompleted) {
-        setShowOnboarding(true);
-      }
       setIsLoading(false);
     }
   }, [user]);
 
-  const handleOnboardingComplete = async (data: any) => {
-    try {
-      // Call API to save onboarding data
-      const response = await usersApi.createProfile({
-        ...data.personal,
-        ...data.financial,
-      });
+  // Check profile completion
+  const checkProfileCompletion = () => {
+    if (!user?.profile) return { completed: false, missing: ["profile"] };
 
-      if (response) {
-        // Refresh user data instead of reloading page
-        await refreshUser();
-        setShowOnboarding(false);
-      }
-    } catch (error) {
-      console.error("Error saving onboarding data:", error);
-    }
+    const requiredFields = [
+      "income",
+      "monthlyExpenses",
+      "currentSavings",
+      "riskTolerance",
+    ];
+    const missing = requiredFields.filter(
+      (field) => !user.profile?.[field as keyof typeof user.profile]
+    );
+
+    return {
+      completed: missing.length === 0,
+      missing,
+      completionPercentage: Math.round(
+        ((requiredFields.length - missing.length) / requiredFields.length) * 100
+      ),
+    };
   };
 
-  const handleOnboardingSkip = async () => {
-    try {
-      // Call API to mark onboarding as skipped
-      const response = await usersApi.skipOnboarding();
-
-      if (response) {
-        // Refresh user data instead of reloading page
-        await refreshUser();
-        setShowOnboarding(false);
-      }
-    } catch (error) {
-      console.error("Error skipping onboarding:", error);
-    }
-  };
+  const profileStatus = checkProfileCompletion();
 
   if (isLoading) {
     return (
@@ -97,51 +82,91 @@ const DashboardHome = () => {
     );
   }
 
-  if (showOnboarding) {
+  // Real data from user profile
+  const formatCurrency = (amount?: number) => {
+    if (!amount) return "Rp 0";
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const calculateNetIncome = () => {
+    const income = user?.profile?.income || 0;
+    const expenses = user?.profile?.monthlyExpenses || 0;
+    return income - expenses;
+  };
+
+  // If no profile data, show empty state
+  if (!user?.profile?.income && !isLoading) {
     return (
-      <OnboardingForm
-        onComplete={handleOnboardingComplete}
-        onSkip={handleOnboardingSkip}
-      />
+      <div className="p-6">
+        <div className="text-center py-12">
+          <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Wallet className="h-8 w-8 text-blue-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Selesaikan Profil Anda
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Isi informasi keuangan di profil untuk melihat dashboard lengkap
+          </p>
+          <button
+            onClick={() => (window.location.href = "/profile")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Lengkapi Profil
+          </button>
+        </div>
+      </div>
     );
   }
 
-  // Enhanced mock data with Indonesian context
+  const calculateSavingsProgress = () => {
+    const netIncome = calculateNetIncome();
+    const targetSavings = netIncome * 0.2; // 20% target
+    const actualSavings = netIncome > 0 ? netIncome : 0;
+    return targetSavings > 0
+      ? Math.min((actualSavings / targetSavings) * 100, 100)
+      : 0;
+  };
+
   const summaryCards = [
     {
       title: "Total Saldo",
-      value: "Rp 45.250.000",
+      value: formatCurrency(user?.profile?.currentSavings),
       change: "+12.5%",
-      trend: "up",
+      trend: "up" as const,
       icon: Wallet,
-      color: "blue",
+      color: "blue" as const,
       description: "Total aset keuangan Anda",
     },
     {
       title: "Pendapatan Bulanan",
-      value: "Rp 8.500.000",
+      value: formatCurrency(user?.profile?.income),
       change: "+5.2%",
-      trend: "up",
+      trend: "up" as const,
       icon: TrendingUp,
-      color: "green",
+      color: "green" as const,
       description: "Pendapatan bulan ini",
     },
     {
       title: "Pengeluaran Bulanan",
-      value: "Rp 6.200.000",
+      value: formatCurrency(user?.profile?.monthlyExpenses),
       change: "-8.1%",
-      trend: "down",
+      trend: "down" as const,
       icon: CreditCard,
-      color: "red",
+      color: "red" as const,
       description: "Pengeluaran bulan ini",
     },
     {
       title: "Target Menabung",
-      value: "78%",
+      value: `${Math.round(calculateSavingsProgress())}%`,
       change: "+15%",
-      trend: "up",
+      trend: "up" as const,
       icon: Target,
-      color: "purple",
+      color: "purple" as const,
       description: "Progress target tabungan",
     },
   ];
@@ -186,20 +211,37 @@ const DashboardHome = () => {
     },
   ];
 
-  // Chart data
+  // Chart data based on user profile
+  const currentIncome = user?.profile?.income || 0;
+  const currentExpenses = user?.profile?.monthlyExpenses || 0;
+
   const incomeExpenseData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
         label: "Pendapatan",
-        data: [8200000, 8500000, 8100000, 8800000, 8500000, 8700000],
+        data: [
+          currentIncome * 0.95,
+          currentIncome,
+          currentIncome * 0.98,
+          currentIncome * 1.05,
+          currentIncome,
+          currentIncome * 1.02,
+        ],
         borderColor: "#10B981",
         backgroundColor: "rgba(16, 185, 129, 0.1)",
         tension: 0.4,
       },
       {
         label: "Pengeluaran",
-        data: [6500000, 6200000, 6800000, 6100000, 6200000, 5900000],
+        data: [
+          currentExpenses * 1.05,
+          currentExpenses,
+          currentExpenses * 1.1,
+          currentExpenses * 0.95,
+          currentExpenses,
+          currentExpenses * 0.92,
+        ],
         borderColor: "#EF4444",
         backgroundColor: "rgba(239, 68, 68, 0.1)",
         tension: 0.4,
@@ -262,6 +304,42 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-8">
+      {/* Profile Completion Banner */}
+      {!profileStatus.completed && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Target className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-blue-900">
+                  Lengkapi Profile Anda ({profileStatus.completionPercentage}%)
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Isi data finansial untuk mendapatkan insight yang lebih akurat
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => (window.location.href = "/profile")}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Lengkapi Sekarang
+            </button>
+          </div>
+          <div className="mt-3 bg-blue-200 rounded-full h-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${profileStatus.completionPercentage}%` }}
+            />
+          </div>
+        </motion.div>
+      )}
       {/* Welcome Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

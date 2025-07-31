@@ -117,8 +117,8 @@ export default function LoginPage() {
       });
 
       // Store token and user data
-      if (data.access_token) {
-        localStorage.setItem("auth_token", data.access_token);
+      if (data.accessToken) {
+        localStorage.setItem("auth_token", data.accessToken);
         localStorage.setItem("user_data", JSON.stringify(data.user));
       }
 

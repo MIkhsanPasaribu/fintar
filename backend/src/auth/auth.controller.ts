@@ -7,27 +7,8 @@ import {
   HttpStatus,
   Logger,
 } from "@nestjs/common";
-import { IsEmail, IsString, MinLength, MaxLength } from "class-validator";
 import { AuthService } from "./auth.service";
-
-interface LoginDto {
-  email: string;
-  password: string;
-}
-
-class RegisterDto {
-  @IsEmail({}, { message: "Email must be a valid email address" })
-  email: string;
-
-  @IsString({ message: "Password must be a string" })
-  @MinLength(6, { message: "Password must be at least 6 characters long" })
-  password: string;
-
-  @IsString({ message: "Name must be a string" })
-  @MinLength(2, { message: "Name must be at least 2 characters long" })
-  @MaxLength(50, { message: "Name must be less than 50 characters" })
-  name: string;
-}
+import { LoginDto, RegisterDto } from "./dto";
 
 @Controller("auth")
 export class AuthController {
@@ -38,16 +19,7 @@ export class AuthController {
   @Post("login")
   async login(@Body() loginDto: LoginDto) {
     try {
-      const user = await this.authService.validateUser(
-        loginDto.email,
-        loginDto.password
-      );
-
-      if (!user) {
-        throw new UnauthorizedException("Invalid credentials");
-      }
-
-      return await this.authService.login(user);
+      return await this.authService.login(loginDto);
     } catch (error) {
       this.logger.error("Login failed:", error);
 
@@ -76,11 +48,7 @@ export class AuthController {
   @Post("register")
   async register(@Body() registerDto: RegisterDto) {
     try {
-      return await this.authService.register(
-        registerDto.email,
-        registerDto.password,
-        registerDto.name
-      );
+      return await this.authService.register(registerDto);
     } catch (error) {
       this.logger.error("Registration failed:", error);
 
@@ -95,7 +63,7 @@ export class AuthController {
   @Post("logout")
   async logout() {
     try {
-      return await this.authService.logout();
+      return { message: "Logged out successfully" };
     } catch (error) {
       this.logger.error("Logout failed:", error);
       return { message: "Logged out successfully" };

@@ -5,26 +5,22 @@ import { UsersModule } from "./users/users.module";
 import { ChatModule } from "./chat/chat.module";
 import { FinancialModule } from "./financial/financial.module";
 import { ConsultantsModule } from "./consultants/consultants.module";
-import { AiModule } from "./ai/ai.module";
-import { PrismaModule } from "./common/prisma/prisma.module";
-import { MongoModule } from "./common/mongo/mongo.module";
-import { SupabaseModule } from "./common/supabase/supabase.module";
+import { CommonModule } from "./common/common.module";
+import { HealthModule } from "./health/health.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ".env",
+      envFilePath: [".env.local", ".env"],
     }),
-    PrismaModule,
-    //MongoModule, // Temporarily disabled due to MongoDB Atlas connection issues
-    SupabaseModule,
+    CommonModule,
+    HealthModule,
     AuthModule,
     UsersModule,
     ChatModule,
     FinancialModule,
     ConsultantsModule,
-    AiModule,
   ],
 })
 export class AppModule {}

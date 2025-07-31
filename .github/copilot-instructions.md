@@ -36,15 +36,15 @@ Fintar adalah AI-based Financial Empowerment Platform yang dirancang untuk memba
 
 ### 🟣 Database & ORM
 
-- **Main DB**: PostgreSQL (untuk transaksi, pengguna, forum, dll)
+- **Main DB**: Supabase (untuk transaksi, pengguna, forum, dll)
 - **ORM**: Prisma
 - **Second DB**: MongoDB (untuk histori chat AI, log AI, dsb)
 - **ODM**: Mongoose
 
 ### 🧠 AI Engine & Orchestration
 
-- **LLM Provider**: Google Gemini 1.5 Pro / Gemini 1.5 Flash
-- **Orkestrasi AI**: Langchain.js
+- **LLM Provider**: Gemini 2.0 Flash
+- **Orkestrasi AI**: Langchain.js, LangSmith, Langgraph
 - **Vector Store (opsional)**: Pinecone / Weaviate / Qdrant
 - **Prompt Monitoring**: PromptLayer / LangSmith
 - **Model Lokal (opsional)**: IndoBERT, IndoGPT (via HuggingFace)
@@ -110,7 +110,6 @@ fintar/
 │   ├── package.json                  # Backend dependencies
 │   ├── nest-cli.json                 # NestJS CLI config
 │   ├── tsconfig.json                 # TypeScript config
-│   └── Dockerfile                    # Backend container
 │
 ├── database/                         # 🟣 Database Scripts & Config
 │   ├── postgresql/                   # PostgreSQL setup

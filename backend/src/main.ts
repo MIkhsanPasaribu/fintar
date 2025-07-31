@@ -3,46 +3,40 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import * as compression from "compression";
 import { AppModule } from "./app.module";
-import { Logger } from "@nestjs/common";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Get config service
   const configService = app.get(ConfigService);
 
-  // Log environment configuration for debugging
-  const logger = new Logger("Bootstrap");
-  logger.log("Starting Fintar Backend API...");
-  logger.log(`Environment: ${configService.get("NODE_ENV") || "development"}`);
-  logger.log(`Database URL configured: ${!!configService.get("DATABASE_URL")}`);
-  logger.log(`Supabase URL configured: ${!!configService.get("SUPABASE_URL")}`);
-  logger.log(`JWT Secret configured: ${!!configService.get("JWT_SECRET")}`);
-
-  // Security
+  // Security middlewares
   app.use(helmet());
+  app.use(compression());
 
-  // Rate limiting
-  app.use(
-    rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
-      message: "Too many requests from this IP, please try again later.",
-    })
-  );
-
-  // CORS
+  // CORS configuration
   app.enableCors({
-    origin: configService.get("FRONTEND_URL") || "http://localhost:3000",
+    origin: [
+      "http://localhost:3000", // Frontend development
+      "https://fintar.vercel.app", // Production frontend
+      configService.get("FRONTEND_URL"), // Custom frontend URL
+    ].filter(Boolean),
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
   });
 
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: false,
-      forbidNonWhitelisted: false,
+      whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     })
   );
 
@@ -52,21 +46,43 @@ async function bootstrap() {
   // Swagger documentation
   const config = new DocumentBuilder()
     .setTitle("Fintar API")
-    .setDescription(
-      "Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI - REST API"
-    )
+    .setDescription("AI-Powered Financial Management Platform API")
     .setVersion("1.0")
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "JWT",
+        description: "Enter JWT token",
+        in: "header",
+      },
+      "JWT-auth"
+    )
+    .addTag("auth", "Authentication endpoints")
+    .addTag("users", "User management endpoints")
+    .addTag("chat", "AI Chat endpoints")
+    .addTag("financial", "Financial planning endpoints")
+    .addTag("consultants", "Consultant marketplace endpoints")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, document);
+  SwaggerModule.setup("api/docs", app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
+  // Start server
   const port = configService.get("PORT") || 3001;
   await app.listen(port);
 
-  console.log(`🚀 Fintar Backend API running on http://localhost:${port}`);
+  console.log(`🚀 Fintar Backend API is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+  console.log(`🔗 Health Check: http://localhost:${port}/api/v1/health`);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error("Failed to start application:", error);
+  process.exit(1);
+});

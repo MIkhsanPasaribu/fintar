@@ -2,152 +2,64 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
-  Patch,
-  Param,
-  Delete,
-  ValidationPipe,
-  UsePipes,
   UseGuards,
-  Req,
-  Logger,
+  Param,
 } from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { UserProfileService } from "./user-profile.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import {
-  CreateUserProfileDto,
-  UpdateUserProfileDto,
-  SkipOnboardingDto,
-} from "./dto/user-profile.dto";
-import {
-  PersonalInfoDto,
-  FinancialInfoDto,
-  OnboardingStepDto,
-} from "./dto/onboarding.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { GetUser } from "../auth/decorators/get-user.decorator";
 
+@ApiTags("users")
 @Controller("users")
 export class UsersController {
-  private readonly logger = new Logger(UsersController.name);
-
   constructor(
     private readonly usersService: UsersService,
     private readonly userProfileService: UserProfileService
-  ) {
-    this.logger.log("UsersController initialized");
-    this.logger.log("Profile endpoint is available at: GET /users/profile");
-  }
+  ) {}
 
-  @Post()
-  @UsePipes(new ValidationPipe())
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
+  @Get("profile")
   @UseGuards(JwtAuthGuard)
-  @Get("me")
-  getCurrentUser(@Req() req: any) {
-    return this.usersService.findOne(req.user.userId);
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get user profile" })
+  @ApiResponse({
+    status: 200,
+    description: "User profile retrieved successfully",
+  })
+  async getProfile(@GetUser("id") userId: string) {
+    return this.userProfileService.getProfile(userId);
+  }
+
+  @Post("profile")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Create user profile" })
+  @ApiResponse({ status: 201, description: "Profile created successfully" })
+  async createProfile(@GetUser("id") userId: string, @Body() profileData: any) {
+    return this.userProfileService.createOrUpdateProfile(userId, profileData);
+  }
+
+  @Put("profile")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Update user profile" })
+  @ApiResponse({ status: 200, description: "Profile updated successfully" })
+  async updateProfile(@GetUser("id") userId: string, @Body() updateData: any) {
+    return this.userProfileService.updateProfile(userId, updateData);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(id);
-  }
-
-  // Profile Management
-
-  @UseGuards(JwtAuthGuard)
-  @Get("profile")
-  async getProfile(@Req() req: any) {
-    this.logger.log("=== GET /users/profile CALLED ===");
-    this.logger.log(`[DEBUG] Getting profile for user: ${req.user.userId}`);
-    this.logger.log(`[DEBUG] User object: ${JSON.stringify(req.user)}`);
-
-    const profile = await this.userProfileService.getProfile(req.user.userId);
-    this.logger.log(`[DEBUG] Profile query result: ${JSON.stringify(profile)}`);
-    this.logger.log(`[DEBUG] Profile found: ${!!profile}`);
-
-    return profile;
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch("profile")
-  @UsePipes(
-    new ValidationPipe({ whitelist: false, forbidNonWhitelisted: false })
-  )
-  updateProfile(
-    @Req() req: any,
-    @Body() updateProfileDto: UpdateUserProfileDto
-  ) {
-    return this.userProfileService.updateProfile(
-      req.user.userId,
-      updateProfileDto
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete("profile")
-  deleteProfile(@Req() req: any) {
-    return this.userProfileService.deleteProfile(req.user.userId);
-  }
-
-  // Onboarding Management
-  @UseGuards(JwtAuthGuard)
-  @Get("onboarding/status")
-  getOnboardingStatus(@Req() req: any) {
-    return this.userProfileService.getOnboardingStatus(req.user.userId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post("onboarding/skip")
-  skipOnboarding(@Req() req: any) {
-    return this.userProfileService.skipOnboarding(req.user.userId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post("financial-data")
-  submitFinancialInfo(
-    @Req() req: any,
-    @Body() financialInfoDto: FinancialInfoDto
-  ) {
-    return this.userProfileService.submitFinancialInfo(
-      req.user.userId,
-      financialInfoDto
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Patch("onboarding/:step")
-  updateOnboardingStep(
-    @Req() req: any,
-    @Param("step") step: string,
-    @Body() onboardingStepDto: OnboardingStepDto
-  ) {
-    if (step !== "profile" && step !== "financial") {
-      throw new Error('Invalid step. Must be "profile" or "financial"');
-    }
-    return this.userProfileService.updateOnboardingStatus(
-      req.user.userId,
-      step as "profile" | "financial",
-      onboardingStepDto.completed
-    );
+  @ApiOperation({ summary: "Get user by ID" })
+  @ApiResponse({ status: 200, description: "User retrieved successfully" })
+  async getUserById(@Param("id") id: string) {
+    return this.usersService.findById(id);
   }
 }

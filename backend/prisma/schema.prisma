@@ -202,6 +202,20 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
+// AI Analytics table to replace MongoDB functionality
+model AIAnalytics {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String?
+  type      String   // 'chat_interaction', 'financial_advice', 'investment_recommendation', etc.
+  action    String   // 'message_sent', 'advice_given', 'recommendation_clicked', etc.
+  data      Json     // flexible data storage
+  metadata  Json?    // additional metadata
+  timestamp DateTime @default(now())
+
+  @@map("ai_analytics")
+}
+
 // @rls:enable
 // @rls:policy("booking_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
 // @rls:policy("booking_consultant_policy", "USING (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))", "WITH CHECK (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))")

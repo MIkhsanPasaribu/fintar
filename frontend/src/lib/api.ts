@@ -128,14 +128,6 @@ export const usersApi = {
 
   // Get current user info
   getCurrentUser: () => apiClient.get("/users/me"),
-
-  // Onboarding API
-  getOnboardingStatus: () => apiClient.get("/users/onboarding/status"),
-
-  skipOnboarding: () => apiClient.post("/users/onboarding/skip"),
-
-  updateOnboardingStep: (step: string, completed: boolean) =>
-    apiClient.patch(`/users/onboarding/${step}`, { completed }),
 };
 
 // Consultants API

@@ -3,12 +3,12 @@ const axios = require("axios");
 async function testGetProfile() {
   try {
     const login = await axios.post("http://localhost:3001/api/v1/auth/login", {
-      email: "fintargemastik@gmail.com",
-      password: "Testing123",
+      email: "test@fintar.com",
+      password: "testpassword123",
     });
 
     const headers = {
-      Authorization: `Bearer ${login.data.access_token}`,
+      Authorization: `Bearer ${login.data.accessToken}`,
     };
 
     const profile = await axios.get(

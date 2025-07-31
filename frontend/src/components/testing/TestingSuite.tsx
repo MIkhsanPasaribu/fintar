@@ -34,7 +34,7 @@ interface TestSuite {
   id: string;
   name: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   tests: TestResult[];
 }
 
@@ -228,11 +228,15 @@ const TestingSuite = () => {
             result = {
               id: testId,
               name: "AI Chat Connection",
-              status: testMessage ? "passed" : "failed",
+              status:
+                testMessage !== undefined && testMessage !== null
+                  ? "passed"
+                  : "failed",
               duration: Date.now() - startTime,
-              details: testMessage
-                ? "AI chat is responding"
-                : "AI chat not responding",
+              details:
+                testMessage !== undefined && testMessage !== null
+                  ? "AI chat is responding"
+                  : "AI chat not responding",
             };
           } catch (error) {
             result = {

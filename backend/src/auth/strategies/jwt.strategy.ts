@@ -3,6 +3,13 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
 
+export interface JwtPayload {
+  email: string;
+  sub: string;
+  iat?: number;
+  exp?: number;
+}
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
@@ -13,22 +20,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: configService.get<string>("JWT_SECRET"),
     });
-
-    this.logger.log(
-      `JWT Strategy initialized with secret: ${!!configService.get<string>("JWT_SECRET")}`
-    );
   }
 
-  async validate(payload: any) {
+  async validate(payload: JwtPayload) {
     this.logger.log(
       `JWT validation called with payload: ${JSON.stringify(payload)}`
     );
 
     const user = {
-      userId: payload.sub || payload.id || payload.userId,
-      username: payload.username,
+      userId: payload.sub,
       email: payload.email,
-      id: payload.sub || payload.id || payload.userId,
+      id: payload.sub, // Alias for backward compatibility
     };
 
     this.logger.log(

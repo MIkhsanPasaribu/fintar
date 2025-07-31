@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   PiggyBank,
@@ -18,8 +18,10 @@ import {
   ChevronLeft,
   ChevronRight,
   TestTube,
+  LogOut,
 } from "lucide-react";
 import NotificationSystem from "./NotificationSystem";
+import { useUser } from "@/hooks/useUser";
 
 interface SidebarProps {
   isCollapsed?: boolean;
@@ -35,6 +37,13 @@ const Sidebar = ({
   onMobileMenuClose,
 }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/auth/login");
+  };
 
   const navigationGroups = [
     {
@@ -282,6 +291,25 @@ const Sidebar = ({
                 </Link>
               );
             })}
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <LogOut
+                className={`h-5 w-5 ${isCollapsed ? "mx-auto" : "mr-3"}`}
+              />
+
+              {!isCollapsed && (
+                <div className="flex-1 min-w-0 text-left">
+                  <span className="font-medium truncate">Logout</span>
+                  <p className="text-xs text-red-500 truncate">
+                    Sign out of your account
+                  </p>
+                </div>
+              )}
+            </button>
           </div>
         </div>
       </motion.aside>
@@ -425,6 +453,23 @@ const Sidebar = ({
                 </Link>
               );
             })}
+
+            {/* Mobile Logout Button */}
+            <button
+              onClick={() => {
+                handleLogout();
+                onMobileMenuClose?.();
+              }}
+              className="group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <LogOut className="h-5 w-5 mr-3" />
+              <div className="flex-1 min-w-0 text-left">
+                <span className="font-medium truncate">Logout</span>
+                <p className="text-xs text-red-500 truncate">
+                  Sign out of your account
+                </p>
+              </div>
+            </button>
           </div>
         </div>
       </motion.aside>

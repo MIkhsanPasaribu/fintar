@@ -1,139 +1,82 @@
+import { ApiProperty } from "@nestjs/swagger";
 import {
-  IsOptional,
-  IsString,
-  IsNumber,
-  IsArray,
-  IsEnum,
   IsDateString,
-  IsBoolean,
-  IsJSON,
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  Min,
+  Max,
+  IsObject,
 } from "class-validator";
-import { Transform } from "class-transformer";
-import { Gender, RiskLevel, MaritalStatus } from "@prisma/client";
 
-export class CreateUserProfileDto {
+export enum Gender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  OTHER = "OTHER",
+}
+
+export enum MaritalStatus {
+  SINGLE = "SINGLE",
+  MARRIED = "MARRIED",
+  DIVORCED = "DIVORCED",
+  WIDOWED = "WIDOWED",
+}
+
+export class UserProfileDto {
+  @ApiProperty({ example: "1990-01-01", required: false })
   @IsOptional()
   @IsDateString()
   dateOfBirth?: string;
 
+  @ApiProperty({ enum: Gender, required: false })
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;
 
+  @ApiProperty({ example: "Software Engineer", required: false })
   @IsOptional()
   @IsString()
   occupation?: string;
 
+  @ApiProperty({ example: "Tech Corp Indonesia", required: false })
   @IsOptional()
   @IsString()
   company?: string;
 
-  // Financial Information
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
-  monthlyIncome?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
-  monthlyExpenses?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
-  currentSavings?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
-  currentDebt?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseFloat(value))
-  emergencyFundAmount?: number;
-
-  // Investment & Risk
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  financialGoals?: string[];
-
-  @IsOptional()
-  @IsEnum(RiskLevel)
-  riskTolerance?: RiskLevel;
-
-  @IsOptional()
-  @IsString()
-  investmentExperience?: string;
-
-  @IsOptional()
-  @IsJSON()
-  currentInvestments?: any;
-
-  // Personal Information
+  @ApiProperty({ enum: MaritalStatus, required: false })
   @IsOptional()
   @IsEnum(MaritalStatus)
   maritalStatus?: MaritalStatus;
 
+  @ApiProperty({ example: 2, required: false })
   @IsOptional()
   @IsNumber()
-  @Transform(({ value }) => parseInt(value))
+  @Min(0)
+  @Max(20)
   dependents?: number;
 
+  @ApiProperty({ example: "Bachelor Degree", required: false })
   @IsOptional()
   @IsString()
   educationLevel?: string;
 
-  // Assets & Liabilities
+  @ApiProperty({
+    example: {
+      street: "Jl. Sudirman No. 1",
+      city: "Jakarta",
+      province: "DKI Jakarta",
+      postalCode: "10110",
+      country: "Indonesia",
+    },
+    required: false,
+  })
   @IsOptional()
-  @IsJSON()
-  assets?: any;
+  @IsObject()
+  address?: Record<string, any>;
 
-  @IsOptional()
-  @IsJSON()
-  liabilities?: any;
-
-  @IsOptional()
-  @IsJSON()
-  insurance?: any;
-
-  // Contact & Address
-  @IsOptional()
-  @IsJSON()
-  address?: any;
-
+  @ApiProperty({ example: "IDR", required: false, default: "IDR" })
   @IsOptional()
   @IsString()
-  phone?: string;
-
-  @IsOptional()
-  @IsString()
-  currency?: string;
-}
-
-export class UpdateUserProfileDto extends CreateUserProfileDto {}
-
-export class OnboardingStatusDto {
-  @IsBoolean()
-  onboardingCompleted: boolean;
-
-  @IsBoolean()
-  profileCompleted: boolean;
-
-  @IsBoolean()
-  financialDataCompleted: boolean;
-
-  @IsBoolean()
-  hasProfile: boolean;
-
-  @IsBoolean()
-  hasFinancialData: boolean;
-}
-
-export class SkipOnboardingDto {
-  @IsOptional()
-  @IsString()
-  reason?: string;
+  currency?: string = "IDR";
 }
