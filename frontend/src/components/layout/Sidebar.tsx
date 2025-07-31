@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
-  PiggyBank,
+  Orbit,
   TrendingUp,
   Sparkles,
   Calculator,
@@ -19,6 +20,7 @@ import {
   ChevronRight,
   TestTube,
   LogOut,
+  Loader2,
 } from "lucide-react";
 import NotificationSystem from "./NotificationSystem";
 import { useUser } from "@/hooks/useUser";
@@ -39,86 +41,106 @@ const Sidebar = ({
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useUser();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    router.push("/auth/login");
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      // Perform logout
+      logout();
+
+      // Small delay for better UX
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // Redirect to login
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if error, still redirect to login
+      router.push("/login");
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const navigationGroups = [
     {
-      title: "Overview",
+      title: "🌌 AI Universe",
       items: [
         {
           label: "Dashboard",
           href: "/dashboard",
           icon: TrendingUp,
-          description: "Financial overview",
+          description: "Overview Finansial Galaksi Anda",
         },
         {
-          label: "AI Co-Pilot",
+          label: "AI Navigator",
           href: "/chat",
           icon: Sparkles,
-          description: "Asisten AI Finansial Cerdas",
-          badge: "AI",
+          description: "Chat dengan AI Keuangan 24/7",
+          badge: "AI ✨",
         },
       ],
     },
     {
-      title: "Financial Tools",
+      title: "🚀 Financial AI Tools",
       items: [
         {
-          label: "Financial Analysis",
+          label: "Analisis AI",
           href: "/financial-analysis",
           icon: TrendingUp,
-          description: "Analisis Finansial AI",
+          description: "Insight Keuangan dengan AI",
           badge: "AI",
         },
         {
-          label: "Budget Tracker",
-          href: "/dashboard/budget",
+          label: "Budget AI",
+          href: "/budget-ai",
           icon: Calculator,
-          description: "Track your expenses",
+          description: "Rekomendasi Budget Cerdas",
+          badge: "AI",
         },
         {
-          label: "Investment",
-          href: "/dashboard/investment",
+          label: "Investment AI",
+          href: "/investment-ai",
           icon: BarChart3,
-          description: "Portfolio management",
+          description: "Strategi Investasi Personal",
+          badge: "AI",
         },
         {
-          label: "Goals",
-          href: "/dashboard/goals",
+          label: "Financial Planning",
+          href: "/financial-planning",
           icon: Target,
-          description: "Financial planning",
+          description: "Rencana Keuangan Jangka Panjang",
+          badge: "AI",
         },
       ],
     },
     {
-      title: "Services",
+      title: "🌟 Services",
       items: [
         {
-          label: "Consultants",
+          label: "Konsultan Ahli",
           href: "/consultants",
           icon: Users,
-          description: "Expert financial advice",
+          description: "Konsultasi dengan Expert Keuangan",
         },
         {
-          label: "Bookings",
+          label: "Jadwal Konsultasi",
           href: "/bookings",
           icon: Calendar,
-          description: "Your appointments",
+          description: "Booking & Appointment",
         },
       ],
     },
     {
-      title: "Learning",
+      title: "📚 Learning",
       items: [
         {
-          label: "Education",
+          label: "Edukasi Keuangan",
           href: "/education",
           icon: BookOpen,
-          description: "Financial literacy",
+          description: "Literasi & Tips Finansial",
         },
         {
           label: "Testing Suite",
@@ -160,7 +182,7 @@ const Sidebar = ({
             {!isCollapsed && (
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl">
-                  <PiggyBank className="h-6 w-6 text-white" />
+                  <Orbit className="h-6 w-6 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                   Fintar
@@ -295,17 +317,38 @@ const Sidebar = ({
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+              disabled={isLoggingOut}
+              className={`group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 ${
+                isLoggingOut
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : "text-red-600 hover:bg-red-50 hover:text-red-700"
+              }`}
             >
-              <LogOut
-                className={`h-5 w-5 ${isCollapsed ? "mx-auto" : "mr-3"}`}
-              />
+              {isLoggingOut ? (
+                <Loader2
+                  className={`h-5 w-5 animate-spin ${
+                    isCollapsed ? "mx-auto" : "mr-3"
+                  }`}
+                />
+              ) : (
+                <LogOut
+                  className={`h-5 w-5 ${isCollapsed ? "mx-auto" : "mr-3"}`}
+                />
+              )}
 
               {!isCollapsed && (
                 <div className="flex-1 min-w-0 text-left">
-                  <span className="font-medium truncate">Logout</span>
-                  <p className="text-xs text-red-500 truncate">
-                    Sign out of your account
+                  <span className="font-medium truncate">
+                    {isLoggingOut ? "Logging out..." : "Logout"}
+                  </span>
+                  <p
+                    className={`text-xs truncate ${
+                      isLoggingOut ? "text-gray-400" : "text-red-500"
+                    }`}
+                  >
+                    {isLoggingOut
+                      ? "Please wait..."
+                      : "Sign out of your account"}
                   </p>
                 </div>
               )}
@@ -325,7 +368,7 @@ const Sidebar = ({
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl">
-              <PiggyBank className="h-6 w-6 text-white" />
+              <Orbit className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               Fintar
@@ -460,13 +503,28 @@ const Sidebar = ({
                 handleLogout();
                 onMobileMenuClose?.();
               }}
-              className="group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+              disabled={isLoggingOut}
+              className={`group flex items-center w-full px-3 py-3 rounded-xl transition-all duration-200 ${
+                isLoggingOut
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : "text-red-600 hover:bg-red-50 hover:text-red-700"
+              }`}
             >
-              <LogOut className="h-5 w-5 mr-3" />
+              {isLoggingOut ? (
+                <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+              ) : (
+                <LogOut className="h-5 w-5 mr-3" />
+              )}
               <div className="flex-1 min-w-0 text-left">
-                <span className="font-medium truncate">Logout</span>
-                <p className="text-xs text-red-500 truncate">
-                  Sign out of your account
+                <span className="font-medium truncate">
+                  {isLoggingOut ? "Logging out..." : "Logout"}
+                </span>
+                <p
+                  className={`text-xs truncate ${
+                    isLoggingOut ? "text-gray-400" : "text-red-500"
+                  }`}
+                >
+                  {isLoggingOut ? "Please wait..." : "Sign out of your account"}
                 </p>
               </div>
             </button>

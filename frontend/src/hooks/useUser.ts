@@ -99,7 +99,12 @@ export const useUser = () => {
   }, []);
 
   const logout = () => {
+    // Clear all auth-related data from localStorage
     localStorage.removeItem("auth_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_data");
+
+    // Reset user state
     setUser(null);
   };
 

@@ -241,7 +241,7 @@ class ApiClient {
   // User endpoints
   async getUserProfile(): Promise<ApiResponse<UserProfile>> {
     try {
-      const response = await this.axiosInstance.get("/users/profile");
+      const response = await this.axiosInstance.get("/api/v1/users/profile");
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to get user profile");
@@ -252,7 +252,10 @@ class ApiClient {
     data: Partial<UserProfile>
   ): Promise<ApiResponse<UserProfile>> {
     try {
-      const response = await this.axiosInstance.put("/users/profile", data);
+      const response = await this.axiosInstance.put(
+        "/api/v1/users/profile",
+        data
+      );
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to update profile");
@@ -310,7 +313,7 @@ class ApiClient {
     metadata?: Record<string, any>;
   }): Promise<ApiResponse<ChatSession>> {
     try {
-      const response = await this.axiosInstance.post("/chat/sessions", data);
+      const response = await this.axiosInstance.post("chat/sessions", data);
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to create chat session");
@@ -319,7 +322,7 @@ class ApiClient {
 
   async getChatSessions(): Promise<ApiResponse<ChatSession[]>> {
     try {
-      const response = await this.axiosInstance.get("/chat/sessions");
+      const response = await this.axiosInstance.get("chat/sessions");
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to get chat sessions");
@@ -329,7 +332,7 @@ class ApiClient {
   async getChatHistory(sessionId: string): Promise<ApiResponse<ChatMessage[]>> {
     try {
       const response = await this.axiosInstance.get(
-        `/chat/sessions/${sessionId}/messages`
+        `chat/sessions/${sessionId}/messages`
       );
       return { data: response.data, success: true };
     } catch (error) {

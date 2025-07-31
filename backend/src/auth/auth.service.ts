@@ -31,11 +31,22 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Generate unique username
+    const baseUsername = email.split("@")[0];
+    let username = baseUsername;
+    let counter = 1;
+
+    // Check if username exists and make it unique
+    while (await this.prisma.user.findUnique({ where: { username } })) {
+      username = `${baseUsername}${counter}`;
+      counter++;
+    }
+
     // Create user and profile
     const user = await this.prisma.user.create({
       data: {
         email,
-        username: email.split("@")[0], // Use email prefix as username
+        username,
         password: hashedPassword,
         role: UserRole.CLIENT,
         profile: {

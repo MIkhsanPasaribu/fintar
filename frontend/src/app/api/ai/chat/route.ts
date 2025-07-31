@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
         userId: chatRequest.userId,
         timestamp: new Date().toISOString(),
         metadata: aiResponse.metadata || {
-          model: "gemini-2.0-flash",
+          model: "fintar-ai",
           tokens: 0,
           responseTime: 0,
         },
@@ -212,7 +212,7 @@ async function getCapabilities() {
       "debt_management",
       "risk_assessment",
     ],
-    models: ["gemini-2.0-flash"],
+    models: ["fintar-ai"],
     languages: ["id", "en"],
     maxTokens: 8192,
     supportedFormats: ["text"],

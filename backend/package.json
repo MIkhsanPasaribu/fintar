@@ -61,6 +61,7 @@
     "mongodb": "^6.18.0",
     "mongoose": "^8.0.3",
     "nestjs": "^0.0.1",
+    "node-fetch": "^3.3.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

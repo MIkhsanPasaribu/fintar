@@ -78,13 +78,20 @@ export class AiChatService {
     } catch (error) {
       this.logger.error(`Failed to process message for user ${userId}:`, error);
 
+      // Check if it's a quota error and provide specific guidance
+      const isQuotaError =
+        error instanceof Error &&
+        (error.message.includes("quota") ||
+          error.message.includes("429") ||
+          error.message.includes("Too Many Requests"));
+
       // Log failed analytics
       const processingTime = Date.now() - startTime;
       await this.chatService.logAIAnalytics({
         userId,
         sessionId,
         type: "chat_interaction",
-        action: "ai_response_failed",
+        action: isQuotaError ? "ai_quota_exceeded" : "ai_response_failed",
         data: {
           aiModel: "gemini-2.0-flash",
           requestData: { message: messageDto.content },
@@ -93,10 +100,19 @@ export class AiChatService {
           tokenUsage: 0,
           success: false,
           error: error instanceof Error ? error.message : "Unknown error",
+          isQuotaError,
         },
       });
 
-      throw new BadRequestException("Failed to process message");
+      if (isQuotaError) {
+        throw new BadRequestException(
+          "AI service is temporarily unavailable due to high demand. Please try again in a few minutes."
+        );
+      } else {
+        throw new BadRequestException(
+          "Failed to process message. Please try again."
+        );
+      }
     }
   }
 

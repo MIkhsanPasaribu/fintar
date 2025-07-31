@@ -4,31 +4,17 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/kartu";
-import { Button } from "@/components/ui/tombol";
-import { Badge } from "@/components/ui/badge";
-import {
-  PiggyBank,
   TrendingUp,
-  Shield,
   Sparkles,
   ArrowRight,
   CheckCircle,
   Star,
-  Users,
   Calculator,
   MessageCircle,
-  Play,
   Zap,
-  Target,
-  Award,
   Globe,
   BarChart3,
-  Wallet,
+  Orbit,
 } from "lucide-react";
 
 export function ModernHomepage() {
@@ -40,29 +26,33 @@ export function ModernHomepage() {
       icon: <Sparkles className="h-8 w-8 text-blue-600" />,
       title: "AI Financial Co-Pilot 24/7",
       description:
-        "Asisten AI yang membantu perencanaan keuangan, budgeting, dan strategi investasi personal dengan analisis mendalam",
+        "Asisten AI cerdas yang siap membantu Anda 24/7 untuk konsultasi keuangan, perencanaan budget, dan strategi investasi dengan teknologi AI terdepan",
       color: "from-blue-500 to-cyan-500",
+      status: "AKTIF ✨",
     },
     {
-      icon: <Calculator className="h-8 w-8 text-emerald-600" />,
-      title: "Smart Budget Tracker",
+      icon: <BarChart3 className="h-8 w-8 text-emerald-600" />,
+      title: "Analisis Keuangan AI",
       description:
-        "Tracking pengeluaran otomatis dengan visualisasi yang mudah dipahami dan rekomendasi penghematan",
+        "Analisis mendalam data keuangan Anda dengan AI untuk memberikan insight dan rekomendasi yang personal dan akurat",
       color: "from-emerald-500 to-teal-500",
+      status: "AKTIF ✨",
+    },
+    {
+      icon: <Calculator className="h-8 w-8 text-purple-600" />,
+      title: "Rekomendasi Budget Cerdas",
+      description:
+        "AI menganalisis pola pengeluaran Anda dan memberikan rekomendasi budget yang optimal untuk mencapai tujuan finansial",
+      color: "from-purple-500 to-pink-500",
+      status: "AKTIF ✨",
     },
     {
       icon: <TrendingUp className="h-8 w-8 text-orange-600" />,
-      title: "Strategi Investasi Personal",
+      title: "Perencanaan Investasi AI",
       description:
-        "Rekomendasi investasi berdasarkan profil risiko dan tujuan finansial Anda dengan analisis AI",
+        "Strategi investasi personal berdasarkan profil risiko, tujuan keuangan, dan analisis pasar real-time dengan bantuan AI",
       color: "from-orange-500 to-red-500",
-    },
-    {
-      icon: <Users className="h-8 w-8 text-purple-600" />,
-      title: "Marketplace Konsultan",
-      description:
-        "Akses ke konsultan keuangan tersertifikasi dengan rating dan ulasan dari pengguna lain",
-      color: "from-purple-500 to-pink-500",
+      status: "AKTIF ✨",
     },
   ];
 
@@ -116,7 +106,7 @@ export function ModernHomepage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl">
-                <PiggyBank className="h-6 w-6 text-white" />
+                <Orbit className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                 Fintar
@@ -177,18 +167,50 @@ export function ModernHomepage() {
                 </div>
                 <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                   <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    Kelola Keuangan
+                    Fintar: Solusi
                   </span>
                   <br />
                   <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    Dengan AI
+                    Finansial AI
                   </span>
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  Fintar: Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM
-                  Berbasis AI. Wujudkan kebebasan finansial dengan perencanaan
-                  cerdas dan konsultasi AI terdepan.
+                  <span className="font-semibold text-blue-700">
+                    Fintar: Solusi Optimalisasi Finansial Pintar Keluarga dan
+                    UMKM Berbasis AI
+                  </span>
+                  <br />
+                  Platform keuangan cerdas dengan AI Assistant 24/7, analisis
+                  finansial mendalam, dan rekomendasi investasi personal yang
+                  akurat.
                 </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                  <div className="flex items-center space-x-3 bg-green-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="text-green-800 font-medium">
+                      AI Chat Assistant Aktif
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3 bg-blue-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-blue-600" />
+                    <span className="text-blue-800 font-medium">
+                      Analisis AI Real-time
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3 bg-purple-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-purple-600" />
+                    <span className="text-purple-800 font-medium">
+                      Budget AI Recommendations
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3 bg-orange-50 p-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-orange-600" />
+                    <span className="text-orange-800 font-medium">
+                      Investment AI Planning
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -196,13 +218,16 @@ export function ModernHomepage() {
                   href="/register"
                   className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 group"
                 >
-                  Mulai Gratis Sekarang
+                  Mulai dengan AI Assistant Gratis
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <button className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-blue-300 hover:text-blue-600 transition-all duration-300">
-                  <Play className="mr-2 h-5 w-5" />
-                  Lihat Demo
-                </button>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-blue-300 text-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-300"
+                >
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Test AI Chat Sekarang
+                </Link>
               </div>
             </motion.div>
 
@@ -213,21 +238,27 @@ export function ModernHomepage() {
               className="relative"
             >
               <div className="relative bg-white rounded-3xl shadow-2xl p-8 border border-gray-200/50">
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-xl text-sm font-medium">
-                  AI Assistant
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-medium">
+                  ✨ AI AKTIF
                 </div>
                 <div className="space-y-6">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
-                    <span className="font-medium text-gray-900">Fintar AI</span>
+                    <span className="font-medium text-gray-900">
+                      Fintar AI Assistant
+                    </span>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-gray-700">
-                      &quot;Berdasarkan analisis pengeluaran Anda, saya
-                      merekomendasikan untuk mengalokasikan 30% untuk investasi
-                      saham dan 20% untuk dana darurat.&quot;
+                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
+                    <p className="text-blue-800 font-medium">
+                      💡 AI Analisis Real-time
+                    </p>
+                    <p className="text-blue-700 mt-2">
+                      &quot;Berdasarkan data keuangan Anda, saya
+                      merekomendasikan alokasi 30% untuk investasi saham blue
+                      chip, 25% untuk obligasi, dan 20% untuk dana darurat.
+                      Proyeksi return: 12-15% per tahun.&quot;
                     </p>
                   </div>
                   <div className="flex justify-end">
@@ -248,11 +279,11 @@ export function ModernHomepage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-4xl font-bold text-gray-900">
-              Fitur Unggulan <span className="text-blue-600">Fintar</span>
+              Fitur AI <span className="text-blue-600">Terdepan</span> ✨
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Kelola keuangan Anda dengan teknologi AI terdepan dan akses ke
-              konsultan ahli
+              Platform Finansial AI pertama di Indonesia yang menggunakan
+              teknologi AI terdepan untuk memberikan analisis keuangan terbaik
             </p>
           </div>
 
@@ -264,8 +295,11 @@ export function ModernHomepage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 relative"
               >
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  {feature.status}
+                </div>
                 <div
                   className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
                 >
@@ -397,7 +431,7 @@ export function ModernHomepage() {
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl">
-                  <PiggyBank className="h-6 w-6 text-white" />
+                  <Orbit className="h-6 w-6 text-white" />
                 </div>
                 <span className="text-2xl font-bold">Fintar</span>
               </div>

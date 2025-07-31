@@ -261,7 +261,7 @@ async function testChatSystem() {
   }
 
   console.log("✅ Chat session created");
-  const sessionId = sessionResult.data.sessionId;
+  const sessionId = sessionResult.data.id;
 
   // Send a test message
   console.log("  📨 Sending test message...");

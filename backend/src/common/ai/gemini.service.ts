@@ -27,6 +27,11 @@ export class GeminiService {
   private genAI: GoogleGenerativeAI;
   private model: any;
   private isAvailable = false;
+  private lastRequestTime = 0;
+  private requestCount = 0;
+  private readonly MIN_DELAY_BETWEEN_REQUESTS = 2000; // 2 seconds
+  private readonly MAX_REQUESTS_PER_MINUTE = 15; // Conservative limit
+  private requestTimes: number[] = [];
 
   constructor(private configService: ConfigService) {
     this.initializeGemini();
@@ -45,7 +50,7 @@ export class GeminiService {
 
       this.genAI = new GoogleGenerativeAI(apiKey);
       this.model = this.genAI.getGenerativeModel({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
       });
       this.isAvailable = true;
       this.logger.log("✅ Gemini AI client initialized");
@@ -56,6 +61,80 @@ export class GeminiService {
 
   isGeminiAvailable(): boolean {
     return this.isAvailable;
+  }
+
+  private async enforceRateLimit(): Promise<void> {
+    const now = Date.now();
+
+    // Remove requests older than 1 minute
+    this.requestTimes = this.requestTimes.filter((time) => now - time < 60000);
+
+    // Check if we've exceeded requests per minute
+    if (this.requestTimes.length >= this.MAX_REQUESTS_PER_MINUTE) {
+      const oldestRequest = this.requestTimes[0];
+      const waitTime = 60000 - (now - oldestRequest);
+      if (waitTime > 0) {
+        this.logger.warn(`⏱️ Rate limit reached, waiting ${waitTime}ms`);
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      }
+    }
+
+    // Ensure minimum delay between requests
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    if (timeSinceLastRequest < this.MIN_DELAY_BETWEEN_REQUESTS) {
+      const delay = this.MIN_DELAY_BETWEEN_REQUESTS - timeSinceLastRequest;
+      this.logger.debug(`⏸️ Enforcing delay of ${delay}ms between requests`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
+    this.requestTimes.push(Date.now());
+    this.lastRequestTime = Date.now();
+  }
+
+  private async callGeminiWithRetry(
+    prompt: string,
+    maxRetries = 2
+  ): Promise<any> {
+    await this.enforceRateLimit();
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        this.logger.debug(
+          `🤖 Calling Gemini API (attempt ${attempt}/${maxRetries})`
+        );
+        const result = await this.model.generateContent(prompt);
+        return result;
+      } catch (error: any) {
+        const isQuotaError =
+          error.message?.includes("429") || error.message?.includes("quota");
+        const isRateLimit = error.message?.includes("Too Many Requests");
+
+        if (isQuotaError || isRateLimit) {
+          this.logger.warn(
+            `⚠️ Quota/Rate limit error on attempt ${attempt}: ${error.message}`
+          );
+
+          if (attempt < maxRetries) {
+            // Extract retry delay from error if available
+            const retryMatch = error.message.match(/retryDelay":"(\d+)s/);
+            const retryDelay = retryMatch
+              ? parseInt(retryMatch[1]) * 1000
+              : 5000;
+
+            this.logger.log(`⏳ Waiting ${retryDelay}ms before retry...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            continue;
+          } else {
+            throw new Error(
+              `API quota exceeded. Please wait before making more requests. Error: ${error.message}`
+            );
+          }
+        } else {
+          // For non-quota errors, throw immediately
+          throw error;
+        }
+      }
+    }
   }
 
   async generateFinancialAdvice(
@@ -81,7 +160,7 @@ export class GeminiService {
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.85, // Default confidence for financial advice
@@ -112,7 +191,7 @@ export class GeminiService {
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.9, // High confidence for budget analysis
@@ -145,7 +224,7 @@ export class GeminiService {
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.8, // Moderate confidence for investment strategy
@@ -171,15 +250,19 @@ export class GeminiService {
     const prompt = this.buildChatPrompt(message, context);
 
     try {
-      const result = await this.model.generateContent(prompt);
+      const result = await this.callGeminiWithRetry(prompt);
       const response = await result.response;
       const text = response.text();
 
       const processingTime = Date.now() - startTime;
 
+      this.logger.log(
+        `✅ Chat message processed successfully in ${processingTime}ms`
+      );
+
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.85,
@@ -305,7 +388,7 @@ Berikan respons yang helpful, accurate, dan sesuai dengan konteks keuangan pengg
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.8,
@@ -336,7 +419,7 @@ Berikan respons yang helpful, accurate, dan sesuai dengan konteks keuangan pengg
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.85,
@@ -365,7 +448,7 @@ Berikan respons yang helpful, accurate, dan sesuai dengan konteks keuangan pengg
 
       return {
         content: text,
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-2.0-flash",
         tokens: this.estimateTokens(prompt + text),
         processingTime,
         confidence: 0.85,

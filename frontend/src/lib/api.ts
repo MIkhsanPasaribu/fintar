@@ -30,7 +30,13 @@ class ApiClient {
     }
 
     try {
-      const response = await fetch(`${this.baseURL}/api/v1${endpoint}`, {
+      console.log(`🌐 API Request: ${endpoint}`, {
+        method: options.method || "GET",
+        headers: defaultHeaders,
+        body: options.body ? JSON.parse(options.body as string) : undefined,
+      });
+
+      const response = await fetch(`${this.baseURL}${endpoint}`, {
         ...options,
         headers: {
           ...defaultHeaders,
@@ -38,15 +44,29 @@ class ApiClient {
         },
       });
 
+      console.log(`📡 API Response: ${endpoint}`, {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+      });
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}`);
+        console.error(`❌ API Error [${endpoint}]:`, {
+          status: response.status,
+          statusText: response.statusText,
+          errorData,
+        });
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
+      console.log(`✅ API Success [${endpoint}]:`, data);
       return data;
     } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error);
+      console.error(`💥 API Error [${endpoint}]:`, error);
       throw error;
     }
   }
@@ -104,30 +124,30 @@ export const authApi = {
 
 // Users API
 export const usersApi = {
-  getProfile: (userId: string) => apiClient.get(`/users/${userId}`),
+  getProfile: (userId: string) => apiClient.get(`/api/v1/users/${userId}`),
 
   updateProfile: (userId: string, profileData: any) =>
-    apiClient.put(`/users/${userId}`, profileData),
+    apiClient.put(`/api/v1/users/${userId}`, profileData),
 
   getUserPreferences: (userId: string) =>
-    apiClient.get(`/users/${userId}/preferences`),
+    apiClient.get(`/api/v1/users/${userId}/preferences`),
 
   updateUserPreferences: (userId: string, preferences: any) =>
-    apiClient.put(`/users/${userId}/preferences`, preferences),
+    apiClient.put(`/api/v1/users/${userId}/preferences`, preferences),
 
   // User Profile API (new endpoints)
   createProfile: (profileData: any) =>
-    apiClient.post("/users/profile", profileData),
+    apiClient.post("/api/v1/users/profile", profileData),
 
-  getUserProfile: () => apiClient.get("/users/profile"),
+  getUserProfile: () => apiClient.get("/api/v1/users/profile"),
 
   updateUserProfile: (profileData: any) =>
-    apiClient.patch("/users/profile", profileData),
+    apiClient.patch("/api/v1/users/profile", profileData),
 
-  deleteUserProfile: () => apiClient.delete("/users/profile"),
+  deleteUserProfile: () => apiClient.delete("/api/v1/users/profile"),
 
   // Get current user info
-  getCurrentUser: () => apiClient.get("/users/me"),
+  getCurrentUser: () => apiClient.get("/api/v1/users/me"),
 };
 
 // Consultants API
@@ -139,56 +159,59 @@ export const consultantApi = {
         if (value) params.append(key, String(value));
       });
     }
-    return apiClient.get(`/consultants?${params.toString()}`);
+    return apiClient.get(`/api/v1/consultants?${params.toString()}`);
   },
 
-  getById: (id: string) => apiClient.get(`/consultants/${id}`),
+  getById: (id: string) => apiClient.get(`/api/v1/consultants/${id}`),
 
   getAvailability: (id: string, date: string) =>
-    apiClient.get(`/consultants/${id}/availability?date=${date}`),
+    apiClient.get(`/api/v1/consultants/${id}/availability?date=${date}`),
 
-  getReviews: (id: string) => apiClient.get(`/consultants/${id}/reviews`),
+  getReviews: (id: string) =>
+    apiClient.get(`/api/v1/consultants/${id}/reviews`),
 };
 
 // Bookings API
 export const bookingApi = {
   getAll: (userId?: string) => {
     const params = userId ? `?userId=${userId}` : "";
-    return apiClient.get(`/bookings${params}`);
+    return apiClient.get(`/api/v1/bookings${params}`);
   },
 
-  getById: (id: string) => apiClient.get(`/bookings/${id}`),
+  getById: (id: string) => apiClient.get(`/api/v1/bookings/${id}`),
 
-  create: (bookingData: any) => apiClient.post("/bookings", bookingData),
+  create: (bookingData: any) => apiClient.post("/api/v1/bookings", bookingData),
 
   update: (id: string, updateData: any) =>
-    apiClient.put(`/bookings/${id}`, updateData),
+    apiClient.put(`/api/v1/bookings/${id}`, updateData),
 
-  cancel: (id: string) => apiClient.put(`/bookings/${id}/cancel`),
+  cancel: (id: string) => apiClient.put(`/api/v1/bookings/${id}/cancel`),
 
   reschedule: (id: string, newDateTime: string) =>
-    apiClient.put(`/bookings/${id}/reschedule`, { scheduledAt: newDateTime }),
+    apiClient.put(`/api/v1/bookings/${id}/reschedule`, {
+      scheduledAt: newDateTime,
+    }),
 };
 
 // Financial API
 export const financialApi = {
   getFinancialData: (userId: string) =>
-    apiClient.get(`/financial/users/${userId}/data`),
+    apiClient.get(`/api/v1/financial/users/${userId}/data`),
 
   addFinancialData: (userId: string, data: any) =>
-    apiClient.post(`/financial/users/${userId}/data`, data),
+    apiClient.post(`/api/v1/financial/users/${userId}/data`, data),
 
   updateFinancialData: (userId: string, dataId: string, data: any) =>
-    apiClient.put(`/financial/users/${userId}/data/${dataId}`, data),
+    apiClient.put(`/api/v1/financial/users/${userId}/data/${dataId}`, data),
 
   deleteFinancialData: (userId: string, dataId: string) =>
-    apiClient.delete(`/financial/users/${userId}/data/${dataId}`),
+    apiClient.delete(`/api/v1/financial/users/${userId}/data/${dataId}`),
 
   getFinancialSummary: (userId: string) =>
-    apiClient.get(`/financial/users/${userId}/summary`),
+    apiClient.get(`/api/v1/financial/users/${userId}/summary`),
 
   generateBudgetPlan: (userId: string, budgetData: any) =>
-    apiClient.post(`/financial/users/${userId}/budget-plan`, budgetData),
+    apiClient.post(`/api/v1/financial/users/${userId}/budget-plan`, budgetData),
 };
 
 // AI Chat API

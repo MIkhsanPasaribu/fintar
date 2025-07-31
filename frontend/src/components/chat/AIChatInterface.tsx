@@ -14,6 +14,9 @@ import {
   AlertCircle,
   RefreshCw,
   Trash2,
+  Orbit,
+  Star,
+  Atom,
 } from "lucide-react";
 import { useAIChat } from "@/hooks/useAIChat";
 
@@ -98,12 +101,12 @@ const AIChatInterface = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white/20 rounded-lg">
-              <Bot className="h-6 w-6" />
+              <Orbit className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Fintar AI Assistant</h2>
+              <h2 className="text-xl font-bold">Fintar AI Navigator</h2>
               <p className="text-blue-100 text-sm">
-                Asisten Keuangan Pintar 24/7
+                Eksplorasi Galaksi Finansial Bersama AI
               </p>
             </div>
           </div>

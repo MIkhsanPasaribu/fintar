@@ -8,7 +8,7 @@ import {
   TrendingUp,
   TrendingDown,
   DollarSign,
-  PiggyBank,
+  Wallet,
   CreditCard,
   Target,
   AlertTriangle,
@@ -165,7 +165,7 @@ export function FinancialOverview({
       case "DEBT":
         return <CreditCard className="h-5 w-5 text-warning" />;
       case "ASSET":
-        return <PiggyBank className="h-5 w-5 text-success" />;
+        return <Wallet className="h-5 w-5 text-success" />;
       case "LIABILITY":
         return <AlertTriangle className="h-5 w-5 text-danger" />;
       default:

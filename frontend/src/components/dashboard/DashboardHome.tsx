@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   TrendingUp,
   Target,
@@ -11,6 +12,13 @@ import {
   Sparkles,
   CreditCard,
   Wallet,
+  MessageCircle,
+  BarChart3,
+  Calculator,
+  Zap,
+  Orbit,
+  Atom,
+  Star,
 } from "lucide-react";
 import { Line, Doughnut } from "react-chartjs-2";
 import {
@@ -304,6 +312,92 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-8">
+      {/* AI Features Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl p-6"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="bg-white/20 p-3 rounded-full">
+              <Star className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">
+                Fintar AI Universe Siap Membantu! ✨
+              </h2>
+              <p className="text-blue-100">
+                Eksplorasi Galaksi Finansial dengan AI Cerdas: Chat 24/7,
+                Analisis Real-time, dan Navigasi Investasi Personal
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              href="/chat"
+              className="bg-white text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center gap-2 text-sm"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Chat AI
+            </Link>
+            <Link
+              href="/financial-analysis"
+              className="bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg hover:bg-white/20 transition-colors font-medium flex items-center gap-2 text-sm"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Analisis
+            </Link>
+            <Link
+              href="/budget-ai"
+              className="bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg hover:bg-white/20 transition-colors font-medium flex items-center gap-2 text-sm"
+            >
+              <Calculator className="h-4 w-4" />
+              Budget AI
+            </Link>
+            <Link
+              href="/investment-ai"
+              className="bg-white/10 border border-white/20 text-white px-3 py-2 rounded-lg hover:bg-white/20 transition-colors font-medium flex items-center gap-2 text-sm"
+            >
+              <TrendingUp className="h-4 w-4" />
+              Investment
+            </Link>
+          </div>
+        </div>
+
+        {/* AI Status Indicators - Cosmic Theme */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="flex items-center space-x-2">
+              <Orbit className="h-4 w-4 text-green-300" />
+              <span className="text-sm font-medium">AI Navigator</span>
+            </div>
+            <p className="text-xs text-blue-100 mt-1">Aktif Orbit 24/7</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="flex items-center space-x-2">
+              <Atom className="h-4 w-4 text-green-300" />
+              <span className="text-sm font-medium">Quantum Analysis</span>
+            </div>
+            <p className="text-xs text-blue-100 mt-1">Real-time Data</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="flex items-center space-x-2">
+              <Star className="h-4 w-4 text-green-300" />
+              <span className="text-sm font-medium">Stellar Budgeting</span>
+            </div>
+            <p className="text-xs text-blue-100 mt-1">Cosmic Recommendations</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+            <div className="flex items-center space-x-2">
+              <Zap className="h-4 w-4 text-green-300" />
+              <span className="text-sm font-medium">Galaxy Investments</span>
+            </div>
+            <p className="text-xs text-blue-100 mt-1">Universal Planning</p>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Profile Completion Banner */}
       {!profileStatus.completed && (
         <motion.div
@@ -325,12 +419,12 @@ const DashboardHome = () => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => (window.location.href = "/profile")}
+            <Link
+              href="/profile"
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Lengkapi Sekarang
-            </button>
+            </Link>
           </div>
           <div className="mt-3 bg-blue-200 rounded-full h-2">
             <div

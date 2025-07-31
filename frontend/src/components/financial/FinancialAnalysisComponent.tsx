@@ -90,20 +90,24 @@ const FinancialAnalysisComponent = () => {
     setError(null);
 
     try {
-      const request: FinancialAnalysisRequest = {
-        userId: user.id,
-        sessionId: AIService.generateSessionId(),
-        financialData,
-        analysisType,
-      };
+      // Call the new AI insights endpoint
+      const result = await AIService.analyzeFinancialData();
 
-      const result = await AIService.analyzeFinancialData(request);
-      setAnalysis(result);
-      setActiveTab("analysis");
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Terjadi kesalahan dalam analisis"
-      );
+      if (result.success) {
+        setAnalysis({
+          insights: result.insights,
+          data: result.data,
+          metadata: result.metadata,
+          analysisType,
+          timestamp: new Date().toISOString(),
+        });
+        setActiveTab("analysis");
+      } else {
+        setError(result.error || "Gagal menganalisis data keuangan");
+      }
+    } catch (error) {
+      console.error("Financial analysis error:", error);
+      setError("Terjadi kesalahan saat menganalisis data keuangan");
     } finally {
       setIsLoading(false);
     }

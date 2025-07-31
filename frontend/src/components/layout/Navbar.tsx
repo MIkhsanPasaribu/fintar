@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  PiggyBank,
+  Orbit,
   Menu,
   X,
   User,
@@ -19,7 +19,6 @@ import {
   Users,
   BookOpen,
   Calendar,
-  MessageCircle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -104,7 +103,7 @@ const Navbar = () => {
               className="flex items-center space-x-2 group"
             >
               <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl group-hover:scale-105 transition-transform">
-                <PiggyBank className="h-6 w-6 text-white" />
+                <Orbit className="h-6 w-6 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                 Fintar
@@ -254,7 +253,7 @@ const Navbar = () => {
                 {/* Logo */}
                 <div className="flex items-center space-x-3 mb-8">
                   <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl">
-                    <PiggyBank className="h-6 w-6 text-white" />
+                    <Orbit className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                     Fintar
