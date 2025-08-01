@@ -138,8 +138,9 @@ export class AIService {
       console.log("Response data:", response.data);
 
       // Backend returns the session object directly, not wrapped in 'data'
-      const responseData = response.data || response;
-      const sessionId = responseData?.id || responseData?.sessionId;
+      const responseData = response.data as any;
+      const sessionId =
+        (responseData as any)?.id || (responseData as any)?.sessionId;
 
       if (!sessionId) {
         console.error("Session creation response missing ID:", {
@@ -197,19 +198,20 @@ export class AIService {
       );
 
       // Backend response format: { userMessage: {...}, aiMessage: {...}, sessionInfo: {...} }
-      const responseData = response.data || response;
+      const responseData = response.data as any;
       console.log("Message response received:", responseData);
 
       return {
         response:
-          responseData?.aiMessage?.content ||
-          responseData?.message ||
+          (responseData as any)?.aiMessage?.content ||
+          (responseData as any)?.message ||
           "AI berhasil memproses pesan Anda",
         messageType: "text",
         sessionId: currentSessionId,
         timestamp:
-          responseData?.aiMessage?.timestamp || new Date().toISOString(),
-        suggestions: responseData?.suggestions || [
+          (responseData as any)?.aiMessage?.timestamp ||
+          new Date().toISOString(),
+        suggestions: (responseData as any)?.suggestions || [
           "Berikan analisis keuangan saya",
           "Rekomendasi investasi",
           "Buat rencana budget",
@@ -221,7 +223,9 @@ export class AIService {
 
       // Check for specific error types
       const errorMessage =
-        error?.response?.data?.message || error?.message || "Unknown error";
+        (error as any)?.response?.data?.message ||
+        (error as any)?.message ||
+        "Unknown error";
       const isQuotaError =
         errorMessage.includes("quota") ||
         errorMessage.includes("temporarily unavailable") ||
@@ -240,17 +244,30 @@ export class AIService {
   /**
    * Get financial analysis from AI
    */
-  static async analyzeFinancialData(
-    request?: FinancialAnalysisRequest
-  ): Promise<any> {
+  static async analyzeFinancialData(): Promise<any> {
     try {
-      const response = await apiClient.get("/financial/ai-insights");
+      const response = await apiClient.get("/api/v1/financial/ai-insights");
+
+      console.log("🔍 Raw API Response:", response.data);
+
+      // The backend returns { success, insights, aiMetadata }
+      const responseData = response.data as any;
+
+      // Backend response structure: { success, insights, aiMetadata }
+      // Frontend expects: { success, insights: "text", data: { insights: {...} }, metadata: {...} }
+
+      // Extract actual insights data
+      const insightsData = responseData?.insights || {};
+      const metadata = responseData?.aiMetadata || {};
+
       return {
-        success: true,
+        success: responseData?.success || true,
         insights:
-          response.data?.insights || "Analisis keuangan berhasil diproses",
-        data: response.data,
-        metadata: response.data?.aiMetadata || {},
+          insightsData?.summary || "Analisis keuangan berhasil diproses",
+        data: {
+          insights: insightsData, // Put full insights structure in data.insights
+        },
+        metadata: metadata,
       };
     } catch (error) {
       console.error("Financial Analysis API Error:", error);
@@ -258,6 +275,15 @@ export class AIService {
         success: false,
         error: "Gagal menganalisis data keuangan. Silakan coba lagi.",
         insights: "Maaf, analisis tidak dapat diproses saat ini.",
+        data: {
+          insights: {
+            summary: "Analisis tidak tersedia saat ini",
+            opportunities: [],
+            riskAssessment: { level: "unknown", recommendations: [] },
+            financialMetrics: null,
+          },
+        },
+        metadata: {},
       };
     }
   }
@@ -265,19 +291,18 @@ export class AIService {
   /**
    * Get AI financial planning advice
    */
-  static async getFinancialAdvice(
-    request?: FinancialAdviceRequest
-  ): Promise<any> {
+  static async getFinancialAdvice(): Promise<any> {
     try {
-      const response = await apiClient.post("/financial/ai-plan", {
-        duration: request?.timeframe || "1_year",
-        goals: request?.goals || ["saving", "investment"],
+      const response = await apiClient.post("/api/v1/financial/ai-plan", {
+        duration: "1_year",
+        goals: ["saving", "investment"],
       });
       return {
         success: true,
-        plan: response.data?.plan || "Rencana keuangan berhasil dibuat",
+        plan:
+          (response.data as any)?.plan || "Rencana keuangan berhasil dibuat",
         data: response.data,
-        metadata: response.data?.aiMetadata || {},
+        metadata: (response.data as any)?.aiMetadata || {},
       };
     } catch (error) {
       console.error("Financial Advice API Error:", error);
@@ -292,20 +317,18 @@ export class AIService {
   /**
    * Generate AI budget recommendations
    */
-  static async getBudgetRecommendations(
-    request?: BudgetRecommendationRequest
-  ): Promise<any> {
+  static async getBudgetRecommendations(): Promise<any> {
     try {
       const response = await apiClient.get(
-        "/financial/budget/ai-recommendations"
+        "/api/v1/financial/budget/ai-recommendations"
       );
       return {
         success: true,
         recommendations:
-          response.data?.recommendations ||
+          (response.data as any)?.recommendations ||
           "Rekomendasi budget berhasil dibuat",
         data: response.data,
-        metadata: response.data?.aiMetadata || {},
+        metadata: (response.data as any)?.aiMetadata || {},
       };
     } catch (error) {
       console.error("Budget Recommendations API Error:", error);
@@ -321,9 +344,7 @@ export class AIService {
   /**
    * Get AI investment recommendations
    */
-  static async analyzePortfolio(
-    request?: PortfolioAnalysisRequest
-  ): Promise<any> {
+  static async analyzePortfolio(): Promise<any> {
     try {
       const response = await apiClient.get(
         "/financial/investment/recommendations"
@@ -331,10 +352,10 @@ export class AIService {
       return {
         success: true,
         recommendations:
-          response.data?.recommendations ||
+          (response.data as any)?.recommendations ||
           "Rekomendasi investasi berhasil dibuat",
         data: response.data,
-        metadata: response.data?.aiMetadata || {},
+        metadata: (response.data as any)?.aiMetadata || {},
       };
     } catch (error) {
       console.error("Portfolio Analysis API Error:", error);
@@ -350,9 +371,7 @@ export class AIService {
   /**
    * Assess investment risk
    */
-  static async assessInvestmentRisk(
-    request?: RiskAssessmentRequest
-  ): Promise<any> {
+  static async assessInvestmentRisk(): Promise<any> {
     try {
       const response = await apiClient.get(
         "/financial/investment/recommendations"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -11,8 +12,11 @@ import {
   AlertTriangle,
   CheckCircle,
   Loader2,
+  Sparkles,
+  Target,
+  Atom,
 } from "lucide-react";
-import AIService, { FinancialAnalysisRequest } from "@/lib/ai-api";
+import AIService from "@/lib/ai-api";
 import { useUser } from "@/hooks/useUser";
 
 interface FinancialData {
@@ -43,11 +47,28 @@ interface FinancialData {
 const FinancialAnalysisComponent = () => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<Record<string, unknown> | null>(
-    null
-  );
+  const [analysis, setAnalysis] = useState<Record<string, any> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"input" | "analysis">("input");
+
+  // Helper function to safely get nested data
+  const getInsightsData = (analysis: any) => {
+    // Try multiple paths to find the insights data
+    return (
+      analysis?.data?.insights || // Backend response wrapped in data
+      analysis?.insights || // Direct insights
+      {}
+    );
+  };
+
+  const getMetadata = (analysis: any) => {
+    return (
+      analysis?.metadata ||
+      analysis?.data?.aiMetadata ||
+      analysis?.aiMetadata ||
+      {}
+    );
+  };
 
   const [financialData, setFinancialData] = useState<FinancialData>({
     income: 8500000,
@@ -93,14 +114,24 @@ const FinancialAnalysisComponent = () => {
       // Call the new AI insights endpoint
       const result = await AIService.analyzeFinancialData();
 
+      // Debug: Log the complete result structure
+      console.log("🔍 Full API Result:", result);
+      console.log("🔍 Result Success:", result.success);
+      console.log("🔍 Result Insights:", result.insights);
+      console.log("🔍 Result Data:", result.data);
+      console.log("🔍 Result Metadata:", result.metadata);
+
       if (result.success) {
-        setAnalysis({
+        const analysisData = {
           insights: result.insights,
           data: result.data,
           metadata: result.metadata,
           analysisType,
           timestamp: new Date().toISOString(),
-        });
+        };
+
+        console.log("🔍 Setting Analysis Data:", analysisData);
+        setAnalysis(analysisData);
         setActiveTab("analysis");
       } else {
         setError(result.error || "Gagal menganalisis data keuangan");
@@ -426,6 +457,23 @@ const FinancialAnalysisComponent = () => {
 
               {analysis ? (
                 <div className="space-y-6">
+                  {/* Debug information in development */}
+                  {process.env.NODE_ENV === "development" && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="text-sm font-mono">
+                        <div>🔍 Debug Info:</div>
+                        <div>
+                          - analysis.insights type: {typeof analysis.insights}
+                        </div>
+                        <div>- analysis.data exists: {!!analysis.data}</div>
+                        <div>
+                          - getInsightsData result:{" "}
+                          {JSON.stringify(getInsightsData(analysis), null, 2)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex">
                       <CheckCircle className="h-5 w-5 text-green-400" />
@@ -440,16 +488,152 @@ const FinancialAnalysisComponent = () => {
                     </div>
                   </div>
 
+                  {/* AI Source Indicator */}
+                  {getMetadata(analysis)?.source && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center">
+                        <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
+                        <span className="text-sm text-blue-700">
+                          {getMetadata(analysis).source ===
+                          "built-in-financial-rules"
+                            ? "Analisis menggunakan sistem rules-based (AI eksternal sedang maintenance)"
+                            : `Analisis menggunakan AI model: ${
+                                getMetadata(analysis).model
+                              }`}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Financial Summary */}
                   <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Hasil Analisis AI
+                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                      <BarChart3 className="h-5 w-5 mr-2 text-blue-500" />
+                      Ringkasan Kondisi Keuangan
                     </h3>
-                    <div className="prose max-w-none">
-                      <pre className="whitespace-pre-wrap text-sm bg-gray-50 p-4 rounded-lg">
-                        {JSON.stringify(analysis, null, 2)}
-                      </pre>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      {getInsightsData(analysis)?.summary ||
+                        analysis.insights ||
+                        "Tidak ada ringkasan analisis tersedia"}
+                    </p>
+
+                    {/* Financial Metrics */}
+                    {getInsightsData(analysis)?.financialMetrics && (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                          <div className="text-sm text-green-600 font-medium">
+                            Tingkat Menabung
+                          </div>
+                          <div className="text-2xl font-bold text-green-800">
+                            {
+                              getInsightsData(analysis).financialMetrics
+                                .savingsRate
+                            }
+                            %
+                          </div>
+                        </div>
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                          <div className="text-sm text-yellow-600 font-medium">
+                            Rasio Utang vs Pendapatan
+                          </div>
+                          <div className="text-2xl font-bold text-yellow-800">
+                            {
+                              getInsightsData(analysis).financialMetrics
+                                .debtToIncomeRatio
+                            }
+                            %
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="text-sm text-blue-600 font-medium">
+                            Dana Darurat (Bulan)
+                          </div>
+                          <div className="text-2xl font-bold text-blue-800">
+                            {
+                              getInsightsData(analysis).financialMetrics
+                                .emergencyFundMonths
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Opportunities/Recommendations */}
+                  <div className="bg-white border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                      <Target className="h-5 w-5 mr-2 text-green-500" />
+                      Rekomendasi Perbaikan
+                    </h3>
+                    <div className="space-y-3">
+                      {(getInsightsData(analysis)?.opportunities || []).map(
+                        (opportunity: string, index: number) => (
+                          <div key={index} className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                            <p className="text-gray-700">{opportunity}</p>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
+
+                  {/* Risk Assessment */}
+                  {getInsightsData(analysis)?.riskAssessment && (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6">
+                      <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                        <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
+                        Penilaian Risiko
+                      </h3>
+                      <div className="flex items-center mb-4">
+                        <span className="text-sm text-gray-600 mr-3">
+                          Tingkat Risiko:
+                        </span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            getInsightsData(analysis).riskAssessment.level ===
+                            "low"
+                              ? "bg-green-100 text-green-800"
+                              : getInsightsData(analysis).riskAssessment
+                                  .level === "moderate"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {getInsightsData(analysis).riskAssessment.level ===
+                          "low"
+                            ? "Rendah"
+                            : getInsightsData(analysis).riskAssessment.level ===
+                              "moderate"
+                            ? "Sedang"
+                            : "Tinggi"}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {(
+                          getInsightsData(analysis).riskAssessment
+                            .recommendations || []
+                        ).map((rec: string, index: number) => (
+                          <div key={index} className="flex items-start">
+                            <Atom className="h-4 w-4 text-orange-500 mt-1 mr-2 flex-shrink-0" />
+                            <p className="text-sm text-gray-700">{rec}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Debug Information (for development) */}
+                  {process.env.NODE_ENV === "development" && (
+                    <details className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <summary className="text-sm font-medium text-gray-700 cursor-pointer">
+                        Debug Data (Development Only)
+                      </summary>
+                      <pre className="whitespace-pre-wrap text-xs bg-white p-4 rounded mt-2 overflow-auto">
+                        {JSON.stringify(analysis, null, 2)}
+                      </pre>
+                    </details>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-12">

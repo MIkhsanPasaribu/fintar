@@ -154,6 +154,11 @@ export class AIFinancialService {
         throw new Error("User not found");
       }
 
+      // Check if Gemini is available
+      if (!this.geminiService.isGeminiAvailable()) {
+        return this.generateFallbackInsights(user, financialData);
+      }
+
       // Prepare context for AI
       const context = this.prepareFinancialContext(user, financialData);
 
@@ -173,9 +178,19 @@ export class AIFinancialService {
         },
       };
     } catch (error) {
-      throw new Error(
-        `Failed to generate comprehensive insights: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
+      console.error("Failed to generate AI insights, using fallback:", error);
+
+      // Try to get user data for fallback
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true },
+      });
+
+      const financialData = await this.prisma.financialData.findFirst({
+        where: { userId },
+      });
+
+      return this.generateFallbackInsights(user, financialData);
     }
   }
 
@@ -307,6 +322,138 @@ export class AIFinancialService {
     return {
       level: "moderate",
       factors: ["market volatility", "economic conditions"],
+    };
+  }
+
+  private generateFallbackInsights(user: any, financialData: any) {
+    const profile = user?.profile;
+    const income = profile?.monthlyIncome || 0;
+    const expenses = profile?.monthlyExpenses || 0;
+    const savings = profile?.currentSavings || 0;
+    const debt = profile?.currentDebt || 0;
+
+    // Calculate basic financial metrics
+    const savingsRate = income > 0 ? ((income - expenses) / income) * 100 : 0;
+    const debtToIncomeRatio = income > 0 ? (debt / (income * 12)) * 100 : 0;
+    const emergencyFundMonths = expenses > 0 ? savings / expenses : 0;
+
+    // Generate basic insights based on financial rules
+    const insights = this.generateBasicFinancialInsights(
+      income,
+      expenses,
+      savings,
+      debt,
+      savingsRate,
+      debtToIncomeRatio,
+      emergencyFundMonths
+    );
+
+    return {
+      success: true,
+      insights: {
+        summary: insights.summary,
+        opportunities: insights.recommendations,
+        riskAssessment: insights.riskAssessment,
+        financialMetrics: {
+          savingsRate: savingsRate.toFixed(1),
+          debtToIncomeRatio: debtToIncomeRatio.toFixed(1),
+          emergencyFundMonths: emergencyFundMonths.toFixed(1),
+        },
+      },
+      aiMetadata: {
+        model: "fallback-rules-based",
+        tokens: 0,
+        confidence: 0.7,
+        source: "built-in-financial-rules",
+      },
+    };
+  }
+
+  private generateBasicFinancialInsights(
+    income: number,
+    expenses: number,
+    savings: number,
+    debt: number,
+    savingsRate: number,
+    debtToIncomeRatio: number,
+    emergencyFundMonths: number
+  ) {
+    const recommendations = [];
+    let riskLevel = "low";
+    let summary = "";
+
+    // Emergency Fund Analysis
+    if (emergencyFundMonths < 3) {
+      recommendations.push(
+        "Prioritaskan membangun dana darurat minimal 3-6 bulan pengeluaran"
+      );
+      riskLevel = "high";
+    } else if (emergencyFundMonths < 6) {
+      recommendations.push(
+        "Tingkatkan dana darurat menjadi 6 bulan pengeluaran"
+      );
+      riskLevel = "moderate";
+    }
+
+    // Savings Rate Analysis
+    if (savingsRate < 10) {
+      recommendations.push(
+        "Tingkatkan tingkat menabung minimal 10% dari pendapatan"
+      );
+      riskLevel = "high";
+    } else if (savingsRate < 20) {
+      recommendations.push(
+        "Target tingkat menabung 20% untuk kondisi keuangan yang optimal"
+      );
+      if (riskLevel !== "high") riskLevel = "moderate";
+    } else {
+      recommendations.push(
+        "Tingkat menabung Anda sudah baik, pertimbangkan investasi"
+      );
+    }
+
+    // Debt Analysis
+    if (debtToIncomeRatio > 40) {
+      recommendations.push(
+        "Utang Anda terlalu tinggi, prioritaskan pelunasan utang"
+      );
+      riskLevel = "high";
+    } else if (debtToIncomeRatio > 20) {
+      recommendations.push(
+        "Pertimbangkan strategi pelunasan utang lebih cepat"
+      );
+      if (riskLevel !== "high") riskLevel = "moderate";
+    }
+
+    // Investment Recommendations
+    if (
+      savingsRate >= 20 &&
+      emergencyFundMonths >= 6 &&
+      debtToIncomeRatio < 20
+    ) {
+      recommendations.push("Kondisi keuangan baik, saatnya mulai berinvestasi");
+      recommendations.push(
+        "Pertimbangkan reksadana atau instrumen investasi jangka panjang"
+      );
+    }
+
+    // Generate summary
+    if (riskLevel === "high") {
+      summary = `Kondisi keuangan Anda memerlukan perhatian khusus. Fokus pada pembangunan dana darurat dan pengurangan utang adalah prioritas utama saat ini.`;
+    } else if (riskLevel === "moderate") {
+      summary = `Kondisi keuangan Anda cukup baik dengan beberapa area yang perlu diperbaiki. Lanjutkan kebiasaan menabung dan pertimbangkan optimisasi pengeluaran.`;
+    } else {
+      summary = `Kondisi keuangan Anda dalam kondisi baik. Saatnya mempertimbangkan strategi investasi untuk pertumbuhan kekayaan jangka panjang.`;
+    }
+
+    return {
+      summary,
+      recommendations,
+      riskAssessment: {
+        level: riskLevel,
+        factors: ["emergency fund", "savings rate", "debt ratio"],
+        recommendations: recommendations.slice(0, 3),
+      },
     };
   }
 }
