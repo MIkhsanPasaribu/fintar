@@ -23,6 +23,8 @@ model User {
   phone       String?
   avatar      String?
   isVerified  Boolean  @default(false)
+  emailVerificationToken String?
+  emailVerificationExpiry DateTime?
   role        UserRole @default(CLIENT)
   password    String
   supabaseId  String?  @unique

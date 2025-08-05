@@ -2,6 +2,8 @@ import {
   Controller,
   Post,
   Body,
+  Get,
+  Query,
   UnauthorizedException,
   HttpException,
   HttpStatus,
@@ -67,6 +69,44 @@ export class AuthController {
     } catch (error) {
       this.logger.error("Logout failed:", error);
       return { message: "Logged out successfully" };
+    }
+  }
+
+  @Get("verify-email")
+  async verifyEmail(@Query("token") token: string) {
+    try {
+      if (!token) {
+        throw new HttpException("Token verifikasi diperlukan", HttpStatus.BAD_REQUEST);
+      }
+      
+      return await this.authService.verifyEmail(token);
+    } catch (error) {
+      this.logger.error("Email verification failed:", error);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException("Verifikasi email gagal", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post("resend-verification")
+  async resendVerification(@Body("email") email: string) {
+    try {
+      if (!email) {
+        throw new HttpException("Email diperlukan", HttpStatus.BAD_REQUEST);
+      }
+      
+      return await this.authService.resendVerification(email);
+    } catch (error) {
+      this.logger.error("Resend verification failed:", error);
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException("Gagal mengirim ulang verifikasi", HttpStatus.BAD_REQUEST);
     }
   }
 }

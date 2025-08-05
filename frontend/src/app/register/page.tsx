@@ -200,19 +200,32 @@ export default function RegisterPage() {
         throw new Error(data.error || "Registration failed");
       }
 
-      addToast({
-        title: "Registrasi Berhasil",
-        description: "Akun Anda telah berhasil dibuat",
-        variant: "default",
-      });
+      // Check if email verification is required
+      if (data.requiresVerification) {
+        addToast({
+          title: "Registrasi Berhasil",
+          description: data.message || "Silakan periksa email Anda untuk verifikasi akun.",
+          variant: "default",
+        });
 
-      // Store token if provided
-      if (data.token) {
-        localStorage.setItem("auth_token", data.token);
+        // Redirect to a verification notice page
+        router.push(`/verification-notice?email=${encodeURIComponent(formData.email)}`);
+      } else {
+        addToast({
+          title: "Registrasi Berhasil",
+          description: "Akun Anda telah berhasil dibuat",
+          variant: "default",
+        });
+
+        // Store token if provided
+        if (data.token) {
+          localStorage.setItem("auth_token", data.token);
+          localStorage.setItem("user_data", JSON.stringify(data.user));
+        }
+
+        // Redirect to dashboard
+        router.push("/dashboard");
       }
-
-      // Redirect to dashboard
-      router.push("/dashboard");
     } catch (error) {
       console.error("Registration error:", error);
       setErrors({

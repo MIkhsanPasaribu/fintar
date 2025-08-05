@@ -2,10 +2,13 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  BadRequestException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
+import * as crypto from "crypto";
 import { PrismaService } from "../common/prisma/prisma.service";
+import { EmailService } from "../common/email/email.service";
 import { RegisterDto, LoginDto } from "./dto";
 import { UserRole } from "@prisma/client";
 
@@ -13,7 +16,8 @@ import { UserRole } from "@prisma/client";
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private emailService: EmailService
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -42,13 +46,22 @@ export class AuthService {
       counter++;
     }
 
+    // Generate email verification token
+    const emailVerificationToken = crypto.randomBytes(32).toString("hex");
+    const emailVerificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
     // Create user and profile
     const user = await this.prisma.user.create({
       data: {
         email,
         username,
+        firstName,
+        lastName,
         password: hashedPassword,
         role: UserRole.CLIENT,
+        isVerified: false,
+        emailVerificationToken,
+        emailVerificationExpiry,
         profile: {
           create: {},
         },
@@ -58,17 +71,29 @@ export class AuthService {
       },
     });
 
-    const tokens = await this.generateTokens(user.id, user.email);
+    // Send verification email
+    try {
+      await this.emailService.sendVerificationEmail(
+        email,
+        firstName || username,
+        emailVerificationToken
+      );
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+      // Continue with registration even if email fails
+    }
 
+    // Don't generate tokens yet - user needs to verify email first
     return {
+      message: "Registrasi berhasil. Silakan periksa email Anda untuk verifikasi akun.",
       user: {
         id: user.id,
         email: user.email,
         username: user.username,
         role: user.role,
-        profile: user.profile,
+        isVerified: user.isVerified,
       },
-      ...tokens,
+      requiresVerification: true,
     };
   }
 
@@ -90,6 +115,11 @@ export class AuthService {
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         throw new UnauthorizedException("Invalid credentials");
+      }
+
+      // Check if email is verified
+      if (!user.isVerified) {
+        throw new UnauthorizedException("Email belum diverifikasi. Silakan periksa email Anda.");
       }
 
       const tokens = await this.generateTokens(user.id, user.email);
@@ -183,5 +213,94 @@ export class AuthService {
         profile: true,
       },
     });
+  }
+
+  async verifyEmail(token: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        emailVerificationToken: token,
+        emailVerificationExpiry: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException("Token verifikasi email tidak valid atau sudah kedaluwarsa");
+    }
+
+    // Update user to verified and clear token
+    const updatedUser = await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpiry: null,
+      },
+      include: {
+        profile: true,
+      },
+    });
+
+    // Generate tokens for the newly verified user
+    const tokens = await this.generateTokens(updatedUser.id, updatedUser.email);
+
+    return {
+      message: "Email berhasil diverifikasi. Selamat datang di Fintar!",
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        username: updatedUser.username,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        role: updatedUser.role,
+        isVerified: updatedUser.isVerified,
+        profile: updatedUser.profile,
+      },
+      ...tokens,
+    };
+  }
+
+  async resendVerification(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException("User tidak ditemukan");
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException("Email sudah diverifikasi");
+    }
+
+    // Generate new token
+    const emailVerificationToken = crypto.randomBytes(32).toString("hex");
+    const emailVerificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Update user with new token
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerificationToken,
+        emailVerificationExpiry,
+      },
+    });
+
+    // Send new verification email
+    try {
+      await this.emailService.sendVerificationEmail(
+        email,
+        user.firstName || user.username,
+        emailVerificationToken
+      );
+
+      return {
+        message: "Email verifikasi baru telah dikirim. Silakan periksa email Anda.",
+      };
+    } catch (error) {
+      console.error("Failed to resend verification email:", error);
+      throw new BadRequestException("Gagal mengirim email verifikasi");
+    }
   }
 }

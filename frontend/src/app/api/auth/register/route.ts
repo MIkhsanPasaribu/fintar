@@ -67,10 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Combine firstName and lastName into name for backend
-      const name = `${firstName} ${lastName}`.trim();
-
-      // Call backend API
+      // Call backend API with correct field names
       const response = await fetch(`${BACKEND_URL}/api/v1/auth/register`, {
         method: "POST",
         headers: {
@@ -78,7 +75,8 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           email,
-          name,
+          firstName,
+          lastName,
           password,
         }),
       });
@@ -90,17 +88,8 @@ export async function POST(request: NextRequest) {
 
       const userData = await response.json();
 
-      return NextResponse.json({
-        message: "Registrasi berhasil",
-        user: {
-          id: userData.id,
-          email: userData.email,
-          username: userData.username,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-        },
-        token: userData.token,
-      });
+      // Return the response from backend (including requiresVerification flag)
+      return NextResponse.json(userData);
     } catch (backendError) {
       console.error("Backend registration error:", backendError);
 
