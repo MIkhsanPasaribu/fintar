@@ -20,32 +20,68 @@ export class EmailService {
   }
 
   private initializeTransporter() {
-    const emailConfig = {
-      host: this.configService.get<string>('SMTP_HOST', 'smtp.gmail.com'),
-      port: this.configService.get<number>('SMTP_PORT', 587),
-      secure: this.configService.get<boolean>('SMTP_SECURE', false), // true for 465, false for other ports
+    const smtpHost = this.configService.get<string>('SMTP_HOST', 'smtp.gmail.com');
+    const smtpPort = this.configService.get<number>('SMTP_PORT', 587);
+    const smtpUser = this.configService.get<string>('SMTP_USER');
+    const smtpPass = this.configService.get<string>('SMTP_PASS');
+
+    if (!smtpUser || !smtpPass) {
+      this.logger.warn('⚠️ SMTP credentials not configured. Email service will not work.');
+      return;
+    }
+
+    const emailConfig: any = {
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465, // true for 465, false for other ports like 587
       auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
+        user: smtpUser,
+        pass: smtpPass,
       },
     };
 
-    if (!emailConfig.auth.user || !emailConfig.auth.pass) {
-      this.logger.warn('⚠️ SMTP credentials not configured. Email service will not work.');
-      return;
+    // Add TLS configuration for Gmail and other providers
+    if (smtpPort === 587) {
+      emailConfig.tls = {
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false,
+        secureProtocol: 'TLSv1_2_method',
+      };
+    }
+
+    // Additional configuration for Gmail specifically
+    if (smtpHost.includes('gmail.com')) {
+      emailConfig.service = 'gmail';
+      emailConfig.tls = {
+        rejectUnauthorized: false,
+      };
     }
 
     try {
       this.transporter = nodemailer.createTransport(emailConfig);
       this.logger.log('✅ Email service initialized successfully');
+      
+      // Verify the connection configuration
+      this.verifyConnection();
     } catch (error) {
       this.logger.error('❌ Failed to initialize email service:', error);
     }
   }
 
+  private async verifyConnection() {
+    if (!this.transporter) return;
+
+    try {
+      await this.transporter.verify();
+      this.logger.log('✅ SMTP connection verified successfully');
+    } catch (error) {
+      this.logger.error('❌ SMTP connection verification failed:', error);
+    }
+  }
+
   async sendEmail(options: EmailOptions): Promise<boolean> {
     if (!this.transporter) {
-      this.logger.error('Email transporter not initialized');
+      this.logger.error('❌ Email transporter not initialized - SMTP credentials missing');
       return false;
     }
 
@@ -58,11 +94,23 @@ export class EmailService {
         html: options.html,
       };
 
+      this.logger.log(`📧 Attempting to send email to ${options.to}`);
       const result = await this.transporter.sendMail(mailOptions);
-      this.logger.log(`✅ Email sent successfully to ${options.to}`);
+      this.logger.log(`✅ Email sent successfully to ${options.to} (Message ID: ${result.messageId})`);
       return true;
     } catch (error) {
       this.logger.error(`❌ Failed to send email to ${options.to}:`, error);
+      
+      // Provide more specific error messages
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('wrong version number')) {
+        this.logger.error('💡 SSL/TLS Configuration Error: Try updating SMTP settings or checking Gmail App Password');
+      } else if (errorMessage.includes('Authentication failed')) {
+        this.logger.error('💡 Authentication Error: Check SMTP_USER and SMTP_PASS credentials');
+      } else if (errorMessage.includes('ECONNREFUSED')) {
+        this.logger.error('💡 Connection Error: Check SMTP_HOST and SMTP_PORT settings');
+      }
+      
       return false;
     }
   }
