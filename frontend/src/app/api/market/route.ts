@@ -580,7 +580,15 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "all";
 
-    const response: any = {
+    interface ApiResponse {
+      lastUpdate: string;
+      source: string;
+      errors: string[];
+      stocks?: unknown[];
+      indices?: unknown[];
+    }
+
+    const response: ApiResponse = {
       lastUpdate: new Date().toISOString(),
       source: "yahoo_finance",
       errors: [],

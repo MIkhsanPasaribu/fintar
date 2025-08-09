@@ -8,6 +8,8 @@ import {
   Min,
   Max,
   IsObject,
+  IsArray,
+  IsEmail,
 } from "class-validator";
 
 export enum Gender {
@@ -23,7 +25,29 @@ export enum MaritalStatus {
   WIDOWED = "WIDOWED",
 }
 
+export enum RiskTolerance {
+  CONSERVATIVE = "CONSERVATIVE",
+  MODERATE = "MODERATE",
+  AGGRESSIVE = "AGGRESSIVE",
+}
+
 export class UserProfileDto {
+  // Allow these fields but ignore them in processing (frontend compatibility)
+  @ApiProperty({ example: "user_123", required: false })
+  @IsOptional()
+  @IsString()
+  id?: string;
+
+  @ApiProperty({ example: "user@example.com", required: false })
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @ApiProperty({ example: "username", required: false })
+  @IsOptional()
+  @IsString()
+  username?: string;
+
   // User-specific fields (stored in User table)
   @ApiProperty({ example: "John", required: false })
   @IsOptional()
@@ -82,6 +106,68 @@ export class UserProfileDto {
   @IsOptional()
   @IsString()
   educationLevel?: string;
+
+  // Financial fields
+  @ApiProperty({ example: 10000000, required: false })
+  @IsOptional()
+  @IsNumber()
+  monthlyIncome?: number;
+
+  @ApiProperty({ example: 7000000, required: false })
+  @IsOptional()
+  @IsNumber()
+  monthlyExpenses?: number;
+
+  @ApiProperty({ example: 50000000, required: false })
+  @IsOptional()
+  @IsNumber()
+  currentSavings?: number;
+
+  @ApiProperty({ example: 5000000, required: false })
+  @IsOptional()
+  @IsNumber()
+  currentDebt?: number;
+
+  @ApiProperty({ example: 15000000, required: false })
+  @IsOptional()
+  @IsNumber()
+  emergencyFundAmount?: number;
+
+  @ApiProperty({ enum: RiskTolerance, required: false })
+  @IsOptional()
+  @IsEnum(RiskTolerance)
+  riskTolerance?: RiskTolerance;
+
+  @ApiProperty({ example: ["Emergency Fund", "Buy House"], required: false })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  financialGoals?: string[];
+
+  @ApiProperty({ example: "Beginner", required: false })
+  @IsOptional()
+  @IsString()
+  investmentExperience?: string;
+
+  @ApiProperty({ example: {}, required: false })
+  @IsOptional()
+  @IsObject()
+  currentInvestments?: Record<string, any>;
+
+  @ApiProperty({ example: {}, required: false })
+  @IsOptional()
+  @IsObject()
+  assets?: Record<string, any>;
+
+  @ApiProperty({ example: {}, required: false })
+  @IsOptional()
+  @IsObject()
+  liabilities?: Record<string, any>;
+
+  @ApiProperty({ example: {}, required: false })
+  @IsOptional()
+  @IsObject()
+  insurance?: Record<string, any>;
 
   @ApiProperty({
     example: {
