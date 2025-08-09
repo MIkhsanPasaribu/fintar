@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, CheckCircle, RefreshCw, ArrowRight } from "lucide-react";
 
-export default function VerificationNoticePage() {
+function VerificationNoticeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
@@ -23,7 +23,9 @@ export default function VerificationNoticePage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/auth/resend-verification`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+        }/api/v1/auth/resend-verification`,
         {
           method: "POST",
           headers: {
@@ -58,7 +60,9 @@ export default function VerificationNoticePage() {
           {/* Logo */}
           <div className="mb-8">
             <div className="text-3xl font-bold text-primary mb-2">FINTAR</div>
-            <p className="text-text-metadata text-sm">Verifikasi Email Diperlukan</p>
+            <p className="text-text-metadata text-sm">
+              Verifikasi Email Diperlukan
+            </p>
           </div>
 
           {/* Mail Icon */}
@@ -73,33 +77,36 @@ export default function VerificationNoticePage() {
             <h1 className="text-2xl font-bold text-text-body mb-4">
               Periksa Email Anda
             </h1>
-            
+
             <div className="text-text-subtitle text-base leading-relaxed space-y-3">
-              <p>
-                Kami telah mengirimkan link verifikasi ke email Anda:
-              </p>
-              
+              <p>Kami telah mengirimkan link verifikasi ke email Anda:</p>
+
               {email && (
                 <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">
                   <p className="font-medium text-primary break-all">{email}</p>
                 </div>
               )}
-              
+
               <p>
-                Klik link dalam email tersebut untuk mengaktifkan akun Anda dan mulai menggunakan Fintar.
+                Klik link dalam email tersebut untuk mengaktifkan akun Anda dan
+                mulai menggunakan Fintar.
               </p>
             </div>
           </div>
 
           {/* Status Message */}
           {message && (
-            <div className={`mb-6 p-4 rounded-lg border ${
-              messageType === "success" 
-                ? "bg-success-50 border-success-200 text-success-700"
-                : "bg-danger-50 border-danger-200 text-danger-700"
-            }`}>
+            <div
+              className={`mb-6 p-4 rounded-lg border ${
+                messageType === "success"
+                  ? "bg-success-50 border-success-200 text-success-700"
+                  : "bg-danger-50 border-danger-200 text-danger-700"
+              }`}
+            >
               <div className="flex items-center">
-                {messageType === "success" && <CheckCircle className="w-5 h-5 mr-2" />}
+                {messageType === "success" && (
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                )}
                 <p className="text-sm">{message}</p>
               </div>
             </div>
@@ -149,17 +156,17 @@ export default function VerificationNoticePage() {
             <p className="text-text-metadata text-sm mb-4">
               Masih mengalami kesulitan?
             </p>
-            
+
             <div className="space-y-2">
-              <Link 
-                href="/contact" 
+              <Link
+                href="/contact"
                 className="text-primary hover:text-primary-600 text-sm font-medium"
               >
                 Hubungi Support
               </Link>
               <span className="text-text-metadata text-sm mx-2">•</span>
-              <Link 
-                href="/help/verification" 
+              <Link
+                href="/help/verification"
                 className="text-primary hover:text-primary-600 text-sm font-medium"
               >
                 Panduan Verifikasi
@@ -169,5 +176,13 @@ export default function VerificationNoticePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerificationNoticePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerificationNoticeContent />
+    </Suspense>
   );
 }

@@ -19,8 +19,17 @@ import { useUser } from "@/hooks/useUser";
 interface FinancialPlan {
   success: boolean;
   plan?: string;
-  data?: unknown;
-  metadata?: unknown;
+  data?: {
+    short_term?: string[];
+    medium_term?: string[];
+    long_term?: string[];
+    emergency_fund?: string;
+    investment_strategy?: string[];
+  };
+  metadata?: {
+    timestamp?: string;
+    user_profile?: string;
+  };
   error?: string;
 }
 

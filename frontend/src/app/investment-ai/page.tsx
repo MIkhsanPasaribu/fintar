@@ -246,8 +246,8 @@ const InvestmentAIPage = () => {
                     Siap untuk Analisis Portfolio
                   </h3>
                   <p className="text-gray-500">
-                    Klik tombol "Analisis Investasi dengan AI" untuk mendapatkan
-                    strategi investasi yang personal
+                    Klik tombol &quot;Analisis Investasi dengan AI&quot; untuk
+                    mendapatkan strategi investasi yang personal
                   </p>
                 </div>
               </div>

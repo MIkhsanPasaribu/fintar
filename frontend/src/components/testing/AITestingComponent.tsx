@@ -88,24 +88,7 @@ const AITestingComponent = () => {
           if (!user)
             return { success: false, message: "User not authenticated" };
           try {
-            const response = await AIService.analyzeFinancialData({
-              userId: user.id,
-              sessionId: AIService.generateSessionId(),
-              financialData: {
-                income: 8500000,
-                expenses: {
-                  housing: 3500000,
-                  food: 1500000,
-                  transportation: 800000,
-                  utilities: 500000,
-                  entertainment: 600000,
-                  healthcare: 300000,
-                  other: 500000,
-                },
-                savings: 800000,
-              },
-              analysisType: "budget",
-            });
+            const response = await AIService.analyzeFinancialData();
             return {
               success: !!response,
               message: "Financial analysis completed successfully",
@@ -122,17 +105,7 @@ const AITestingComponent = () => {
           if (!user)
             return { success: false, message: "User not authenticated" };
           try {
-            const response = await AIService.getFinancialAdvice({
-              userId: user.id,
-              sessionId: AIService.generateSessionId(),
-              question: "Bagaimana cara mengoptimalkan budget bulanan saya?",
-              userProfile: {
-                age: 28,
-                income: 8500000,
-                riskTolerance: "medium",
-                financialGoals: ["Emergency Fund", "Investment"],
-              },
-            });
+            const response = await AIService.getFinancialAdvice();
             return {
               success: !!response,
               message: "Financial advice generated successfully",

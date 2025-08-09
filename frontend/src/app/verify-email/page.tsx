@@ -1,18 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, Loader2, Mail } from "lucide-react";
 
-export default function VerifyEmailPage() {
+interface UserData {
+  email: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  id?: string;
+  role?: string;
+  isVerified?: boolean;
+}
+
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
   const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -27,7 +39,9 @@ export default function VerifyEmailPage() {
   const verifyEmail = async (verificationToken: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/auth/verify-email?token=${verificationToken}`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+        }/api/v1/auth/verify-email?token=${verificationToken}`,
         {
           method: "GET",
           headers: {
@@ -69,7 +83,9 @@ export default function VerifyEmailPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/v1/auth/resend-verification`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+        }/api/v1/auth/resend-verification`,
         {
           method: "POST",
           headers: {
@@ -122,7 +138,7 @@ export default function VerifyEmailPage() {
               {status === "success" && "Email Berhasil Diverifikasi!"}
               {status === "error" && "Verifikasi Gagal"}
             </h1>
-            
+
             <p className="text-text-subtitle text-base leading-relaxed">
               {message}
             </p>
@@ -130,7 +146,8 @@ export default function VerifyEmailPage() {
             {status === "success" && userData && (
               <div className="mt-4 p-4 bg-success-50 border border-success-200 rounded-lg">
                 <p className="text-success-700 text-sm">
-                  Selamat datang, <strong>{userData.firstName || userData.username}</strong>!
+                  Selamat datang,{" "}
+                  <strong>{userData.firstName || userData.username}</strong>!
                   <br />
                   Anda akan diarahkan ke dashboard dalam beberapa detik...
                 </p>
@@ -160,7 +177,7 @@ export default function VerifyEmailPage() {
                     Kirim Ulang Email Verifikasi
                   </button>
                 )}
-                
+
                 <Link
                   href="/login"
                   className="w-full bg-neutral-200 text-text-body py-3 px-6 rounded-lg font-medium hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-300/50 focus:ring-offset-2 transition-all duration-200 inline-block"
@@ -181,7 +198,10 @@ export default function VerifyEmailPage() {
           <div className="mt-8 pt-6 border-t border-neutral-200">
             <p className="text-text-metadata text-sm">
               Butuh bantuan?{" "}
-              <Link href="/contact" className="text-primary hover:text-primary-600">
+              <Link
+                href="/contact"
+                className="text-primary hover:text-primary-600"
+              >
                 Hubungi Support
               </Link>
             </p>
@@ -189,5 +209,13 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

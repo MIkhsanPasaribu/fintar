@@ -261,7 +261,7 @@ const TestingSuite = () => {
               },
               analysisType: "budget" as const,
             };
-            const analysis = await AIService.analyzeFinancialData(mockData);
+            const analysis = await AIService.analyzeFinancialData();
             result = {
               id: testId,
               name: "Financial Analysis API",
