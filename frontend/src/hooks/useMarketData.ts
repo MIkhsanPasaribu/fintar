@@ -58,9 +58,8 @@ export const useMarketData = () => {
       setLoading(true);
       setError(null);
 
-      // Use our API route instead of direct Yahoo Finance calls
-      // Temporarily use mock=true to test formatting, change to mock=false for real data
-      const response = await fetch("/api/market?type=all&mock=true", {
+      // Always use real Yahoo Finance data - no mock parameter
+      const response = await fetch("/api/market?type=all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
