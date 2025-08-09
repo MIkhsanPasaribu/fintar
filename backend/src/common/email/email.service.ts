@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
-import { Transporter } from 'nodemailer';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import * as nodemailer from "nodemailer";
+import { Transporter } from "nodemailer";
 
 export interface EmailOptions {
   to: string;
@@ -20,38 +20,78 @@ export class EmailService {
   }
 
   private initializeTransporter() {
+    const smtpHost = this.configService.get<string>(
+      "SMTP_HOST",
+      "smtp.gmail.com"
+    );
+    const smtpPort = this.configService.get<number>("SMTP_PORT", 587);
+    const smtpUser = this.configService.get<string>("SMTP_USER");
+    const smtpPass = this.configService.get<string>("SMTP_PASS");
+
+    if (!smtpUser || !smtpPass) {
+      this.logger.warn(
+        "⚠️ SMTP credentials not configured. Email service will not work."
+      );
+      return;
+    }
+
+    // Gmail-specific configuration
     const emailConfig = {
-      host: this.configService.get<string>('SMTP_HOST', 'smtp.gmail.com'),
-      port: this.configService.get<number>('SMTP_PORT', 587),
-      secure: this.configService.get<boolean>('SMTP_SECURE', false), // true for 465, false for other ports
+      host: smtpHost,
+      port: smtpPort,
+      secure: false, // false for 587, true for 465
       auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      tls: {
+        // Do not fail on invalid certs for development
+        rejectUnauthorized: this.configService.get<boolean>(
+          "SMTP_TLS_REJECT_UNAUTHORIZED",
+          false
+        ),
       },
     };
 
-    if (!emailConfig.auth.user || !emailConfig.auth.pass) {
-      this.logger.warn('⚠️ SMTP credentials not configured. Email service will not work.');
-      return;
+    // Add specific Gmail configuration if using Gmail
+    if (smtpHost.includes("gmail")) {
+      emailConfig.tls = {
+        rejectUnauthorized: false,
+        // Note: ciphers option removed due to TypeScript incompatibility
+        // Gmail should work fine with default TLS settings
+      };
     }
 
     try {
       this.transporter = nodemailer.createTransport(emailConfig);
-      this.logger.log('✅ Email service initialized successfully');
+
+      // Verify the connection
+      this.transporter.verify((error, success) => {
+        if (error) {
+          this.logger.error(
+            "❌ SMTP connection verification failed:",
+            error.message
+          );
+        } else {
+          this.logger.log("✅ SMTP connection verified successfully");
+        }
+      });
+
+      this.logger.log("✅ Email service initialized successfully");
     } catch (error) {
-      this.logger.error('❌ Failed to initialize email service:', error);
+      this.logger.error("❌ Failed to initialize email service:", error);
     }
   }
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
     if (!this.transporter) {
-      this.logger.error('Email transporter not initialized');
+      this.logger.error("Email transporter not initialized");
       return false;
     }
 
     try {
       const mailOptions = {
-        from: `"Fintar" <${this.configService.get<string>('SMTP_FROM', this.configService.get<string>('SMTP_USER'))}>`,
+        from: `"Fintar" <${this.configService.get<string>("SMTP_FROM", this.configService.get<string>("SMTP_USER"))}>`,
         to: options.to,
         subject: options.subject,
         text: options.text,
@@ -67,21 +107,34 @@ export class EmailService {
     }
   }
 
-  async sendVerificationEmail(email: string, firstName: string, verificationToken: string): Promise<boolean> {
-    const verificationUrl = `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/verify-email?token=${verificationToken}`;
+  async sendVerificationEmail(
+    email: string,
+    firstName: string,
+    verificationToken: string
+  ): Promise<boolean> {
+    const verificationUrl = `${this.configService.get<string>("FRONTEND_URL", "http://localhost:3000")}/verify-email?token=${verificationToken}`;
 
-    const htmlContent = this.getVerificationEmailTemplate(firstName, verificationUrl);
-    const textContent = this.getVerificationEmailText(firstName, verificationUrl);
+    const htmlContent = this.getVerificationEmailTemplate(
+      firstName,
+      verificationUrl
+    );
+    const textContent = this.getVerificationEmailText(
+      firstName,
+      verificationUrl
+    );
 
     return this.sendEmail({
       to: email,
-      subject: 'Verifikasi Email Anda - Fintar',
+      subject: "Verifikasi Email Anda - Fintar",
       html: htmlContent,
       text: textContent,
     });
   }
 
-  private getVerificationEmailTemplate(firstName: string, verificationUrl: string): string {
+  private getVerificationEmailTemplate(
+    firstName: string,
+    verificationUrl: string
+  ): string {
     return `
     <!DOCTYPE html>
     <html lang="id">
@@ -147,7 +200,10 @@ export class EmailService {
     `;
   }
 
-  private getVerificationEmailText(firstName: string, verificationUrl: string): string {
+  private getVerificationEmailText(
+    firstName: string,
+    verificationUrl: string
+  ): string {
     return `
 Halo ${firstName}!
 
@@ -167,8 +223,12 @@ Tim Fintar
     `;
   }
 
-  async sendPasswordResetEmail(email: string, firstName: string, resetToken: string): Promise<boolean> {
-    const resetUrl = `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/reset-password?token=${resetToken}`;
+  async sendPasswordResetEmail(
+    email: string,
+    firstName: string,
+    resetToken: string
+  ): Promise<boolean> {
+    const resetUrl = `${this.configService.get<string>("FRONTEND_URL", "http://localhost:3000")}/reset-password?token=${resetToken}`;
 
     const htmlContent = `
     <!DOCTYPE html>
@@ -243,7 +303,7 @@ Tim Fintar
 
     return this.sendEmail({
       to: email,
-      subject: 'Reset Password - Fintar',
+      subject: "Reset Password - Fintar",
       html: htmlContent,
       text: textContent,
     });
