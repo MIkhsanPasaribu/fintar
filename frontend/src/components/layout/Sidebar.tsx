@@ -21,6 +21,7 @@ import {
   TestTube,
   LogOut,
   Loader2,
+  LineChart,
 } from "lucide-react";
 import NotificationSystem from "./NotificationSystem";
 import { useUser } from "@/hooks/useUser";
@@ -130,6 +131,13 @@ const Sidebar = ({
           href: "/bookings",
           icon: Calendar,
           description: "Booking & Appointment",
+        },
+        {
+          label: "Pemantauan Harga Pasar",
+          href: "/market-monitoring",
+          icon: LineChart,
+          description: "Monitoring Saham & Crypto Real-time",
+          badge: "Live",
         },
       ],
     },
