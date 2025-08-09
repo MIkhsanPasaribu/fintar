@@ -345,7 +345,15 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type") || "all";
     const useMock = searchParams.get("mock") === "true";
 
-    const response: any = {
+    interface ApiResponse {
+      lastUpdate: string;
+      source: string;
+      errors: string[];
+      stocks?: unknown[];
+      indices?: unknown[];
+    }
+
+    const response: ApiResponse = {
       lastUpdate: new Date().toISOString(),
       source: useMock ? "mock_data" : "yahoo_finance",
       errors: [],

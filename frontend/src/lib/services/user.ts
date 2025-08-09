@@ -1,21 +1,5 @@
 import { usersApi } from "../api";
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  avatar?: string;
-  occupation?: string;
-  company?: string;
-  monthlyIncome?: number;
-  monthlyExpenses?: number;
-  currentSavings?: number;
-  riskTolerance?: string;
-  financialGoals?: string[];
-}
+import { UserProfile } from "../../types";
 
 export const userService = {
   async getProfile(): Promise<UserProfile> {
@@ -25,6 +9,16 @@ export const userService = {
 
   async updateProfile(data: Partial<UserProfile>): Promise<UserProfile> {
     const response = await usersApi.updateUserProfile(data);
+    return response.data as UserProfile;
+  },
+
+  async updateProfileFull(data: Partial<UserProfile>): Promise<UserProfile> {
+    const response = await usersApi.updateUserProfileFull(data);
+    return response.data as UserProfile;
+  },
+
+  async createProfile(data: Partial<UserProfile>): Promise<UserProfile> {
+    const response = await usersApi.createProfile(data);
     return response.data as UserProfile;
   },
 

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   UseGuards,
   Param,
@@ -17,6 +18,7 @@ import { UsersService } from "./users.service";
 import { UserProfileService } from "./user-profile.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { GetUser } from "../auth/decorators/get-user.decorator";
+import { UserProfileDto } from "./dto/user-profile-complete.dto";
 
 @ApiTags("users")
 @Controller("users")
@@ -43,7 +45,10 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create user profile" })
   @ApiResponse({ status: 201, description: "Profile created successfully" })
-  async createProfile(@GetUser("id") userId: string, @Body() profileData: any) {
+  async createProfile(
+    @GetUser("id") userId: string,
+    @Body() profileData: UserProfileDto
+  ) {
     return this.userProfileService.createOrUpdateProfile(userId, profileData);
   }
 
@@ -52,7 +57,22 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update user profile" })
   @ApiResponse({ status: 200, description: "Profile updated successfully" })
-  async updateProfile(@GetUser("id") userId: string, @Body() updateData: any) {
+  async updateProfile(
+    @GetUser("id") userId: string,
+    @Body() updateData: UserProfileDto
+  ) {
+    return this.userProfileService.updateProfile(userId, updateData);
+  }
+
+  @Patch("profile")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Partially update user profile" })
+  @ApiResponse({ status: 200, description: "Profile updated successfully" })
+  async patchProfile(
+    @GetUser("id") userId: string,
+    @Body() updateData: Partial<UserProfileDto>
+  ) {
     return this.userProfileService.updateProfile(userId, updateData);
   }
 

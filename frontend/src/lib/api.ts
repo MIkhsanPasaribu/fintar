@@ -135,7 +135,7 @@ export const usersApi = {
   updateUserPreferences: (userId: string, preferences: any) =>
     apiClient.put(`/api/v1/users/${userId}/preferences`, preferences),
 
-  // User Profile API (new endpoints)
+  // User Profile API (updated endpoints)
   createProfile: (profileData: any) =>
     apiClient.post("/api/v1/users/profile", profileData),
 
@@ -143,6 +143,9 @@ export const usersApi = {
 
   updateUserProfile: (profileData: any) =>
     apiClient.patch("/api/v1/users/profile", profileData),
+
+  updateUserProfileFull: (profileData: any) =>
+    apiClient.put("/api/v1/users/profile", profileData),
 
   deleteUserProfile: () => apiClient.delete("/api/v1/users/profile"),
 
