@@ -61,26 +61,6 @@ export default function MarketMonitoringPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Real Data Indicator */}
-            <div className="flex items-center gap-2 px-3 py-2 bg-success-50 border border-success-200 rounded-lg">
-              <Wifi className="w-4 h-4 text-success-600" />
-              <span className="text-sm font-medium text-success-700">
-                Data Real Yahoo Finance
-              </span>
-            </div>
-
-            {/* Refresh Button */}
-            <Button
-              onClick={handleRefresh}
-              disabled={refreshing || loading}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-              />
-              {refreshing ? "Memperbarui..." : "Refresh"}
-            </Button>
           </div>
         </div>
 

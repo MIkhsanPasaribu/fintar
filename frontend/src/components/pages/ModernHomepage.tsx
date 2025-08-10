@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -15,11 +16,14 @@ import {
   Globe,
   BarChart3,
   Orbit,
+  Menu,
+  X,
 } from "lucide-react";
 
 export function ModernHomepage() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const features = [
     {
@@ -105,13 +109,16 @@ export function ModernHomepage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl">
-                <Orbit className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                Fintar
-              </span>
+              <Image
+                src="/Fintarlogo.png"
+                alt="Fintar Logo"
+                width={100}
+                height={70}
+                className="object-contain"
+              />
             </div>
+
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <a
                 href="#features"
@@ -144,8 +151,73 @@ export function ModernHomepage() {
                 Daftar Gratis
               </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden bg-white border-t border-gray-200"
+            >
+              <div className="px-4 py-6 space-y-4">
+                <a
+                  href="#features"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  Fitur
+                </a>
+                <a
+                  href="#pricing"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  Harga
+                </a>
+                <a
+                  href="#testimonials"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  Testimoni
+                </a>
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block w-full text-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300"
+                >
+                  Daftar Gratis
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}

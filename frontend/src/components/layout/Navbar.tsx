@@ -100,14 +100,16 @@ const Navbar = () => {
             {/* Logo */}
             <Link
               href="/dashboard"
-              className="flex items-center space-x-2 group"
             >
-              <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl group-hover:scale-105 transition-transform">
-                <Orbit className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Fintar
-              </span>
+                <div className="flex items-center space-x-2">
+                  <Image
+                    src="/Fintarlogo.png"
+                    alt="Fintar Logo"
+                    width={100}
+                    height={70}
+                    className="object-contain"
+                  />
+                </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -252,12 +254,15 @@ const Navbar = () => {
               <div className="p-6">
                 {/* Logo */}
                 <div className="flex items-center space-x-3 mb-8">
-                  <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl">
-                    <Orbit className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                    Fintar
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <Image
+                    src="/Fintarlogo.png"
+                    alt="Fintar Logo"
+                    width={100}
+                    height={70}
+                    className="object-contain"
+                  />
+                </div>
                 </div>
 
                 {/* User Info */}

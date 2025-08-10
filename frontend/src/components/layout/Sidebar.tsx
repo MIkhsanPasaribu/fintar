@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -189,12 +190,15 @@ const Sidebar = ({
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl">
-                  <Orbit className="h-6 w-6 text-white" />
+                <div className="flex items-center space-x-2">
+                  <Image
+                    src="/Fintarlogo.png"
+                    alt="Fintar Logo"
+                    width={100}
+                    height={70}
+                    className="object-contain"
+                  />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                  Fintar
-                </span>
               </div>
             )}
 
@@ -375,12 +379,15 @@ const Sidebar = ({
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl">
-              <Orbit className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              Fintar
-            </span>
+                <div className="flex items-center space-x-2">
+                  <Image
+                    src="/Fintarlogo.png"
+                    alt="Fintar Logo"
+                    width={100}
+                    height={70}
+                    className="object-contain"
+                  />
+                </div>
           </div>
           <button
             onClick={onMobileMenuClose}
