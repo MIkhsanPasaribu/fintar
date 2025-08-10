@@ -346,9 +346,9 @@ class ApiClient {
   ): Promise<ApiResponse> {
     try {
       const response = await this.axiosInstance.post(
-        `/chat/ai/${sessionId}/message`,
+        `chat/sessions/${sessionId}/messages`,
         {
-          content,
+          content
         }
       );
       return { data: response.data, success: true };

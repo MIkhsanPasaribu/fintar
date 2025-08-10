@@ -16,14 +16,19 @@ export const useAIChat = (initialSessionId?: string) => {
         try {
           setIsLoading(true);
           setError(null);
-          console.log("Initializing session for user:", user.id);
+          console.log("🔄 Initializing session for user:", user.id);
           const newSessionId = await AIService.createChatSession(user.id);
           setSessionId(newSessionId);
-          console.log("Session initialized:", newSessionId);
+          console.log("✅ Session initialized:", newSessionId);
         } catch (error) {
-          console.error("Error creating session:", error);
-          setError("Failed to create chat session. Please refresh the page.");
-          // Don't set fallback session, let user refresh instead
+          console.error("❌ Error creating session:", error);
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to create chat session";
+          setError(
+            `Failed to create chat session: ${errorMessage}. Please refresh the page.`
+          );
         } finally {
           setIsLoading(false);
         }
