@@ -392,7 +392,7 @@ const DashboardHome = () => {
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
             <div className="flex items-center space-x-2">
               <Orbit className="h-4 w-4 text-green-300" />
-              <span className="text-sm font-medium">AI Navigator</span>
+              <span className="text-sm font-medium">AI Copilot</span>
             </div>
             <p className="text-xs text-blue-100 mt-1">Aktif Orbit 24/7</p>
           </div>

@@ -77,7 +77,7 @@ const Sidebar = ({
           description: "Overview Finansial Galaksi Anda",
         },
         {
-          label: "AI Navigator",
+          label: "AI Copilot",
           href: "/chat",
           icon: Sparkles,
           description: "Chat dengan AI Keuangan 24/7",
@@ -379,15 +379,15 @@ const Sidebar = ({
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <Image
-                    src="/Fintarlogo.png"
-                    alt="Fintar Logo"
-                    width={100}
-                    height={70}
-                    className="object-contain"
-                  />
-                </div>
+            <div className="flex items-center space-x-2">
+              <Image
+                src="/Fintarlogo.png"
+                alt="Fintar Logo"
+                width={100}
+                height={70}
+                className="object-contain"
+              />
+            </div>
           </div>
           <button
             onClick={onMobileMenuClose}
