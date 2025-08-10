@@ -348,7 +348,7 @@ class ApiClient {
       const response = await this.axiosInstance.post(
         `chat/sessions/${sessionId}/messages`,
         {
-          content
+          content,
         }
       );
       return { data: response.data, success: true };

@@ -108,13 +108,15 @@ export class GeminiService {
         const isQuotaError =
           error.message?.includes("429") || error.message?.includes("quota");
         const isRateLimit = error.message?.includes("Too Many Requests");
-        const isNetworkError = 
-          error.message?.includes("fetch failed") || 
+        const isNetworkError =
+          error.message?.includes("fetch failed") ||
           error.message?.includes("ECONNREFUSED") ||
           error.message?.includes("ENOTFOUND") ||
           error.message?.includes("network");
 
-        this.logger.error(`❌ Gemini API error (attempt ${attempt}): ${error.message}`);
+        this.logger.error(
+          `❌ Gemini API error (attempt ${attempt}): ${error.message}`
+        );
 
         if (isQuotaError || isRateLimit) {
           this.logger.warn(
@@ -281,7 +283,7 @@ export class GeminiService {
       };
     } catch (error) {
       this.logger.error("Failed to process chat message:", error);
-      
+
       // Return fallback response instead of throwing error
       this.logger.warn("🔄 Using fallback response due to AI service error");
       return this.getFallbackResponse(message);
@@ -290,11 +292,11 @@ export class GeminiService {
 
   private getFallbackResponse(message: string): AIResponse {
     const startTime = Date.now();
-    
+
     // Generate contextual fallback based on message content
     let fallbackContent = "";
     const messageLower = message.toLowerCase();
-    
+
     if (messageLower.includes("investasi") || messageLower.includes("invest")) {
       fallbackContent = `Terima kasih atas pertanyaan tentang investasi Anda. 
 
@@ -314,8 +316,10 @@ Untuk investasi dengan modal kecil, berikut beberapa opsi yang bisa Anda pertimb
 Apakah ada aspek investasi tertentu yang ingin Anda pelajari lebih dalam?
 
 *Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk konsultasi lebih mendalam, Anda bisa menggunakan fitur konsultasi dengan expert.*`;
-    
-    } else if (messageLower.includes("budget") || messageLower.includes("anggaran")) {
+    } else if (
+      messageLower.includes("budget") ||
+      messageLower.includes("anggaran")
+    ) {
       fallbackContent = `Terima kasih atas pertanyaan tentang budgeting Anda.
 
 Berikut panduan dasar mengatur budget bulanan:
@@ -341,8 +345,10 @@ Berikut panduan dasar mengatur budget bulanan:
 Apakah ada aspek budgeting tertentu yang ingin Anda tanyakan?
 
 *Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk analisis budget personal, silakan gunakan fitur konsultasi expert.*`;
-    
-    } else if (messageLower.includes("tabungan") || messageLower.includes("saving")) {
+    } else if (
+      messageLower.includes("tabungan") ||
+      messageLower.includes("saving")
+    ) {
       fallbackContent = `Terima kasih atas pertanyaan tentang tabungan Anda.
 
 **Strategi menabung efektif:**
@@ -366,7 +372,6 @@ Apakah ada aspek budgeting tertentu yang ingin Anda tanyakan?
 Ada tujuan tabungan spesifik yang ingin Anda capai?
 
 *Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk rencana tabungan personal, silakan konsultasi dengan expert keuangan.*`;
-    
     } else {
       fallbackContent = `Halo! Terima kasih atas pertanyaan keuangan Anda.
 
@@ -391,9 +396,9 @@ Silakan ajukan pertanyaan spesifik tentang keuangan Anda, dan saya akan memberik
 
 *Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk konsultasi mendalam, Anda dapat menggunakan fitur konsultasi dengan expert keuangan kami.*`;
     }
-    
+
     const processingTime = Date.now() - startTime;
-    
+
     return {
       content: fallbackContent,
       model: "fallback-response",

@@ -219,7 +219,7 @@ export class AIService {
       } else if (data.response) {
         // Fallback format
         aiMessage = { content: data.response };
-      } else if (typeof data === 'string') {
+      } else if (typeof data === "string") {
         // Direct string response
         aiMessage = { content: data };
       } else {

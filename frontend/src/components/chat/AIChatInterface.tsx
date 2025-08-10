@@ -168,7 +168,8 @@ const AIChatInterface = () => {
       )}
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50">{messages.map((message, index) => (
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50">
+        {messages.map((message, index) => (
           <motion.div
             key={message.id}
             initial={{ opacity: 0, y: 20 }}
@@ -211,7 +212,9 @@ const AIChatInterface = () => {
                       : "bg-white border border-gray-100 shadow-md"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {message.content}
+                  </p>
 
                   {/* Message Type Indicator */}
                   {message.messageType === "financial_analysis" && (
@@ -232,14 +235,20 @@ const AIChatInterface = () => {
                 </div>
 
                 {/* Timestamp */}
-                <div className={`mt-1 text-xs ${message.sender === "user" ? "text-right" : "text-left"} text-gray-500`}>
+                <div
+                  className={`mt-1 text-xs ${
+                    message.sender === "user" ? "text-right" : "text-left"
+                  } text-gray-500`}
+                >
                   {formatTimestamp(message.timestamp)}
                 </div>
 
                 {/* Suggestions */}
                 {message.suggestions && message.suggestions.length > 0 && (
                   <div className="mt-2 space-y-1">
-                    <p className="text-xs text-gray-600">💡 Saran pertanyaan:</p>
+                    <p className="text-xs text-gray-600">
+                      💡 Saran pertanyaan:
+                    </p>
                     <div className="space-y-1">
                       {message.suggestions.map((suggestion, idx) => (
                         <button
@@ -316,7 +325,8 @@ const AIChatInterface = () => {
           </button>
         </div>
         <div className="mt-2 text-xs text-gray-500 text-center">
-          ✨ <strong>Fintar AI Copilot</strong> - Asisten Keuangan Cerdas Berbasis AI untuk Keluarga dan UMKM
+          ✨ <strong>Fintar AI Copilot</strong> - Asisten Keuangan Cerdas
+          Berbasis AI untuk Keluarga dan UMKM
         </div>
       </div>
     </div>
