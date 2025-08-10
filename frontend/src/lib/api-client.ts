@@ -306,6 +306,44 @@ class ApiClient {
     }
   }
 
+  // Investment AI endpoints
+  async getAIInvestmentRecommendations(): Promise<ApiResponse> {
+    try {
+      const response = await this.axiosInstance.get(
+        "/financial/investment/ai-recommendations"
+      );
+      return { data: response.data, success: true };
+    } catch (error) {
+      return this.handleError(
+        error,
+        "Failed to get AI investment recommendations"
+      );
+    }
+  }
+
+  async analyzePortfolioWithAI(portfolioData?: any): Promise<ApiResponse> {
+    try {
+      const response = await this.axiosInstance.post(
+        "/financial/investment/ai-analyze",
+        portfolioData
+      );
+      return { data: response.data, success: true };
+    } catch (error) {
+      return this.handleError(error, "Failed to analyze portfolio with AI");
+    }
+  }
+
+  async getMarketTrendAnalysis(): Promise<ApiResponse> {
+    try {
+      const response = await this.axiosInstance.get(
+        "/financial/investment/market-trends"
+      );
+      return { data: response.data, success: true };
+    } catch (error) {
+      return this.handleError(error, "Failed to get market trend analysis");
+    }
+  }
+
   // Chat endpoints
   async createChatSession(data: {
     title?: string;

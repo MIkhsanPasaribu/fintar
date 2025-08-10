@@ -3,6 +3,16 @@ import { ConfigService } from "@nestjs/config";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface FinancialContext {
+  userId?: string;
+  userProfile?: {
+    age?: number;
+    income?: number;
+    expenses?: number;
+    savings?: number;
+    riskTolerance?: string;
+    goals?: string[];
+    experience?: string;
+  };
   monthlyIncome?: number;
   monthlyExpenses?: number;
   currentSavings?: number;
@@ -11,6 +21,8 @@ export interface FinancialContext {
   age?: number;
   occupation?: string;
   dependents?: number;
+  requestType?: string;
+  additionalData?: any;
 }
 
 export interface AIResponse {

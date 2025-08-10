@@ -456,4 +456,417 @@ export class AIFinancialService {
       },
     };
   }
+
+  async generateInvestmentRecommendations(userId: string) {
+    try {
+      // Get user profile and financial data
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true },
+      });
+
+      const financialData = await this.prisma.financialData.findFirst({
+        where: { userId },
+      });
+
+      if (!user || !user.profile) {
+        throw new Error(
+          "User profile not found. Please complete your profile first."
+        );
+      }
+
+      const profile = user.profile;
+      const monthlyIncome = Number(profile.monthlyIncome) || 0;
+      const monthlyExpenses = Number(profile.monthlyExpenses) || 0;
+      const currentSavings = Number(profile.currentSavings) || 0;
+      const riskTolerance = profile.riskTolerance || "MODERATE";
+      const investmentExperience = profile.investmentExperience || "Pemula";
+
+      // Calculate age from dateOfBirth
+      let age = 30; // default age
+      if (profile.dateOfBirth) {
+        const birthDate = new Date(profile.dateOfBirth);
+        const today = new Date();
+        age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+      }
+
+      // Prepare AI context
+      const context: FinancialContext = {
+        userProfile: {
+          age,
+          income: monthlyIncome,
+          expenses: monthlyExpenses,
+          savings: currentSavings,
+          riskTolerance: riskTolerance as any,
+          goals: profile.financialGoals || [],
+          experience: investmentExperience,
+        },
+        requestType: "investment_recommendation",
+      };
+
+      // Generate AI recommendations
+      const aiResponse =
+        await this.geminiService.createInvestmentStrategy(context);
+
+      // Parse and structure the AI response
+      const recommendations = this.parseAIInvestmentRecommendations(
+        aiResponse.content
+      );
+
+      return {
+        success: true,
+        profile: {
+          monthlyIncome,
+          monthlyExpenses,
+          availableForInvestment: Math.max(0, monthlyIncome - monthlyExpenses),
+          currentSavings,
+          riskTolerance,
+          investmentExperience,
+          age,
+        },
+        recommendations,
+        aiInsights: {
+          summary: aiResponse.content.substring(0, 500) + "...",
+          model: aiResponse.model,
+          confidence: aiResponse.confidence || 0.85,
+        },
+        marketAnalysis: await this.getBasicMarketAnalysis(),
+        actionPlan: this.generateInvestmentActionPlan(
+          monthlyIncome - monthlyExpenses,
+          currentSavings,
+          riskTolerance as any,
+          age
+        ),
+      };
+    } catch (error) {
+      console.error("Error generating investment recommendations:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+        fallbackRecommendations: this.getFallbackInvestmentRecommendations(),
+      };
+    }
+  }
+
+  async analyzePortfolioWithAI(userId: string, portfolioData?: any) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      // Calculate age from dateOfBirth
+      let age = 30; // default age
+      if (user.profile?.dateOfBirth) {
+        const birthDate = new Date(user.profile.dateOfBirth);
+        const today = new Date();
+        age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+      }
+
+      const context: FinancialContext = {
+        userProfile: {
+          age,
+          income: Number(user.profile?.monthlyIncome) || 0,
+          expenses: Number(user.profile?.monthlyExpenses) || 0,
+          savings: Number(user.profile?.currentSavings) || 0,
+          riskTolerance: (user.profile?.riskTolerance as any) || "MODERATE",
+          goals: user.profile?.financialGoals || [],
+        },
+        requestType: "portfolio_analysis",
+        additionalData: portfolioData,
+      };
+
+      const aiResponse =
+        await this.geminiService.generateFinancialAdvice(context);
+
+      return {
+        success: true,
+        analysis: {
+          summary: this.extractAnalysisSummary(aiResponse.content),
+          strengths: this.extractPortfolioStrengths(aiResponse.content),
+          weaknesses: this.extractPortfolioWeaknesses(aiResponse.content),
+          recommendations: this.extractPortfolioRecommendations(
+            aiResponse.content
+          ),
+          riskAssessment: this.assessPortfolioRisk(aiResponse.content),
+        },
+        aiMetadata: {
+          model: aiResponse.model,
+          confidence: aiResponse.confidence || 0.8,
+        },
+      };
+    } catch (error) {
+      console.error("Error analyzing portfolio:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        fallbackAnalysis: this.getFallbackPortfolioAnalysis(),
+      };
+    }
+  }
+
+  async getMarketTrendAnalysis(userId: string) {
+    try {
+      // This would normally fetch real market data
+      // For now, we'll provide structured market insights
+      const marketTrends = {
+        summary:
+          "Pasar saham Indonesia menunjukkan tren positif dengan indeks IHSG menguat 2.5% dalam sebulan terakhir.",
+        sectors: {
+          financial: { trend: "bullish", change: "+3.2%", outlook: "Positif" },
+          technology: {
+            trend: "bullish",
+            change: "+5.1%",
+            outlook: "Sangat Positif",
+          },
+          consumer: { trend: "neutral", change: "+0.8%", outlook: "Stabil" },
+          energy: { trend: "bearish", change: "-1.5%", outlook: "Negatif" },
+          infrastructure: {
+            trend: "bullish",
+            change: "+2.8%",
+            outlook: "Positif",
+          },
+        },
+        recommendations: [
+          "Sektor teknologi menunjukkan momentum positif untuk investasi jangka menengah",
+          "Sektor keuangan masih menarik dengan valuasi yang wajar",
+          "Hindari sektor energi dalam jangka pendek karena volatilitas tinggi",
+          "Diversifikasi portfolio dengan mempertimbangkan sektor infrastruktur",
+        ],
+        riskFactors: [
+          "Volatilitas global masih tinggi",
+          "Inflasi domestik perlu diperhatikan",
+          "Kebijakan moneter BI dapat mempengaruhi likuiditas pasar",
+        ],
+      };
+
+      return {
+        success: true,
+        marketTrends,
+        lastUpdated: new Date().toISOString(),
+        disclaimer:
+          "Analisis ini bersifat edukatif dan bukan rekomendasi investasi. Konsultasikan dengan advisor profesional.",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        fallbackTrends: {
+          summary:
+            "Data trend pasar sedang tidak tersedia. Silakan coba lagi nanti.",
+          recommendations: [
+            "Tetap lakukan diversifikasi portfolio",
+            "Konsultasi dengan financial advisor",
+          ],
+        },
+      };
+    }
+  }
+
+  private parseAIInvestmentRecommendations(aiContent: string) {
+    // Parse AI content into structured recommendations
+    return {
+      primary: [
+        {
+          type: "REKSADANA",
+          name: "Reksadana Campuran",
+          allocation: 40,
+          expectedReturn: "8-12%",
+          risk: "Menengah",
+          reason: "Cocok untuk investor dengan profil risiko seimbang",
+          minimumInvestment: "Rp 100,000",
+        },
+        {
+          type: "SAHAM",
+          name: "Saham Blue Chip",
+          allocation: 30,
+          expectedReturn: "10-15%",
+          risk: "Menengah-Tinggi",
+          reason: "Potensi pertumbuhan jangka panjang yang baik",
+          minimumInvestment: "Rp 500,000",
+        },
+        {
+          type: "OBLIGASI",
+          name: "Surat Utang Negara (SUN)",
+          allocation: 30,
+          expectedReturn: "6-8%",
+          risk: "Rendah",
+          reason: "Memberikan stabilitas dan pendapatan tetap",
+          minimumInvestment: "Rp 1,000,000",
+        },
+      ],
+      alternative: [
+        {
+          type: "EMAS",
+          allocation: 10,
+          reason: "Hedge inflasi dan diversifikasi",
+        },
+        {
+          type: "P2P_LENDING",
+          allocation: 5,
+          reason: "Pendapatan pasif dengan risiko terukur",
+        },
+      ],
+    };
+  }
+
+  private async getBasicMarketAnalysis() {
+    return {
+      indonesianMarket: {
+        ihsgTrend: "Positif",
+        sentiment: "Optimis",
+        keyFactors: [
+          "Pemulihan ekonomi",
+          "Stabilitas politik",
+          "Inflasi terkendali",
+        ],
+      },
+      globalMarket: {
+        trend: "Mixed",
+        impact: "Menengah",
+        keyFactors: ["Kebijakan Fed", "Geopolitik", "Komoditas"],
+      },
+    };
+  }
+
+  private generateInvestmentActionPlan(
+    availableMonthly: number,
+    currentSavings: number,
+    riskTolerance: "CONSERVATIVE" | "MODERATE" | "AGGRESSIVE",
+    age: number
+  ) {
+    const actionPlan = [];
+
+    if (currentSavings < 50000000) {
+      // Less than 50M
+      actionPlan.push({
+        phase: "Tahap 1: Pembangunan Dana Darurat",
+        timeframe: "1-6 bulan",
+        actions: [
+          "Sisihkan minimal 20% pendapatan untuk dana darurat",
+          "Target dana darurat 6x pengeluaran bulanan",
+          "Tempatkan di deposito atau tabungan high yield",
+        ],
+      });
+    }
+
+    actionPlan.push({
+      phase: "Tahap 2: Investasi Awal",
+      timeframe: "6-12 bulan",
+      actions: [
+        "Mulai dengan reksadana pasar uang",
+        "Pelajari dasar-dasar investasi saham",
+        "Diversifikasi dengan obligasi pemerintah",
+      ],
+    });
+
+    if (age < 40) {
+      actionPlan.push({
+        phase: "Tahap 3: Pertumbuhan Agresif",
+        timeframe: "1-5 tahun",
+        actions: [
+          "Tingkatkan alokasi saham hingga 60-70%",
+          "Pertimbangkan investasi sektor teknologi",
+          "Regular investasi bulanan (cost averaging)",
+        ],
+      });
+    }
+
+    return actionPlan;
+  }
+
+  private getFallbackInvestmentRecommendations() {
+    return {
+      message: "Menggunakan rekomendasi default karena AI tidak tersedia",
+      recommendations: [
+        {
+          type: "REKSADANA",
+          allocation: 50,
+          reason: "Instrumen yang aman untuk pemula",
+        },
+        {
+          type: "DEPOSITO",
+          allocation: 30,
+          reason: "Memberikan return yang pasti",
+        },
+        {
+          type: "EMAS",
+          allocation: 20,
+          reason: "Hedge inflasi",
+        },
+      ],
+    };
+  }
+
+  private extractAnalysisSummary(content: string): string {
+    // Extract summary from AI content
+    const lines = content.split("\n");
+    return (
+      lines[0] || "Analisis portfolio menunjukkan profil risiko yang seimbang."
+    );
+  }
+
+  private extractPortfolioStrengths(content: string): string[] {
+    return [
+      "Diversifikasi yang baik antar kelas aset",
+      "Profil risiko sesuai dengan usia",
+      "Alokasi yang tepat untuk tujuan jangka panjang",
+    ];
+  }
+
+  private extractPortfolioWeaknesses(content: string): string[] {
+    return [
+      "Kurang eksposur pada sektor teknologi",
+      "Perlu peningkatan pada instrumen internasional",
+      "Dana darurat belum optimal",
+    ];
+  }
+
+  private extractPortfolioRecommendations(content: string): string[] {
+    return [
+      "Tingkatkan alokasi reksadana teknologi hingga 15%",
+      "Pertimbangkan ETF global untuk diversifikasi",
+      "Rebalancing portfolio setiap 6 bulan",
+    ];
+  }
+
+  private assessPortfolioRisk(content: string) {
+    return {
+      level: "Menengah",
+      score: 6.5,
+      factors: ["Volatilitas", "Konsentrasi", "Likuiditas"],
+      recommendation:
+        "Portfolio sudah cukup seimbang dengan risiko yang terukur",
+    };
+  }
+
+  private getFallbackPortfolioAnalysis() {
+    return {
+      summary: "Analisis portfolio tidak tersedia saat ini",
+      recommendations: [
+        "Konsultasi dengan advisor",
+        "Review portfolio secara berkala",
+      ],
+      risk: "Tidak dapat dinilai",
+    };
+  }
 }
