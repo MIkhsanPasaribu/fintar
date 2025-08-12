@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3001";
 
+console.log("🔧 BACKEND_URL:", BACKEND_URL);
+console.log("🔧 Environment variables:", {
+  BACKEND_URL: process.env.BACKEND_URL,
+  NODE_ENV: process.env.NODE_ENV,
+});
+
 interface RegisterRequest {
   email: string;
   username: string;
