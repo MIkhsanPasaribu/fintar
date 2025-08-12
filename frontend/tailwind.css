@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Import our main styles */
+@import "./src/app/globals.css";

@@ -1,0 +1,373 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// @rls:enable
+// @rls:policy("users_policy", "USING (auth.uid() = id)", "WITH CHECK (auth.uid() = id)")
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  firstName   String?
+  lastName    String?
+  phone       String?
+  avatar      String?
+  isVerified  Boolean  @default(false)
+  emailVerificationToken String?
+  emailVerificationExpiry DateTime?
+  role        UserRole @default(CLIENT)
+  password    String
+  supabaseId  String?  @unique
+  preferences Json?
+  onboardingCompleted Boolean @default(false)
+  profileCompleted    Boolean @default(false)
+  financialDataCompleted Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  profile         UserProfile?
+  consultations   Consultation[]
+  financialData   FinancialData[]
+  chatSessions    ChatSession[]
+  bookings        Booking[]
+  reviews         Review[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  dateOfBirth       DateTime?
+  gender            Gender?
+  occupation        String?
+  company           String?
+  
+  // Financial Information
+  monthlyIncome     Float?
+  monthlyExpenses   Float?
+  currentSavings    Float?
+  currentDebt       Float?
+  emergencyFundAmount Float?
+  
+  // Investment & Risk
+  financialGoals    String[]
+  riskTolerance     RiskLevel?
+  investmentExperience String?
+  currentInvestments Json?
+  
+  // Personal Information
+  maritalStatus     MaritalStatus?
+  dependents        Int     @default(0)
+  educationLevel    String?
+  
+  // Assets & Liabilities
+  assets            Json? // property, vehicles, etc.
+  liabilities       Json? // loans, credit cards, etc.
+  insurance         Json?
+  
+  // Contact & Address
+  address           Json?
+  phone             String?
+  
+  // Metadata
+  currency          String  @default("IDR")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// @rls:enable
+// @rls:policy("consultant_read_policy", "USING (true)", "WITH CHECK (false)")
+// @rls:policy("consultant_write_policy", "USING (auth.uid() IN (SELECT id FROM users WHERE role = 'ADMIN'))", "WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'ADMIN'))")
+model Consultant {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  firstName       String
+  lastName        String
+  phone           String?
+  avatar          String?
+  specialization  String[]
+  experience      Int
+  rating          Float    @default(0)
+  hourlyRate      Float
+  isActive        Boolean  @default(true)
+  bio             String?
+  certifications  String[]
+  languages       String[]
+  timeZone        String
+  availability    Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  consultations   Consultation[]
+  bookings        Booking[]
+  reviews         Review[]
+
+  @@map("consultants")
+}
+
+// @rls:enable
+// @rls:policy("consultation_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("consultation_consultant_policy", "USING (auth.uid() IN (SELECT id FROM users WHERE role = 'CONSULTANT' OR role = 'ADMIN'))", "WITH CHECK (auth.uid() IN (SELECT id FROM users WHERE role = 'CONSULTANT' OR role = 'ADMIN'))")
+model Consultation {
+  id            String             @id @default(cuid())
+  userId        String
+  consultantId  String
+  type          ConsultationType
+  status        ConsultationStatus @default(SCHEDULED)
+  scheduledAt   DateTime
+  duration      Int                @default(60) // minutes
+  price         Float
+  notes         String?
+  feedback      String?
+  rating        Int?
+  meetingLink   String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id])
+  consultant Consultant @relation(fields: [consultantId], references: [id])
+
+  @@map("consultations")
+}
+
+// @rls:enable
+// @rls:policy("financial_data_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+model FinancialData {
+  id           String          @id @default(cuid())
+  userId       String
+  type         FinancialType
+  category     String
+  amount       Float
+  currency     String          @default("IDR")
+  description  String?
+  date         DateTime
+  recurring    Boolean         @default(false)
+  frequency    String?
+  tags         String[]
+  metadata     Json?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("financial_data")
+}
+
+// @rls:enable
+// @rls:policy("chat_session_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+model ChatSession {
+  id        String      @id @default(cuid())
+  userId    String
+  title     String?
+  type      ChatType    @default(GENERAL)
+  status    ChatStatus  @default(ACTIVE)
+  metadata  Json?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+// @rls:enable
+// @rls:policy("chat_message_policy", "USING (EXISTS (SELECT 1 FROM chat_sessions WHERE id = sessionId AND userId = auth.uid()))", "WITH CHECK (EXISTS (SELECT 1 FROM chat_sessions WHERE id = sessionId AND userId = auth.uid()))")
+model ChatMessage {
+  id          String      @id @default(cuid())
+  sessionId   String
+  role        MessageRole
+  content     String
+  metadata    Json?
+  timestamp   DateTime    @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+// AI Analytics table to replace MongoDB functionality
+model AIAnalytics {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String?
+  type      String   // 'chat_interaction', 'financial_advice', 'investment_recommendation', etc.
+  action    String   // 'message_sent', 'advice_given', 'recommendation_clicked', etc.
+  data      Json     // flexible data storage
+  metadata  Json?    // additional metadata
+  timestamp DateTime @default(now())
+
+  @@map("ai_analytics")
+}
+
+// @rls:enable
+// @rls:policy("booking_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("booking_consultant_policy", "USING (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))", "WITH CHECK (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))")
+model Booking {
+  id           String        @id @default(cuid())
+  userId       String
+  consultantId String
+  type         BookingType
+  status       BookingStatus @default(PENDING)
+  scheduledAt  DateTime
+  duration     Int           @default(60)
+  price        Float
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id])
+  consultant Consultant @relation(fields: [consultantId], references: [id])
+
+  @@map("bookings")
+}
+
+// @rls:enable
+// @rls:policy("review_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+// @rls:policy("review_read_policy", "USING (true)", "WITH CHECK (false)")
+model Review {
+  id           String   @id @default(cuid())
+  userId       String
+  consultantId String
+  rating       Int
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id])
+  consultant Consultant @relation(fields: [consultantId], references: [id])
+
+  @@map("reviews")
+}
+
+// @rls:enable
+// @rls:policy("notification_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
+model Notification {
+  id        String             @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean            @default(false)
+  metadata  Json?
+  createdAt DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// Enums
+enum UserRole {
+  CLIENT
+  CONSULTANT
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum RiskLevel {
+  LOW
+  MODERATE
+  HIGH
+  AGGRESSIVE
+}
+
+enum ConsultationType {
+  FINANCIAL_PLANNING
+  INVESTMENT_ADVICE
+  DEBT_MANAGEMENT
+  INSURANCE_PLANNING
+  TAX_PLANNING
+  RETIREMENT_PLANNING
+  EMERGENCY_FUND
+  BUDGETING
+}
+
+enum ConsultationStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum FinancialType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+  DEBT
+  ASSET
+  LIABILITY
+}
+
+enum ChatType {
+  GENERAL
+  FINANCIAL_ADVICE
+  INVESTMENT_HELP
+  BUDGET_PLANNING
+  DEBT_ASSISTANCE
+}
+
+enum ChatStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum BookingType {
+  CONSULTATION
+  FOLLOW_UP
+  EMERGENCY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMATION
+  BOOKING_REMINDER
+  CONSULTATION_REMINDER
+  NEW_MESSAGE
+  SYSTEM_UPDATE
+  PAYMENT_REMINDER
+}

@@ -1,10 +1,7 @@
-import Layout from "@/components/layout/layout";
-import DashboardOverview from "@/components/dashboard/overview";
+"use client";
+
+import DashboardHome from "@/components/dashboard/DashboardHome";
 
 export default function DashboardPage() {
-  return (
-    <Layout>
-      <DashboardOverview />
-    </Layout>
-  );
+  return <DashboardHome />;
 }

@@ -1,26 +1,46 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 
-// Mock AI responses for demonstration
-const mockResponses = [
-  "Berdasarkan analisis keuangan Anda, saya sarankan untuk mengalokasikan 20% pendapatan untuk tabungan emergency fund terlebih dahulu.",
-  "Untuk investasi yang cocok bagi pemula, Anda bisa mempertimbangkan reksa dana campuran dengan risiko sedang.",
-  "Tips mengelola budget: gunakan metode 50/30/20 - 50% kebutuhan, 30% keinginan, 20% tabungan dan investasi.",
-  "Dana darurat sebaiknya setara dengan 6-12 bulan pengeluaran rutin Anda. Simpan di tabungan atau deposito yang mudah dicairkan.",
-  "Untuk mengurangi pengeluaran tidak perlu, coba buat daftar prioritas dan terapkan 'waiting period' 24 jam sebelum membeli barang non-esensial.",
-];
+// Backend API configuration
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3001";
 
-const suggestions = [
-  "Bagaimana cara membuat budget bulanan?",
-  "Investasi apa yang cocok untuk pemula?",
-  "Tips menabung untuk dana darurat",
-  "Strategi melunasi hutang dengan cepat",
-  "Cara memilih asuransi yang tepat",
-];
+// Types matching backend interfaces
+interface ChatRequest {
+  userId: string;
+  sessionId: string;
+  message: string;
+  context?: Record<string, any>;
+  chatType?: "general" | "financial" | "consultant" | "support";
+}
+
+interface ChatResponse {
+  responseId: string;
+  message: string;
+  confidence: number;
+  suggestions?: string[];
+  context?: Record<string, any>;
+  metadata?: {
+    model: string;
+    tokens: number;
+    responseTime: number;
+  };
+}
+
+// Generate session ID for user if not provided
+function generateSessionId(): string {
+  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+// Generate user ID (in real app, this would come from authentication)
+function generateUserId(): string {
+  return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message } = body;
+    const { message, userId, sessionId, chatType = "financial" } = body;
 
     if (!message || typeof message !== "string") {
       return NextResponse.json(
@@ -29,50 +49,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Simulate AI processing delay
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1000 + Math.random() * 2000)
-    );
+    // Prepare request for backend
+    const chatRequest: ChatRequest = {
+      userId: userId || generateUserId(),
+      sessionId: sessionId || generateSessionId(),
+      message: message.trim(),
+      chatType,
+      context: {
+        language: "id",
+        userType: "individual",
+        timestamp: new Date().toISOString(),
+      },
+    };
 
-    // Generate mock response based on keywords
-    let response =
-      mockResponses[Math.floor(Math.random() * mockResponses.length)];
+    try {
+      // Call backend AI service
+      const response = await fetch(`${BACKEND_URL}/ai/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(chatRequest),
+      });
 
-    const lowerMessage = message.toLowerCase();
+      if (!response.ok) {
+        throw new Error(`Backend responded with status: ${response.status}`);
+      }
 
-    if (lowerMessage.includes("budget") || lowerMessage.includes("anggaran")) {
-      response =
-        "Untuk membuat budget yang efektif, mulai dengan mencatat semua pemasukan dan pengeluaran selama sebulan. Gunakan aplikasi atau spreadsheet untuk tracking. Terapkan prinsip 50/30/20: 50% untuk kebutuhan pokok, 30% untuk keinginan, dan 20% untuk tabungan serta investasi.";
-    } else if (
-      lowerMessage.includes("investasi") ||
-      lowerMessage.includes("invest")
-    ) {
-      response =
-        "Untuk pemula, saya rekomendasikan memulai dengan reksa dana. Pilih reksa dana campuran atau saham dengan track record minimal 3 tahun. Mulai dengan nominal kecil, misalnya Rp 100.000/bulan, dan tingkatkan secara bertahap. Jangan lupa untuk diversifikasi portofolio Anda.";
-    } else if (
-      lowerMessage.includes("tabung") ||
-      lowerMessage.includes("menabung")
-    ) {
-      response =
-        "Strategi menabung yang efektif: 1) Set target yang spesifik dan realistis, 2) Buat automatic transfer ke rekening tabungan, 3) Pisahkan rekening tabungan dari rekening harian, 4) Cari suku bunga terbaik, 5) Review progress secara berkala.";
-    } else if (
-      lowerMessage.includes("hutang") ||
-      lowerMessage.includes("debt")
-    ) {
-      response =
-        "Untuk melunasi hutang, gunakan metode 'debt snowball' atau 'debt avalanche'. Snowball: bayar hutang terkecil dulu untuk motivasi. Avalanche: bayar hutang dengan bunga tertinggi dulu untuk efisiensi. Hindari hutang baru dan pertimbangkan sumber pendapatan tambahan.";
+      const aiResponse: ChatResponse = await response.json();
+
+      return NextResponse.json({
+        message: aiResponse.message,
+        suggestions:
+          aiResponse.suggestions || generateFallbackSuggestions(message),
+        sessionId: chatRequest.sessionId,
+        userId: chatRequest.userId,
+        timestamp: new Date().toISOString(),
+        metadata: aiResponse.metadata || {
+          model: "fintar-ai",
+          tokens: 0,
+          responseTime: 0,
+        },
+      });
+    } catch (backendError) {
+      console.error("Backend AI service error:", backendError);
+
+      // Fallback to local processing if backend is unavailable
+      return NextResponse.json({
+        message: generateFallbackResponse(message),
+        suggestions: generateFallbackSuggestions(message),
+        sessionId: chatRequest.sessionId,
+        userId: chatRequest.userId,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          model: "fallback",
+          tokens: 0,
+          responseTime: 0,
+        },
+        warning: "Backend AI service unavailable, using fallback response",
+      });
     }
-
-    // Generate random suggestions for follow-up
-    const randomSuggestions = suggestions
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 3);
-
-    return NextResponse.json({
-      message: response,
-      suggestions: randomSuggestions,
-      timestamp: new Date().toISOString(),
-    });
   } catch (error) {
     console.error("AI Chat API Error:", error);
     return NextResponse.json(
@@ -82,9 +118,103 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
-  return NextResponse.json({
-    message: "AI Chat API is running",
-    suggestions: suggestions.slice(0, 3),
-  });
+export async function GET(request: NextRequest) {
+  try {
+    // Health check and capabilities endpoint
+    const response = await fetch(`${BACKEND_URL}/ai/health`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const healthData = await response.json();
+      return NextResponse.json({
+        status: "connected",
+        backend: healthData,
+        capabilities: await getCapabilities(),
+      });
+    } else {
+      throw new Error("Backend health check failed");
+    }
+  } catch (error) {
+    console.error("Backend connection error:", error);
+    return NextResponse.json({
+      status: "disconnected",
+      message: "AI Chat API is running in fallback mode",
+      capabilities: await getCapabilities(),
+    });
+  }
+}
+
+// Helper functions for fallback responses
+function generateFallbackResponse(message: string): string {
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes("budget") || lowerMessage.includes("anggaran")) {
+    return "Untuk membuat budget yang efektif, mulai dengan mencatat semua pemasukan dan pengeluaran selama sebulan. Gunakan aplikasi atau spreadsheet untuk tracking. Terapkan prinsip 50/30/20: 50% untuk kebutuhan pokok, 30% untuk keinginan, dan 20% untuk tabungan serta investasi.";
+  } else if (
+    lowerMessage.includes("investasi") ||
+    lowerMessage.includes("invest")
+  ) {
+    return "Untuk pemula, saya rekomendasikan memulai dengan reksa dana. Pilih reksa dana campuran atau saham dengan track record minimal 3 tahun. Mulai dengan nominal kecil, misalnya Rp 100.000/bulan, dan tingkatkan secara bertahap. Jangan lupa untuk diversifikasi portofolio Anda.";
+  } else if (
+    lowerMessage.includes("tabung") ||
+    lowerMessage.includes("menabung")
+  ) {
+    return "Strategi menabung yang efektif: 1) Set target yang spesifik dan realistis, 2) Buat automatic transfer ke rekening tabungan, 3) Pisahkan rekening tabungan dari rekening harian, 4) Cari suku bunga terbaik, 5) Review progress secara berkala.";
+  } else if (lowerMessage.includes("hutang") || lowerMessage.includes("debt")) {
+    return "Untuk melunasi hutang, gunakan metode 'debt snowball' atau 'debt avalanche'. Snowball: bayar hutang terkecil dulu untuk motivasi. Avalanche: bayar hutang dengan bunga tertinggi dulu untuk efisiensi. Hindari hutang baru dan pertimbangkan sumber pendapatan tambahan.";
+  }
+
+  return "Terima kasih atas pertanyaannya! Sebagai Fintar AI - Solusi Optimalisasi Finansial Pintar, saya siap membantu Anda dalam perencanaan keuangan, budgeting, investasi, dan strategi menabung. Silakan tanyakan aspek keuangan khusus yang ingin Anda diskusikan.";
+}
+
+function generateFallbackSuggestions(message: string): string[] {
+  const suggestions = [
+    "Bagaimana cara membuat budget bulanan?",
+    "Investasi apa yang cocok untuk pemula?",
+    "Tips menabung untuk dana darurat",
+    "Strategi melunasi hutang dengan cepat",
+    "Cara memilih asuransi yang tepat",
+    "Perencanaan keuangan untuk masa pensiun",
+    "Analisis risiko investasi",
+    "Tips mengelola cash flow bisnis",
+  ];
+
+  return suggestions.sort(() => 0.5 - Math.random()).slice(0, 3);
+}
+
+async function getCapabilities() {
+  try {
+    const response = await fetch(`${BACKEND_URL}/ai/capabilities`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error("Failed to get capabilities:", error);
+  }
+
+  // Fallback capabilities
+  return {
+    features: [
+      "financial_analysis",
+      "budget_planning",
+      "investment_advice",
+      "savings_strategy",
+      "debt_management",
+      "risk_assessment",
+    ],
+    models: ["fintar-ai"],
+    languages: ["id", "en"],
+    maxTokens: 8192,
+    supportedFormats: ["text"],
+  };
 }

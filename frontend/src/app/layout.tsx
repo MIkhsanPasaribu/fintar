@@ -1,22 +1,47 @@
 import type { Metadata } from "next";
-
-// These styles apply to every route in the application
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/hooks/use-auth";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Fintar - AI Financial Empowerment Platform",
+  title:
+    "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
   description:
-    "Platform keuangan berbasis AI untuk literasi finansial dan konsultasi finansial 24/7",
+    "Fintar adalah platform pemberdayaan finansial berbasis AI yang membantu keluarga dan UMKM Indonesia mengelola keuangan dengan cerdas, meningkatkan literasi finansial, dan mencapai kebebasan finansial melalui teknologi AI terdepan.",
+  keywords:
+    "fintech Indonesia, perencanaan keuangan keluarga, AI finansial, UMKM, investasi, budgeting, konsultasi keuangan AI, Fintar",
+  authors: [{ name: "Fintar Team" }],
+  openGraph: {
+    title:
+      "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
+    description:
+      "Solusi finansial cerdas berbasis AI untuk keluarga dan UMKM Indonesia",
+    type: "website",
+    locale: "id_ID",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI",
+    description:
+      "Solusi finansial cerdas berbasis AI untuk keluarga dan UMKM Indonesia",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="id">
+      <body className={inter.className}>
+        <AuthProvider>
+          <div className="min-h-screen bg-gray-50">{children}</div>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
