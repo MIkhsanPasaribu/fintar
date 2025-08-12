@@ -9,19 +9,16 @@ import {
   Sparkles,
   ArrowRight,
   CheckCircle,
-  Star,
   Calculator,
   MessageCircle,
   Zap,
-  Globe,
   BarChart3,
-  Orbit,
   Menu,
   X,
 } from "lucide-react";
+import Footer from "../layout/Footer";
 
 export function ModernHomepage() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -67,40 +64,9 @@ export function ModernHomepage() {
   //   { number: "24/7", label: "AI Assistant" },
   // ];
 
-  const testimonials = [
-    {
-      name: "Sarah Wijaya",
-      role: "UKM Owner",
-      content:
-        "Fintar membantu saya mengelola keuangan bisnis dengan lebih baik. AI assistant-nya sangat membantu!",
-      rating: 5,
-      avatar: "SW",
-    },
-    {
-      name: "Budi Santoso",
-      role: "Freelancer",
-      content:
-        "Fitur budget tracker-nya luar biasa. Sekarang saya bisa mengontrol pengeluaran dengan mudah.",
-      rating: 5,
-      avatar: "BS",
-    },
-    {
-      name: "Maya Sari",
-      role: "Karyawan Swasta",
-      content:
-        "Konsultasi dengan financial advisor di platform ini sangat membantu rencana investasi saya.",
-      rating: 5,
-      avatar: "MS",
-    },
-  ];
-
   useEffect(() => {
     setIsVisible(true);
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -126,18 +92,18 @@ export function ModernHomepage() {
               >
                 Fitur
               </a>
-              <a
-                href="#pricing"
+              <Link
+                href="/about"
                 className="text-gray-700 hover:text-blue-600 transition-colors"
               >
-                Harga
-              </a>
-              <a
-                href="#testimonials"
+                Tentang
+              </Link>
+              <Link
+                href="/help"
                 className="text-gray-700 hover:text-blue-600 transition-colors"
               >
-                Testimoni
-              </a>
+                Bantuan
+              </Link>
               <Link
                 href="/login"
                 className="text-gray-700 hover:text-blue-600 transition-colors"
@@ -186,20 +152,20 @@ export function ModernHomepage() {
                 >
                   Fitur
                 </a>
-                <a
-                  href="#pricing"
+                <Link
+                  href="/about"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
-                  Harga
-                </a>
-                <a
-                  href="#testimonials"
+                  Tentang
+                </Link>
+                <Link
+                  href="/help"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
-                  Testimoni
-                </a>
+                  Bantuan
+                </Link>
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -389,77 +355,6 @@ export function ModernHomepage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section
-        id="testimonials"
-        className="py-24 bg-gradient-to-br from-gray-50 to-blue-50"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">
-              Apa Kata <span className="text-blue-600">Pengguna</span>
-            </h2>
-            <p className="text-xl text-gray-600">
-              Ribuan pengguna telah merasakan manfaat Fintar
-            </p>
-          </div>
-
-          <div className="relative max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentTestimonial}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-2xl p-8 text-center shadow-lg"
-              >
-                <div className="flex justify-center mb-4">
-                  {[...Array(testimonials[currentTestimonial].rating)].map(
-                    (_, i) => (
-                      <Star
-                        key={i}
-                        className="h-5 w-5 text-yellow-400 fill-current"
-                      />
-                    )
-                  )}
-                </div>
-                <blockquote className="text-xl text-gray-700 mb-6 leading-relaxed">
-                  &quot;{testimonials[currentTestimonial].content}&quot;
-                </blockquote>
-                <div className="flex items-center justify-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {testimonials[currentTestimonial].avatar}
-                  </div>
-                  <div className="text-left">
-                    <div className="font-semibold text-gray-900">
-                      {testimonials[currentTestimonial].name}
-                    </div>
-                    <div className="text-gray-600">
-                      {testimonials[currentTestimonial].role}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex justify-center mt-8 space-x-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial
-                      ? "bg-blue-600"
-                      : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-24 bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -496,114 +391,7 @@ export function ModernHomepage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl">
-                  <Orbit className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold">Fintar</span>
-              </div>
-              <p className="text-gray-400 leading-relaxed">
-                Platform pemberdayaan finansial berbasis AI untuk mencapai
-                kebebasan finansial.
-              </p>
-              <div className="flex space-x-4">
-                <Globe className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-                <MessageCircle className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Produk</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    AI Assistant
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Budget Tracker
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Investment Planning
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Marketplace
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Perusahaan</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Tentang Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Karir
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Press
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Dukungan</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Terms of Service
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>
-              &copy; 2025 Fintar. All rights reserved. Made with ❤️ for
-              Indonesia
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

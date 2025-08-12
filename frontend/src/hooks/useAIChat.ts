@@ -8,6 +8,7 @@ export const useAIChat = (initialSessionId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(true);
 
   // Initialize session
   useEffect(() => {
@@ -16,12 +17,31 @@ export const useAIChat = (initialSessionId?: string) => {
         try {
           setIsLoading(true);
           setError(null);
+          setIsConnected(true);
           console.log("🔄 Initializing session for user:", user.id);
+
           const newSessionId = await AIService.createChatSession(user.id);
           setSessionId(newSessionId);
           console.log("✅ Session initialized:", newSessionId);
+
+          // Add welcome message immediately after session creation
+          const welcomeMessage: ChatMessage = {
+            id: "welcome",
+            content:
+              "Halo! Saya Fintar AI Navigator, asisten keuangan galaksi Anda. Saya siap membantu Anda mengeksplorasi universe finansial dengan analisis cerdas, perencanaan budget, dan strategi investasi. Ada yang bisa saya bantu hari ini?",
+            sender: "ai",
+            timestamp: new Date(),
+            suggestions: [
+              "Analisis keuangan saya dengan AI",
+              "Rekomendasi budget bulanan",
+              "Strategi investasi untuk pemula",
+              "Rencana finansial jangka panjang",
+            ],
+          };
+          setMessages([welcomeMessage]);
         } catch (error) {
           console.error("❌ Error creating session:", error);
+          setIsConnected(false);
           const errorMessage =
             error instanceof Error
               ? error.message
@@ -29,6 +49,22 @@ export const useAIChat = (initialSessionId?: string) => {
           setError(
             `Failed to create chat session: ${errorMessage}. Please refresh the page.`
           );
+
+          // Still show welcome message even if session creation fails
+          const welcomeMessage: ChatMessage = {
+            id: "welcome",
+            content:
+              "Halo! Saya Fintar AI Navigator. Maaf, ada sedikit kendala teknis saat menginisialisasi sesi. Tapi saya tetap siap membantu Anda dengan analisis keuangan dan perencanaan finansial! Silakan coba lagi atau refresh halaman.",
+            sender: "ai",
+            timestamp: new Date(),
+            suggestions: [
+              "Refresh halaman",
+              "Coba lagi",
+              "Bantuan teknis",
+              "FAQ",
+            ],
+          };
+          setMessages([welcomeMessage]);
         } finally {
           setIsLoading(false);
         }
@@ -38,7 +74,7 @@ export const useAIChat = (initialSessionId?: string) => {
     initializeSession();
   }, [user, sessionId]);
 
-  // Load chat history after session is established
+  // Load chat history - Skip if we already have messages from session init
   useEffect(() => {
     const loadChatHistory = async () => {
       if (
@@ -46,7 +82,7 @@ export const useAIChat = (initialSessionId?: string) => {
         sessionId &&
         sessionId !== "" &&
         sessionId !== "new" &&
-        messages.length === 0
+        messages.length <= 1 // Only if we don't have history (just welcome msg)
       ) {
         try {
           setIsLoading(true);
@@ -56,42 +92,10 @@ export const useAIChat = (initialSessionId?: string) => {
           if (history.length > 0) {
             setMessages(history);
             console.log("Chat history loaded:", history.length, "messages");
-          } else {
-            // Add welcome message if no history
-            const welcomeMessage: ChatMessage = {
-              id: "welcome",
-              content:
-                "Halo! Saya Fintar AI Navigator, asisten keuangan galaksi Anda. Saya siap membantu Anda mengeksplorasi universe finansial dengan analisis cerdas, perencanaan budget, dan strategi investasi. Ada yang bisa saya bantu hari ini?",
-              sender: "ai",
-              timestamp: new Date(),
-              suggestions: [
-                "Analisis keuangan saya dengan AI",
-                "Rekomendasi budget bulanan",
-                "Strategi investasi untuk pemula",
-                "Rencana finansial jangka panjang",
-              ],
-            };
-            setMessages([welcomeMessage]);
-            console.log("Welcome message added");
           }
         } catch (error) {
           console.error("Error loading chat history:", error);
-          // Add welcome message on error
-          const welcomeMessage: ChatMessage = {
-            id: "welcome",
-            content:
-              "Halo! Saya Fintar AI Navigator. Maaf, ada sedikit kendala teknis. Tapi saya tetap siap membantu Anda dengan analisis keuangan dan perencanaan finansial!",
-            sender: "ai",
-            timestamp: new Date(),
-            suggestions: [
-              "Coba analisis AI lagi",
-              "Budget recommendations",
-              "Investment planning",
-              "Financial goals",
-            ],
-          };
-          setMessages([welcomeMessage]);
-          console.log("Error welcome message added");
+          // Keep existing welcome message on error
         } finally {
           setIsLoading(false);
         }
@@ -238,7 +242,7 @@ export const useAIChat = (initialSessionId?: string) => {
     clearChat,
     deleteSession,
     sendQuickAction,
-    isConnected: !!user,
+    isConnected: isConnected && !!user,
   };
 };
 

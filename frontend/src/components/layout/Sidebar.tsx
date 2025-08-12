@@ -374,10 +374,10 @@ const Sidebar = ({
         initial={{ x: "-100%" }}
         animate={{ x: isMobileMenuOpen ? 0 : "-100%" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="lg:hidden fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 shadow-xl"
+        className="lg:hidden fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 shadow-xl flex flex-col"
       >
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        {/* Mobile Header - Fixed */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <Image
@@ -409,7 +409,7 @@ const Sidebar = ({
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - Scrollable */}
         <div className="flex-1 overflow-y-auto py-6">
           <nav className="space-y-6">
             {navigationGroups.map((group) => (
@@ -436,7 +436,7 @@ const Sidebar = ({
                         }`}
                       >
                         <item.icon
-                          className={`h-5 w-5 mr-3 ${
+                          className={`h-5 w-5 mr-3 flex-shrink-0 ${
                             isActive ? "text-blue-600" : ""
                           }`}
                         />
@@ -447,7 +447,7 @@ const Sidebar = ({
                               {item.label}
                             </span>
                             {item.badge && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full">
+                              <span className="px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex-shrink-0 ml-2">
                                 {item.badge}
                               </span>
                             )}
@@ -478,8 +478,8 @@ const Sidebar = ({
           </nav>
         </div>
 
-        {/* Mobile Bottom Section */}
-        <div className="border-t border-gray-200 p-4">
+        {/* Mobile Bottom Section - Fixed */}
+        <div className="border-t border-gray-200 p-4 flex-shrink-0">
           <div className="space-y-2">
             {bottomItems.map((item) => {
               const isActive =
@@ -497,7 +497,7 @@ const Sidebar = ({
                   }`}
                 >
                   <item.icon
-                    className={`h-5 w-5 mr-3 ${
+                    className={`h-5 w-5 mr-3 flex-shrink-0 ${
                       isActive ? "text-blue-600" : ""
                     }`}
                   />
@@ -526,9 +526,9 @@ const Sidebar = ({
               }`}
             >
               {isLoggingOut ? (
-                <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                <Loader2 className="h-5 w-5 mr-3 animate-spin flex-shrink-0" />
               ) : (
-                <LogOut className="h-5 w-5 mr-3" />
+                <LogOut className="h-5 w-5 mr-3 flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0 text-left">
                 <span className="font-medium truncate">
