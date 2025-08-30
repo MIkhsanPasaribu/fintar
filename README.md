@@ -1,4 +1,16 @@
+<div align="right">
+
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=Ryan-infitech.fintar)
+
+</div>
+
 # 🏦 Fintar - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM Berbasis AI
+
+<div align="center">
+
+![preview](preview.gif)
+
+</div>
 
 Fintar adalah platform keuangan berbasis AI yang dirancang khusus untuk memberdayakan keluarga Indonesia dan UMKM dalam mengelola keuangan dengan cerdas, meningkatkan literasi finansial, dan mencapai kebebasan finansial melalui teknologi AI terdepan.
 
