@@ -111,8 +111,32 @@ const FinancialAnalysisComponent = () => {
     setError(null);
 
     try {
+      // Create a sample financial analysis request
+      const analysisRequest = {
+        userId: user?.id || "demo-user",
+        sessionId: `analysis-session-${Date.now()}`,
+        financialData: {
+          income: 12000000, // 12 million IDR sample
+          expenses: {
+            Housing: 4000000,
+            Food: 2000000,
+            Transportation: 1500000,
+            Utilities: 800000,
+            Entertainment: 1000000,
+          },
+          savings: 2700000,
+          debts: {
+            "Credit Card": 1000000,
+          },
+          investments: {
+            "Mutual Funds": 5000000,
+          },
+        },
+        analysisType: "budget" as const,
+      };
+
       // Call the new AI insights endpoint
-      const result = await AIService.analyzeFinancialData();
+      const result = await AIService.analyzeFinancialData(analysisRequest);
 
       // Debug: Log the complete result structure
       console.log("🔍 Full API Result:", result);
@@ -324,16 +348,16 @@ const FinancialAnalysisComponent = () => {
                           {key === "housing"
                             ? "Rumah/Sewa"
                             : key === "food"
-                            ? "Makanan"
-                            : key === "transportation"
-                            ? "Transportasi"
-                            : key === "utilities"
-                            ? "Utilitas"
-                            : key === "entertainment"
-                            ? "Hiburan"
-                            : key === "healthcare"
-                            ? "Kesehatan"
-                            : "Lainnya"}
+                              ? "Makanan"
+                              : key === "transportation"
+                                ? "Transportasi"
+                                : key === "utilities"
+                                  ? "Utilitas"
+                                  : key === "entertainment"
+                                    ? "Hiburan"
+                                    : key === "healthcare"
+                                      ? "Kesehatan"
+                                      : "Lainnya"}
                         </label>
                         <input
                           type="number"
@@ -594,18 +618,18 @@ const FinancialAnalysisComponent = () => {
                             "low"
                               ? "bg-green-100 text-green-800"
                               : getInsightsData(analysis).riskAssessment
-                                  .level === "moderate"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
+                                    .level === "moderate"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
                           }`}
                         >
                           {getInsightsData(analysis).riskAssessment.level ===
                           "low"
                             ? "Rendah"
                             : getInsightsData(analysis).riskAssessment.level ===
-                              "moderate"
-                            ? "Sedang"
-                            : "Tinggi"}
+                                "moderate"
+                              ? "Sedang"
+                              : "Tinggi"}
                         </span>
                       </div>
 

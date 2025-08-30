@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Send,
-  Bot,
   User,
   Sparkles,
   TrendingUp,
@@ -14,9 +13,6 @@ import {
   AlertCircle,
   RefreshCw,
   Trash2,
-  Orbit,
-  Star,
-  Atom,
 } from "lucide-react";
 import { useAIChat } from "@/hooks/useAIChat";
 
@@ -95,32 +91,32 @@ const AIChatInterface = () => {
   }
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-200px)]">
+    <div className="flex flex-col h-[calc(100vh-7rem)]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl">
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white p-4 shadow-lg rounded-t-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-white/20 rounded-lg">
-              <Orbit className="h-6 w-6" />
+            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+              <Sparkles className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Fintar AI Navigator</h2>
+              <h2 className="text-xl font-bold">Fintar AI Copilot</h2>
               <p className="text-blue-100 text-sm">
-                Eksplorasi Galaksi Finansial Bersama AI
+                Asisten Keuangan Cerdas Berbasis AI
               </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={clearChat}
-              className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+              className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all duration-200"
               title="Clear Chat"
             >
-              <Trash2 className="h-5 w-5" />
+              <Trash2 className="h-4 w-4" />
             </button>
             <div className="flex items-center space-x-1">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-sm">Online</span>
+              <span className="text-xs">Online</span>
             </div>
           </div>
         </div>
@@ -128,9 +124,9 @@ const AIChatInterface = () => {
 
       {/* Error Banner */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="bg-red-50 border-l-4 border-red-400 p-3">
           <div className="flex">
-            <AlertCircle className="h-5 w-5 text-red-400" />
+            <AlertCircle className="h-4 w-4 text-red-400" />
             <div className="ml-3">
               <p className="text-sm text-red-700">{error}</p>
             </div>
@@ -140,11 +136,11 @@ const AIChatInterface = () => {
 
       {/* Quick Actions */}
       {messages.length <= 1 && (
-        <div className="p-6 bg-gray-50">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Mulai dengan aksi cepat:
+        <div className="p-4 bg-gradient-to-b from-gray-50 to-white border-b border-gray-200">
+          <h3 className="text-base font-medium text-gray-900 mb-3">
+            🚀 Mulai dengan aksi cepat:
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {quickActions.map((action, index) => (
               <motion.button
                 key={index}
@@ -152,16 +148,16 @@ const AIChatInterface = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => handleQuickAction(action.action)}
-                className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left"
+                className="flex items-center space-x-3 p-3 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left"
               >
-                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                  <action.icon className="h-5 w-5" />
+                <div className="p-2 bg-gradient-to-br from-blue-100 to-purple-100 text-blue-600 rounded-lg">
+                  <action.icon className="h-4 w-4" />
                 </div>
                 <div>
-                  <div className="font-medium text-gray-900">
+                  <div className="font-medium text-gray-900 text-sm">
                     {action.label}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs text-gray-600">
                     {action.description}
                   </div>
                 </div>
@@ -172,19 +168,19 @@ const AIChatInterface = () => {
       )}
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50">
         {messages.map((message, index) => (
           <motion.div
             key={message.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
             className={`flex ${
               message.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <div
-              className={`flex items-start space-x-3 max-w-3xl ${
+              className={`flex items-start space-x-2 max-w-2xl ${
                 message.sender === "user"
                   ? "flex-row-reverse space-x-reverse"
                   : ""
@@ -192,36 +188,38 @@ const AIChatInterface = () => {
             >
               {/* Avatar */}
               <div
-                className={`p-2 rounded-lg ${
+                className={`p-2 rounded-full shadow-sm ${
                   message.sender === "user"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600"
+                    ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
+                    : "bg-gradient-to-br from-gray-100 to-gray-200 text-gray-600"
                 }`}
               >
                 {message.sender === "user" ? (
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4" />
                 ) : (
-                  <Bot className="h-5 w-5" />
+                  <Sparkles className="h-4 w-4" />
                 )}
               </div>
 
               {/* Message Content */}
               <div className="flex-1">
                 <div
-                  className={`p-4 rounded-xl ${
+                  className={`p-3 rounded-2xl shadow-sm ${
                     message.sender === "user"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-gradient-to-br from-blue-600 to-purple-600 text-white"
                       : message.messageType === "error"
                       ? "bg-red-50 text-red-900 border border-red-200"
-                      : "bg-white shadow-sm border border-gray-200"
+                      : "bg-white border border-gray-100 shadow-md"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                    {message.content}
+                  </p>
 
                   {/* Message Type Indicator */}
                   {message.messageType === "financial_analysis" && (
                     <div className="mt-2 flex items-center space-x-1 text-blue-600">
-                      <TrendingUp className="h-4 w-4" />
+                      <TrendingUp className="h-3 w-3" />
                       <span className="text-xs font-medium">
                         Analisis Keuangan
                       </span>
@@ -230,27 +228,33 @@ const AIChatInterface = () => {
 
                   {message.messageType === "advice" && (
                     <div className="mt-2 flex items-center space-x-1 text-green-600">
-                      <Sparkles className="h-4 w-4" />
+                      <Sparkles className="h-3 w-3" />
                       <span className="text-xs font-medium">Saran AI</span>
                     </div>
                   )}
                 </div>
 
                 {/* Timestamp */}
-                <div className="mt-1 text-xs text-gray-500">
+                <div
+                  className={`mt-1 text-xs ${
+                    message.sender === "user" ? "text-right" : "text-left"
+                  } text-gray-500`}
+                >
                   {formatTimestamp(message.timestamp)}
                 </div>
 
                 {/* Suggestions */}
                 {message.suggestions && message.suggestions.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    <p className="text-sm text-gray-600">Saran pertanyaan:</p>
+                  <div className="mt-2 space-y-1">
+                    <p className="text-xs text-gray-600">
+                      💡 Saran pertanyaan:
+                    </p>
                     <div className="space-y-1">
                       {message.suggestions.map((suggestion, idx) => (
                         <button
                           key={idx}
                           onClick={() => handleSendMessage(suggestion)}
-                          className="block w-full text-left p-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                          className="block w-full text-left p-2 text-xs bg-gray-50 hover:bg-blue-50 hover:border-blue-200 border border-gray-200 rounded-lg transition-all duration-200"
                         >
                           {suggestion}
                         </button>
@@ -270,19 +274,19 @@ const AIChatInterface = () => {
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-start"
           >
-            <div className="flex items-start space-x-3 max-w-3xl">
-              <div className="p-2 bg-gray-100 text-gray-600 rounded-lg">
-                <Bot className="h-5 w-5" />
+            <div className="flex items-start space-x-2 max-w-2xl">
+              <div className="p-2 bg-gradient-to-br from-gray-100 to-gray-200 text-gray-600 rounded-full shadow-sm">
+                <Sparkles className="h-4 w-4" />
               </div>
-              <div className="bg-white shadow-sm border border-gray-200 p-4 rounded-xl">
+              <div className="bg-white shadow-md border border-gray-100 p-3 rounded-2xl">
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150" />
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce delay-75" />
+                    <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-150" />
                   </div>
-                  <span className="text-sm text-gray-600">
-                    AI sedang mengetik...
+                  <span className="text-xs text-gray-600">
+                    AI Copilot sedang mengetik...
                   </span>
                 </div>
               </div>
@@ -292,8 +296,8 @@ const AIChatInterface = () => {
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 p-4 bg-white rounded-b-xl">
-        <div className="flex items-center space-x-3">
+      <div className="border-t border-gray-200 p-3 bg-white shadow-lg rounded-b-xl">
+        <div className="flex items-center space-x-2">
           <input
             type="text"
             value={inputMessage}
@@ -304,25 +308,25 @@ const AIChatInterface = () => {
                 handleSendMessage();
               }
             }}
-            placeholder="Tanyakan tentang keuangan Anda..."
+            placeholder="💬 Tanyakan tentang keuangan Anda..."
             disabled={isLoading}
-            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 p-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-200 text-sm"
           />
           <button
             onClick={() => handleSendMessage()}
             disabled={!inputMessage.trim() || isLoading}
-            className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="p-3 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-2xl hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
           >
             {isLoading ? (
-              <RefreshCw className="h-5 w-5 animate-spin" />
+              <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4" />
             )}
           </button>
         </div>
         <div className="mt-2 text-xs text-gray-500 text-center">
-          Fintar AI - Solusi Optimalisasi Finansial Pintar Keluarga dan UMKM
-          Berbasis AI
+          ✨ <strong>Fintar AI Copilot</strong> - Asisten Keuangan Cerdas
+          Berbasis AI untuk Keluarga dan UMKM
         </div>
       </div>
     </div>

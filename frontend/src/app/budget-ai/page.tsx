@@ -15,10 +15,28 @@ import {
 import AIService from "@/lib/ai-api";
 import { useUser } from "@/hooks/useUser";
 
+interface BudgetRecommendation {
+  success: boolean;
+  error?: string;
+  recommendations?: {
+    prioritas_pengeluaran: string[];
+    strategi_hemat: string[];
+    rekomendasi_investasi: string[];
+  };
+  rencana_budget?: {
+    target_tabungan: string;
+    alokasi_investasi: string;
+    persentase_kebutuhan: string;
+    persentase_keinginan: string;
+  };
+  tips?: string[];
+}
+
 const BudgetAIPage = () => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
-  const [recommendations, setRecommendations] = useState<any>(null);
+  const [recommendations, setRecommendations] =
+    useState<BudgetRecommendation | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleGetRecommendations = async () => {
@@ -31,7 +49,26 @@ const BudgetAIPage = () => {
     setError(null);
 
     try {
-      const result = await AIService.getBudgetRecommendations();
+      // Create a sample budget request for demo purposes
+      const budgetRequest = {
+        userId: user.id || "demo-user",
+        sessionId: `budget-session-${Date.now()}`,
+        budgetData: {
+          income: 10000000, // 10 million IDR sample income
+          currentExpenses: {
+            "Kebutuhan Pokok": 4000000,
+            Transportasi: 1500000,
+            Hiburan: 1000000,
+            Makan: 2000000,
+          },
+          savingsGoal: 1500000,
+          debtPayments: {
+            "Cicilan KPR": 2000000,
+          },
+        },
+      };
+
+      const result = await AIService.getBudgetRecommendations(budgetRequest);
       setRecommendations(result);
     } catch (error) {
       console.error("Error getting budget recommendations:", error);
@@ -183,29 +220,37 @@ const BudgetAIPage = () => {
                         ✅ Analisis Berhasil
                       </h4>
                       <p className="text-green-700 text-sm">
-                        {recommendations.recommendations}
+                        Analisis AI telah selesai. Berikut adalah rekomendasi
+                        budget personal Anda.
                       </p>
                     </div>
 
-                    {recommendations.data && (
+                    {recommendations.recommendations && (
                       <div className="space-y-3">
                         <h5 className="font-semibold text-gray-800">
                           Detail Rekomendasi:
                         </h5>
                         <div className="grid grid-cols-1 gap-3">
-                          <div className="p-3 bg-blue-50 rounded-lg">
-                            <span className="text-sm font-medium text-blue-800">
-                              Status AI:
-                            </span>
-                            <span className="text-sm text-blue-700 ml-2">
-                              Aktif & Optimal
-                            </span>
-                          </div>
+                          {recommendations.recommendations
+                            .prioritas_pengeluaran && (
+                            <div className="p-3 bg-blue-50 rounded-lg">
+                              <span className="text-sm font-medium text-blue-800">
+                                Prioritas Pengeluaran:
+                              </span>
+                              <ul className="text-sm text-blue-700 ml-2 mt-1">
+                                {recommendations.recommendations.prioritas_pengeluaran.map(
+                                  (item, idx) => (
+                                    <li key={idx}>• {item}</li>
+                                  )
+                                )}
+                              </ul>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
 
-                    {recommendations.metadata && (
+                    {recommendations.tips && (
                       <div className="text-xs text-gray-500 mt-4">
                         Diproses oleh Fintar AI pada{" "}
                         {new Date().toLocaleString("id-ID")}
@@ -232,7 +277,7 @@ const BudgetAIPage = () => {
                     Siap untuk Analisis AI
                   </h3>
                   <p className="text-gray-500">
-                    Klik tombol "Analisis dengan AI" untuk mendapatkan
+                    Klik tombol &quot;Analisis dengan AI&quot; untuk mendapatkan
                     rekomendasi budget yang personal
                   </p>
                 </div>

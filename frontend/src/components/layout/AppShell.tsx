@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Avatar,
@@ -93,12 +94,15 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/dashboard" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">F</span>
+                <div className="flex items-center space-x-2">
+                  <Image
+                    src="/Fintarlogo.png"
+                    alt="Fintar Logo"
+                    width={100}
+                    height={70}
+                    className="object-contain"
+                  />
                 </div>
-                <span className="text-2xl font-bold text-text-primary">
-                  Fintar
-                </span>
               </Link>
             </div>
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import apiClient from "./api";
+import apiClient from "./api-client";
 
 // AI Chat Types
 export interface ChatMessage {
@@ -116,7 +116,7 @@ export class AIService {
    */
   static async createChatSession(userId: string): Promise<string> {
     try {
-      console.log("Creating new chat session for user:", userId);
+      console.log("🔄 Creating new chat session for user:", userId);
 
       const requestData = {
         title: "Fintar AI Chat Session",
@@ -127,33 +127,34 @@ export class AIService {
         },
       };
 
-      console.log("Sending session creation request:", requestData);
+      console.log("📤 Sending session creation request:", requestData);
 
-      const response = await apiClient.post(
-        "/api/v1/chat/sessions",
-        requestData
-      );
+      const response = await apiClient.createChatSession(requestData);
 
-      console.log("Raw session creation response:", response);
-      console.log("Response data:", response.data);
+      console.log("📥 Raw session creation response:", response);
+      console.log("📋 Response data:", response.data);
 
-      // Backend returns the session object directly, not wrapped in 'data'
-      const responseData = response.data as any;
-      const sessionId =
-        (responseData as any)?.id || (responseData as any)?.sessionId;
+      if (!response.success || !response.data) {
+        console.error("❌ Session creation failed:", response);
+        throw new Error(response.error || "Failed to create chat session");
+      }
+
+      // The api-client returns the session object
+      const responseData = response.data;
+      const sessionId = responseData?._id || responseData?.sessionId;
 
       if (!sessionId) {
-        console.error("Session creation response missing ID:", {
+        console.error("❌ Session creation response missing ID:", {
           responseData: responseData,
           fullResponse: response,
         });
         throw new Error("No session ID returned from backend");
       }
 
-      console.log("Chat session created successfully:", sessionId);
+      console.log("✅ Chat session created successfully:", sessionId);
       return sessionId;
     } catch (error: any) {
-      console.error("Error creating chat session:", error);
+      console.error("❌ Error creating chat session:", error);
 
       // Log more details about the error
       if (error?.response) {
@@ -161,10 +162,19 @@ export class AIService {
           status: error.response.status,
           data: error.response.data,
           headers: error.response.headers,
+          config: error.response.config,
         });
       }
 
-      // Don't create fallback session, let the error bubble up
+      // Create better error message
+      if (error?.response?.status === 401) {
+        throw new Error("Authentication failed. Please log in again.");
+      } else if (error?.response?.status === 500) {
+        throw new Error("Server error occurred while creating chat session.");
+      } else if (error?.code === "NETWORK_ERROR") {
+        throw new Error("Network error. Please check your connection.");
+      }
+
       throw new Error(`Failed to create chat session: ${error.message}`);
     }
   }
@@ -182,258 +192,104 @@ export class AIService {
         currentSessionId === "" ||
         currentSessionId.startsWith("session_") // Fallback session IDs are invalid
       ) {
-        console.log("Creating new session for user:", request.userId);
+        console.log("🔄 Creating new session for user:", request.userId);
         currentSessionId = await this.createChatSession(request.userId);
       }
 
-      console.log("Sending message to session:", currentSessionId);
+      console.log("📤 Sending message to session:", currentSessionId);
 
       // Send the message to backend
-      const response = await apiClient.post(
-        `/api/v1/chat/sessions/${currentSessionId}/messages`,
-        {
-          content: request.message,
-          context: request.context,
-        }
+      const response = await apiClient.sendChatMessage(
+        currentSessionId,
+        request.message
       );
 
-      // Backend response format: { userMessage: {...}, aiMessage: {...}, sessionInfo: {...} }
-      const responseData = response.data as any;
-      console.log("Message response received:", responseData);
+      // Backend response format from test: { userMessage, aiMessage, sessionInfo }
+      const data = response.data;
 
-      return {
-        response:
-          (responseData as any)?.aiMessage?.content ||
-          (responseData as any)?.message ||
-          "AI berhasil memproses pesan Anda",
-        messageType: "text",
-        sessionId: currentSessionId,
-        timestamp:
-          (responseData as any)?.aiMessage?.timestamp ||
-          new Date().toISOString(),
-        suggestions: (responseData as any)?.suggestions || [
-          "Berikan analisis keuangan saya",
-          "Rekomendasi investasi",
-          "Buat rencana budget",
-          "Tips menabung",
-        ],
-      };
-    } catch (error) {
-      console.error("Chat API Error:", error);
-
-      // Check for specific error types
-      const errorMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.message ||
-        "Unknown error";
-      const isQuotaError =
-        errorMessage.includes("quota") ||
-        errorMessage.includes("temporarily unavailable") ||
-        errorMessage.includes("high demand");
-
-      if (isQuotaError) {
-        throw new Error(
-          "AI service is temporarily unavailable due to high demand. Please try again in a few minutes."
-        );
-      } else {
-        throw new Error(`Failed to process message: ${errorMessage}`);
+      if (!response.success || !data) {
+        throw new Error(response.error || "Invalid response from AI service");
       }
+
+      // Extract AI message from backend response
+      let aiMessage;
+      if (data.aiMessage) {
+        // Backend format: { userMessage, aiMessage, sessionInfo }
+        aiMessage = data.aiMessage;
+      } else if (data.response) {
+        // Fallback format
+        aiMessage = { content: data.response };
+      } else if (typeof data === "string") {
+        // Direct string response
+        aiMessage = { content: data };
+      } else {
+        // Unknown format
+        aiMessage = { content: "Sorry, I couldn't process your request." };
+      }
+
+      // Format response for frontend
+      const aiResponse: ChatResponse = {
+        response:
+          aiMessage.content || "Sorry, I couldn't process your request.",
+        messageType: aiMessage.metadata?.messageType || "text",
+        suggestions: aiMessage.metadata?.suggestions || [],
+        analysisData: aiMessage.metadata?.analysisData,
+        sessionId: currentSessionId,
+        timestamp: aiMessage.timestamp || new Date().toISOString(),
+      };
+
+      console.log("✅ AI response received:", aiResponse);
+      return aiResponse;
+    } catch (error: any) {
+      console.error("❌ Error sending message:", error);
+
+      if (error?.response?.status === 401) {
+        throw new Error("Authentication failed. Please log in again.");
+      } else if (error?.response?.status === 404) {
+        throw new Error(
+          "Chat session not found. Please start a new conversation."
+        );
+      }
+
+      throw new Error(`Failed to send message: ${error.message}`);
     }
   }
 
   /**
-   * Get financial analysis from AI
-   */
-  static async analyzeFinancialData(): Promise<any> {
-    try {
-      const response = await apiClient.get("/api/v1/financial/ai-insights");
-
-      console.log("🔍 Raw API Response:", response.data);
-
-      // The backend returns { success, insights, aiMetadata }
-      const responseData = response.data as any;
-
-      // Backend response structure: { success, insights, aiMetadata }
-      // Frontend expects: { success, insights: "text", data: { insights: {...} }, metadata: {...} }
-
-      // Extract actual insights data
-      const insightsData = responseData?.insights || {};
-      const metadata = responseData?.aiMetadata || {};
-
-      return {
-        success: responseData?.success || true,
-        insights:
-          insightsData?.summary || "Analisis keuangan berhasil diproses",
-        data: {
-          insights: insightsData, // Put full insights structure in data.insights
-        },
-        metadata: metadata,
-      };
-    } catch (error) {
-      console.error("Financial Analysis API Error:", error);
-      return {
-        success: false,
-        error: "Gagal menganalisis data keuangan. Silakan coba lagi.",
-        insights: "Maaf, analisis tidak dapat diproses saat ini.",
-        data: {
-          insights: {
-            summary: "Analisis tidak tersedia saat ini",
-            opportunities: [],
-            riskAssessment: { level: "unknown", recommendations: [] },
-            financialMetrics: null,
-          },
-        },
-        metadata: {},
-      };
-    }
-  }
-
-  /**
-   * Get AI financial planning advice
-   */
-  static async getFinancialAdvice(): Promise<any> {
-    try {
-      const response = await apiClient.post("/api/v1/financial/ai-plan", {
-        duration: "1_year",
-        goals: ["saving", "investment"],
-      });
-      return {
-        success: true,
-        plan:
-          (response.data as any)?.plan || "Rencana keuangan berhasil dibuat",
-        data: response.data,
-        metadata: (response.data as any)?.aiMetadata || {},
-      };
-    } catch (error) {
-      console.error("Financial Advice API Error:", error);
-      return {
-        success: false,
-        error: "Gagal mendapatkan saran keuangan. Silakan coba lagi.",
-        plan: "Maaf, rencana keuangan tidak dapat dibuat saat ini.",
-      };
-    }
-  }
-
-  /**
-   * Generate AI budget recommendations
-   */
-  static async getBudgetRecommendations(): Promise<any> {
-    try {
-      const response = await apiClient.get(
-        "/api/v1/financial/budget/ai-recommendations"
-      );
-      return {
-        success: true,
-        recommendations:
-          (response.data as any)?.recommendations ||
-          "Rekomendasi budget berhasil dibuat",
-        data: response.data,
-        metadata: (response.data as any)?.aiMetadata || {},
-      };
-    } catch (error) {
-      console.error("Budget Recommendations API Error:", error);
-      return {
-        success: false,
-        error: "Gagal membuat rekomendasi budget. Silakan coba lagi.",
-        recommendations:
-          "Maaf, rekomendasi budget tidak dapat dibuat saat ini.",
-      };
-    }
-  }
-
-  /**
-   * Get AI investment recommendations
-   */
-  static async analyzePortfolio(): Promise<any> {
-    try {
-      const response = await apiClient.get(
-        "/financial/investment/recommendations"
-      );
-      return {
-        success: true,
-        recommendations:
-          (response.data as any)?.recommendations ||
-          "Rekomendasi investasi berhasil dibuat",
-        data: response.data,
-        metadata: (response.data as any)?.aiMetadata || {},
-      };
-    } catch (error) {
-      console.error("Portfolio Analysis API Error:", error);
-      return {
-        success: false,
-        error: "Gagal menganalisis portfolio. Silakan coba lagi.",
-        recommendations:
-          "Maaf, analisis investasi tidak dapat diproses saat ini.",
-      };
-    }
-  }
-
-  /**
-   * Assess investment risk
-   */
-  static async assessInvestmentRisk(): Promise<any> {
-    try {
-      const response = await apiClient.get(
-        "/financial/investment/recommendations"
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Risk Assessment API Error:", error);
-      throw new Error("Gagal menilai risiko investasi. Silakan coba lagi.");
-    }
-  }
-
-  /**
-   * Get AI chat session history
+   * Get chat history for a session
    */
   static async getChatHistory(
     userId: string,
     sessionId: string
   ): Promise<ChatMessage[]> {
     try {
-      // Ensure session exists first
-      if (
-        !sessionId ||
-        sessionId === "" ||
-        sessionId === "new" ||
-        sessionId.startsWith("session_")
-      ) {
-        console.log("No valid session ID, returning empty history");
-        return [];
-      }
+      console.log("📥 Loading chat history for session:", sessionId);
 
-      console.log("Loading chat history for session:", sessionId);
+      const response = await apiClient.getChatHistory(sessionId);
 
-      const response = await apiClient.get(
-        `/api/v1/chat/sessions/${sessionId}/messages`
-      );
+      const messages = response.success ? response.data || [] : [];
 
-      // Transform backend format to frontend format
-      const messages = response.data as any[];
-      if (!Array.isArray(messages)) {
-        console.log("No messages found in session");
-        return [];
-      }
-
-      const transformedMessages = messages.map((msg: any) => ({
-        id: msg.id || `msg_${Date.now()}`,
+      // Convert backend messages to frontend format
+      const chatHistory: ChatMessage[] = messages.map((msg: any) => ({
+        id: msg.id,
         content: msg.content,
-        sender: (msg.role === "USER" ? "user" : "ai") as "user" | "ai",
-        timestamp: new Date(msg.timestamp || msg.createdAt),
-        messageType: msg.messageType || "text",
+        sender: msg.role === "USER" ? "user" : "ai",
+        timestamp: new Date(msg.timestamp),
+        messageType: msg.metadata?.messageType || "text",
+        suggestions: msg.metadata?.suggestions || [],
       }));
 
-      console.log(
-        "Chat history loaded:",
-        transformedMessages.length,
-        "messages"
-      );
-      return transformedMessages;
-    } catch (error) {
-      console.error("Chat History API Error:", error);
-      // Don't throw error for history, just return empty array
-      console.log("Returning empty history due to error");
-      return [];
+      console.log("✅ Chat history loaded:", chatHistory.length, "messages");
+      return chatHistory;
+    } catch (error: any) {
+      console.error("❌ Error loading chat history:", error);
+
+      if (error?.response?.status === 404) {
+        console.log("📝 No chat history found, starting fresh");
+        return [];
+      }
+
+      throw new Error(`Failed to load chat history: ${error.message}`);
     }
   }
 
@@ -443,34 +299,64 @@ export class AIService {
   static async deleteChatSession(
     userId: string,
     sessionId: string
-  ): Promise<boolean> {
+  ): Promise<void> {
     try {
-      await apiClient.delete(`/api/v1/chat/sessions/${sessionId}`);
-      return true;
-    } catch (error) {
-      console.error("Delete Chat Session API Error:", error);
-      return false;
+      // Note: This feature is not implemented in api-client yet
+      console.log("⚠️ Delete session functionality not yet implemented");
+      console.log("Session deletion requested for:", sessionId);
+    } catch (error: any) {
+      console.error("❌ Error deleting chat session:", error);
+      throw new Error(`Failed to delete chat session: ${error.message}`);
     }
   }
 
   /**
-   * Get user sessions
+   * Get user's chat sessions
    */
   static async getUserSessions(): Promise<any[]> {
     try {
-      const response = await apiClient.get(`/api/v1/chat/sessions`);
-      return (response.data as any[]) || [];
-    } catch (error) {
-      console.error("Get User Sessions API Error:", error);
+      const response = await apiClient.getChatSessions();
+      return response.success ? response.data || [] : [];
+    } catch (error: any) {
+      console.error("❌ Error loading user sessions:", error);
       return [];
     }
   }
 
-  /**
-   * Generate user ID (temporary - should come from auth)
-   */
-  static generateUserId(): string {
-    return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  // Financial Analysis Methods (TODO: Implement with proper API client)
+  static async analyzeFinancialData(
+    request: FinancialAnalysisRequest
+  ): Promise<any> {
+    console.log("⚠️ Financial analysis not yet implemented:", request);
+    throw new Error("Financial analysis feature is not yet available");
+  }
+
+  static async getFinancialAdvice(
+    request: FinancialAdviceRequest
+  ): Promise<any> {
+    console.log("⚠️ Financial advice not yet implemented:", request);
+    throw new Error("Financial advice feature is not yet available");
+  }
+
+  static async getBudgetRecommendations(
+    request: BudgetRecommendationRequest
+  ): Promise<any> {
+    console.log("⚠️ Budget recommendations not yet implemented:", request);
+    throw new Error("Budget recommendations feature is not yet available");
+  }
+
+  static async analyzePortfolio(
+    request: PortfolioAnalysisRequest
+  ): Promise<any> {
+    console.log("⚠️ Portfolio analysis not yet implemented:", request);
+    throw new Error("Portfolio analysis feature is not yet available");
+  }
+
+  static async assessInvestmentRisk(
+    request: RiskAssessmentRequest
+  ): Promise<any> {
+    console.log("⚠️ Investment risk assessment not yet implemented:", request);
+    throw new Error("Investment risk assessment feature is not yet available");
   }
 }
 

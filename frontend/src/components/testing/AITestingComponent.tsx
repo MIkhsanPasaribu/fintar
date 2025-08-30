@@ -88,24 +88,17 @@ const AITestingComponent = () => {
           if (!user)
             return { success: false, message: "User not authenticated" };
           try {
-            const response = await AIService.analyzeFinancialData({
+            const request = {
               userId: user.id,
-              sessionId: AIService.generateSessionId(),
+              sessionId: `test-analysis-${Date.now()}`,
               financialData: {
-                income: 8500000,
-                expenses: {
-                  housing: 3500000,
-                  food: 1500000,
-                  transportation: 800000,
-                  utilities: 500000,
-                  entertainment: 600000,
-                  healthcare: 300000,
-                  other: 500000,
-                },
-                savings: 800000,
+                income: 10000000,
+                expenses: { Test: 5000000 },
+                savings: 2000000,
               },
-              analysisType: "budget",
-            });
+              analysisType: "budget" as const,
+            };
+            const response = await AIService.analyzeFinancialData(request);
             return {
               success: !!response,
               message: "Financial analysis completed successfully",
@@ -122,17 +115,18 @@ const AITestingComponent = () => {
           if (!user)
             return { success: false, message: "User not authenticated" };
           try {
-            const response = await AIService.getFinancialAdvice({
+            const request = {
               userId: user.id,
-              sessionId: AIService.generateSessionId(),
-              question: "Bagaimana cara mengoptimalkan budget bulanan saya?",
+              sessionId: `test-advice-${Date.now()}`,
+              question: "Test financial advice question",
               userProfile: {
-                age: 28,
-                income: 8500000,
-                riskTolerance: "medium",
-                financialGoals: ["Emergency Fund", "Investment"],
+                age: 30,
+                income: 10000000,
+                riskTolerance: "medium" as const,
+                financialGoals: ["Test goal"],
               },
-            });
+            };
+            const response = await AIService.getFinancialAdvice(request);
             return {
               success: !!response,
               message: "Financial advice generated successfully",

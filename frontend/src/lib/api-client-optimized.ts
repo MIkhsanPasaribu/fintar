@@ -85,10 +85,13 @@ class ApiClient {
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: `${API_BASE_URL}/api/v1`,
-      timeout: 30000,
+      timeout: 15000, // Reduced from 30s to 15s
       headers: {
         "Content-Type": "application/json",
       },
+      // Add performance optimizations
+      maxRedirects: 3,
+      validateStatus: (status) => status < 500, // Don't reject on 4xx errors
     });
 
     this.setupInterceptors();
@@ -102,16 +105,30 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Add request timeout logging
+        console.log(
+          `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
+        );
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor to handle token refresh
+    // Response interceptor to handle token refresh and logging
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log(
+          `✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`
+        );
+        return response;
+      },
       async (error: AxiosError) => {
         const originalRequest = error.config as any;
+
+        console.log(
+          `❌ API Error: ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - ${error.response?.status || "Network Error"}`
+        );
 
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
@@ -174,9 +191,8 @@ class ApiClient {
 
         const response = await axios.post(
           `${API_BASE_URL}/api/v1/auth/refresh`,
-          {
-            refreshToken,
-          }
+          { refreshToken },
+          { timeout: 10000 } // Shorter timeout for refresh
         );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
@@ -193,10 +209,75 @@ class ApiClient {
     return this.refreshPromise;
   }
 
-  // Health check
+  private handleError(error: any, defaultMessage: string): ApiResponse {
+    console.error(`API Error: ${defaultMessage}`, error);
+
+    let message = defaultMessage;
+    let statusCode = 500;
+
+    if (error.response) {
+      statusCode = error.response.status;
+      message =
+        error.response.data?.message ||
+        error.response.data?.error ||
+        defaultMessage;
+    } else if (error.request) {
+      message = "Network error - please check your connection";
+      statusCode = 0;
+    } else if (error.code === "ECONNABORTED") {
+      message = "Request timeout - server took too long to respond";
+      statusCode = 408;
+    }
+
+    return {
+      error: message,
+      success: false,
+      data: { statusCode },
+    };
+  }
+
+  // Retry mechanism for critical operations
+  private async retryRequest<T>(
+    requestFn: () => Promise<AxiosResponse<T>>,
+    maxRetries: number = 2,
+    delay: number = 1000
+  ): Promise<AxiosResponse<T>> {
+    let lastError: any;
+
+    for (let i = 0; i <= maxRetries; i++) {
+      try {
+        return await requestFn();
+      } catch (error: any) {
+        lastError = error;
+
+        // Don't retry on auth errors or client errors
+        if (
+          error.response?.status === 401 ||
+          error.response?.status === 403 ||
+          (error.response?.status >= 400 && error.response?.status < 500)
+        ) {
+          throw error;
+        }
+
+        if (i < maxRetries) {
+          console.log(
+            `🔄 Retrying request in ${delay}ms... (${i + 1}/${maxRetries})`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2; // Exponential backoff
+        }
+      }
+    }
+
+    throw lastError;
+  }
+
+  // Health check with fast timeout
   async healthCheck(): Promise<ApiResponse> {
     try {
-      const response = await this.axiosInstance.get("/health");
+      const response = await this.axiosInstance.get("/health", {
+        timeout: 5000, // Fast timeout for health check
+      });
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Health check failed");
@@ -211,7 +292,9 @@ class ApiClient {
     lastName: string;
   }): Promise<ApiResponse<AuthResponse>> {
     try {
-      const response = await this.axiosInstance.post("/auth/register", data);
+      const response = await this.retryRequest(() =>
+        this.axiosInstance.post("/auth/register", data)
+      );
       const authData = response.data;
       this.storeTokens(authData.accessToken, authData.refreshToken);
       return { data: authData, success: true };
@@ -225,7 +308,9 @@ class ApiClient {
     password: string;
   }): Promise<ApiResponse<AuthResponse>> {
     try {
-      const response = await this.axiosInstance.post("/auth/login", data);
+      const response = await this.retryRequest(() =>
+        this.axiosInstance.post("/auth/login", data)
+      );
       const authData = response.data;
       this.storeTokens(authData.accessToken, authData.refreshToken);
       return { data: authData, success: true };
@@ -238,10 +323,10 @@ class ApiClient {
     this.clearTokens();
   }
 
-  // User endpoints
+  // User endpoints - Fixed double prefix
   async getUserProfile(): Promise<ApiResponse<UserProfile>> {
     try {
-      const response = await this.axiosInstance.get("/api/v1/users/profile");
+      const response = await this.axiosInstance.get("/users/profile");
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to get user profile");
@@ -252,13 +337,10 @@ class ApiClient {
     data: Partial<UserProfile>
   ): Promise<ApiResponse<UserProfile>> {
     try {
-      const response = await this.axiosInstance.put(
-        "/api/v1/users/profile",
-        data
-      );
+      const response = await this.axiosInstance.patch("/users/profile", data);
       return { data: response.data, success: true };
     } catch (error) {
-      return this.handleError(error, "Failed to update profile");
+      return this.handleError(error, "Failed to update user profile");
     }
   }
 
@@ -272,86 +354,27 @@ class ApiClient {
     }
   }
 
-  async saveFinancialData(
+  async updateFinancialData(
     data: Partial<FinancialData>
   ): Promise<ApiResponse<FinancialData>> {
     try {
-      const response = await this.axiosInstance.post("/financial/data", data);
+      const response = await this.axiosInstance.patch("/financial/data", data);
       return { data: response.data, success: true };
     } catch (error) {
-      return this.handleError(error, "Failed to save financial data");
+      return this.handleError(error, "Failed to update financial data");
     }
   }
 
-  async getFinancialSummary(): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.get("/financial/summary");
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(error, "Failed to get financial summary");
-    }
-  }
-
-  async getInvestmentRecommendations(): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.get(
-        "/financial/investment/recommendations"
-      );
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(
-        error,
-        "Failed to get investment recommendations"
-      );
-    }
-  }
-
-  // Investment AI endpoints
-  async getAIInvestmentRecommendations(): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.get(
-        "/financial/investment/ai-recommendations"
-      );
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(
-        error,
-        "Failed to get AI investment recommendations"
-      );
-    }
-  }
-
-  async analyzePortfolioWithAI(portfolioData?: any): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.post(
-        "/financial/investment/ai-analyze",
-        portfolioData
-      );
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(error, "Failed to analyze portfolio with AI");
-    }
-  }
-
-  async getMarketTrendAnalysis(): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.get(
-        "/financial/investment/market-trends"
-      );
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(error, "Failed to get market trend analysis");
-    }
-  }
-
-  // Chat endpoints
+  // Chat endpoints with optimizations
   async createChatSession(data: {
+    type: string;
     title?: string;
-    type?: string;
     metadata?: Record<string, any>;
   }): Promise<ApiResponse<ChatSession>> {
     try {
-      const response = await this.axiosInstance.post("chat/sessions", data);
+      const response = await this.retryRequest(() =>
+        this.axiosInstance.post("/chat/sessions", data)
+      );
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to create chat session");
@@ -360,7 +383,7 @@ class ApiClient {
 
   async getChatSessions(): Promise<ApiResponse<ChatSession[]>> {
     try {
-      const response = await this.axiosInstance.get("chat/sessions");
+      const response = await this.axiosInstance.get("/chat/sessions");
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to get chat sessions");
@@ -370,7 +393,7 @@ class ApiClient {
   async getChatHistory(sessionId: string): Promise<ApiResponse<ChatMessage[]>> {
     try {
       const response = await this.axiosInstance.get(
-        `chat/sessions/${sessionId}/messages`
+        `/chat/sessions/${sessionId}/messages`
       );
       return { data: response.data, success: true };
     } catch (error) {
@@ -383,11 +406,11 @@ class ApiClient {
     content: string
   ): Promise<ApiResponse> {
     try {
+      // Longer timeout for AI chat responses
       const response = await this.axiosInstance.post(
-        `chat/sessions/${sessionId}/messages`,
-        {
-          content,
-        }
+        `/chat/sessions/${sessionId}/messages`,
+        { content },
+        { timeout: 30000 } // 30s for AI responses
       );
       return { data: response.data, success: true };
     } catch (error) {
@@ -405,26 +428,11 @@ class ApiClient {
     }
   }
 
-  async getConsultant(id: string): Promise<ApiResponse> {
+  // Bookings endpoints
+  async createBooking(data: any): Promise<ApiResponse> {
     try {
-      const response = await this.axiosInstance.get(`/consultants/${id}`);
-      return { data: response.data, success: true };
-    } catch (error) {
-      return this.handleError(error, "Failed to get consultant");
-    }
-  }
-
-  async createBooking(data: {
-    consultantId: string;
-    scheduledAt: string;
-    service: string;
-    duration?: number;
-    notes?: string;
-  }): Promise<ApiResponse> {
-    try {
-      const response = await this.axiosInstance.post(
-        "/consultants/bookings",
-        data
+      const response = await this.retryRequest(() =>
+        this.axiosInstance.post("/bookings", data)
       );
       return { data: response.data, success: true };
     } catch (error) {
@@ -434,32 +442,14 @@ class ApiClient {
 
   async getUserBookings(): Promise<ApiResponse> {
     try {
-      const response = await this.axiosInstance.get("/consultants/bookings");
+      const response = await this.axiosInstance.get("/bookings");
       return { data: response.data, success: true };
     } catch (error) {
       return this.handleError(error, "Failed to get bookings");
     }
   }
-
-  private handleError(error: any, defaultMessage: string): ApiResponse {
-    console.error("API Error:", error);
-
-    const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      defaultMessage;
-
-    return {
-      error: message,
-      success: false,
-      fallback: false,
-    };
-  }
 }
 
 // Export singleton instance
-export const apiClient = new ApiClient();
-
-// Export default instance for easy import
+const apiClient = new ApiClient();
 export default apiClient;

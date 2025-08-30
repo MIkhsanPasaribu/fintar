@@ -15,6 +15,46 @@ export interface User {
   updatedAt: Date;
 }
 
+// Comprehensive User Profile Types (matches backend)
+export interface UserProfile {
+  // User table fields
+  id: string;
+  email: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  avatar?: string;
+
+  // Profile table fields
+  userId: string;
+  dateOfBirth?: string;
+  gender?: "MALE" | "FEMALE" | "OTHER";
+  occupation?: string;
+  company?: string;
+  monthlyIncome?: number;
+  monthlyExpenses?: number;
+  currentSavings?: number;
+  currentDebt?: number;
+  emergencyFundAmount?: number;
+  financialGoals?: string[];
+  riskTolerance?: "LOW" | "MODERATE" | "HIGH";
+  investmentExperience?: string;
+  currentInvestments?: string;
+  maritalStatus?: "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
+  dependents?: number;
+  educationLevel?: string;
+  assets?: string;
+  liabilities?: string;
+  insurance?: string;
+  address?: string;
+  currency?: string;
+
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Consultant Types
 export interface Consultant {
   id: string;

@@ -1,19 +1,6 @@
 import { useState, useEffect } from "react";
 import { usersApi } from "@/lib/api";
-
-interface UserProfileData {
-  id?: string;
-  email?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string;
-  monthlyIncome?: number;
-  riskTolerance?: string;
-  financialGoals?: string[];
-  currentSavings?: number;
-  monthlyExpenses?: number;
-}
+import { UserProfile } from "@/types";
 
 interface User {
   id: string;
@@ -30,6 +17,22 @@ interface User {
     financialGoals?: string[];
     currentSavings?: number;
     monthlyExpenses?: number;
+    dateOfBirth?: string;
+    gender?: string;
+    occupation?: string;
+    company?: string;
+    currentDebt?: number;
+    emergencyFundAmount?: number;
+    investmentExperience?: string;
+    currentInvestments?: string;
+    maritalStatus?: string;
+    dependents?: number;
+    educationLevel?: string;
+    assets?: string;
+    liabilities?: string;
+    insurance?: string;
+    address?: string;
+    currency?: string;
   };
 }
 
@@ -46,21 +49,28 @@ export const useUser = () => {
           const userProfileResponse = await usersApi
             .getUserProfile()
             .catch(() => null);
-          const userProfileData = userProfileResponse as UserProfileData | null;
+          const userProfileData = userProfileResponse as UserProfile | null;
 
           if (userProfileData) {
             // Create user object with real data from database only
             const currentUser: User = {
               id: userProfileData.id || `user_${Date.now()}`,
               email: userProfileData.email || "",
-              name: userProfileData.name || userProfileData.firstName || "User",
+              name:
+                userProfileData.firstName || userProfileData.username || "User",
               firstName: userProfileData.firstName || "",
               lastName: userProfileData.lastName || "",
               profileCompleted: !!(
-                userProfileData.firstName && userProfileData.lastName
+                userProfileData.firstName &&
+                userProfileData.lastName &&
+                userProfileData.dateOfBirth &&
+                userProfileData.occupation
               ),
               financialDataCompleted: !!(
-                userProfileData.monthlyIncome && userProfileData.monthlyExpenses
+                userProfileData.monthlyIncome &&
+                userProfileData.monthlyExpenses &&
+                userProfileData.currentSavings &&
+                userProfileData.riskTolerance
               ),
               profile: {
                 age: userProfileData?.dateOfBirth
@@ -79,6 +89,25 @@ export const useUser = () => {
                 financialGoals: userProfileData?.financialGoals || [],
                 currentSavings: userProfileData?.currentSavings || undefined,
                 monthlyExpenses: userProfileData?.monthlyExpenses || undefined,
+                dateOfBirth: userProfileData?.dateOfBirth || undefined,
+                gender: userProfileData?.gender || undefined,
+                occupation: userProfileData?.occupation || undefined,
+                company: userProfileData?.company || undefined,
+                currentDebt: userProfileData?.currentDebt || undefined,
+                emergencyFundAmount:
+                  userProfileData?.emergencyFundAmount || undefined,
+                investmentExperience:
+                  userProfileData?.investmentExperience || undefined,
+                currentInvestments:
+                  userProfileData?.currentInvestments || undefined,
+                maritalStatus: userProfileData?.maritalStatus || undefined,
+                dependents: userProfileData?.dependents || undefined,
+                educationLevel: userProfileData?.educationLevel || undefined,
+                assets: userProfileData?.assets || undefined,
+                liabilities: userProfileData?.liabilities || undefined,
+                insurance: userProfileData?.insurance || undefined,
+                address: userProfileData?.address || undefined,
+                currency: userProfileData?.currency || "IDR",
               },
             };
             setUser(currentUser);
@@ -128,24 +157,30 @@ export const useUser = () => {
         const userProfileResponse = await usersApi
           .getUserProfile()
           .catch(() => null);
-        const userProfileData = userProfileResponse as UserProfileData | null;
+        const userProfileData = userProfileResponse as UserProfile | null;
 
         if (userProfileData) {
           const updatedUser: User = {
             id: userProfileData.id || user?.id || `user_${Date.now()}`,
             email: userProfileData.email || user?.email || "",
             name:
-              userProfileData.name ||
               userProfileData.firstName ||
+              userProfileData.username ||
               user?.name ||
               "User",
             firstName: userProfileData.firstName || user?.firstName || "",
             lastName: userProfileData.lastName || user?.lastName || "",
             profileCompleted: !!(
-              userProfileData.firstName && userProfileData.lastName
+              userProfileData.firstName &&
+              userProfileData.lastName &&
+              userProfileData.dateOfBirth &&
+              userProfileData.occupation
             ),
             financialDataCompleted: !!(
-              userProfileData.monthlyIncome && userProfileData.monthlyExpenses
+              userProfileData.monthlyIncome &&
+              userProfileData.monthlyExpenses &&
+              userProfileData.currentSavings &&
+              userProfileData.riskTolerance
             ),
             profile: {
               age: userProfileData?.dateOfBirth
@@ -164,6 +199,25 @@ export const useUser = () => {
               financialGoals: userProfileData?.financialGoals || [],
               currentSavings: userProfileData?.currentSavings || undefined,
               monthlyExpenses: userProfileData?.monthlyExpenses || undefined,
+              dateOfBirth: userProfileData?.dateOfBirth || undefined,
+              gender: userProfileData?.gender || undefined,
+              occupation: userProfileData?.occupation || undefined,
+              company: userProfileData?.company || undefined,
+              currentDebt: userProfileData?.currentDebt || undefined,
+              emergencyFundAmount:
+                userProfileData?.emergencyFundAmount || undefined,
+              investmentExperience:
+                userProfileData?.investmentExperience || undefined,
+              currentInvestments:
+                userProfileData?.currentInvestments || undefined,
+              maritalStatus: userProfileData?.maritalStatus || undefined,
+              dependents: userProfileData?.dependents || undefined,
+              educationLevel: userProfileData?.educationLevel || undefined,
+              assets: userProfileData?.assets || undefined,
+              liabilities: userProfileData?.liabilities || undefined,
+              insurance: userProfileData?.insurance || undefined,
+              address: userProfileData?.address || undefined,
+              currency: userProfileData?.currency || "IDR",
             },
           };
           setUser(updatedUser);

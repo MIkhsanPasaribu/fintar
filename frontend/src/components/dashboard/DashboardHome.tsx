@@ -57,26 +57,53 @@ const DashboardHome = () => {
     }
   }, [user]);
 
-  // Check profile completion
+  // Check profile completion - more comprehensive
   const checkProfileCompletion = () => {
-    if (!user?.profile) return { completed: false, missing: ["profile"] };
+    if (!user?.profile)
+      return {
+        completed: false,
+        missing: ["profile"],
+        completionPercentage: 0,
+      };
 
     const requiredFields = [
       "income",
       "monthlyExpenses",
       "currentSavings",
       "riskTolerance",
+      "dateOfBirth",
+      "occupation",
     ];
-    const missing = requiredFields.filter(
+
+    const optionalFields = [
+      "company",
+      "financialGoals",
+      "emergencyFundAmount",
+      "investmentExperience",
+      "maritalStatus",
+      "educationLevel",
+    ];
+
+    const missingRequired = requiredFields.filter(
       (field) => !user.profile?.[field as keyof typeof user.profile]
     );
 
+    const presentOptional = optionalFields.filter(
+      (field) => user.profile?.[field as keyof typeof user.profile]
+    );
+
+    const requiredPercentage =
+      ((requiredFields.length - missingRequired.length) /
+        requiredFields.length) *
+      80; // 80% for required
+    const optionalPercentage =
+      (presentOptional.length / optionalFields.length) * 20; // 20% for optional
+
     return {
-      completed: missing.length === 0,
-      missing,
-      completionPercentage: Math.round(
-        ((requiredFields.length - missing.length) / requiredFields.length) * 100
-      ),
+      completed: missingRequired.length === 0,
+      missing: missingRequired,
+      completionPercentage: Math.round(requiredPercentage + optionalPercentage),
+      hasOptionalData: presentOptional.length > 0,
     };
   };
 
@@ -98,12 +125,6 @@ const DashboardHome = () => {
       currency: "IDR",
       minimumFractionDigits: 0,
     }).format(amount);
-  };
-
-  const calculateNetIncome = () => {
-    const income = user?.profile?.income || 0;
-    const expenses = user?.profile?.monthlyExpenses || 0;
-    return income - expenses;
   };
 
   // If no profile data, show empty state
@@ -131,15 +152,6 @@ const DashboardHome = () => {
     );
   }
 
-  const calculateSavingsProgress = () => {
-    const netIncome = calculateNetIncome();
-    const targetSavings = netIncome * 0.2; // 20% target
-    const actualSavings = netIncome > 0 ? netIncome : 0;
-    return targetSavings > 0
-      ? Math.min((actualSavings / targetSavings) * 100, 100)
-      : 0;
-  };
-
   const summaryCards = [
     {
       title: "Total Saldo",
@@ -157,7 +169,11 @@ const DashboardHome = () => {
       trend: "up" as const,
       icon: TrendingUp,
       color: "green" as const,
-      description: "Pendapatan bulan ini",
+      description: user?.profile?.occupation
+        ? `${user.profile.occupation}${
+            user?.profile?.company ? ` - ${user.profile.company}` : ""
+          }`
+        : "Pendapatan bulan ini",
     },
     {
       title: "Pengeluaran Bulanan",
@@ -169,13 +185,19 @@ const DashboardHome = () => {
       description: "Pengeluaran bulan ini",
     },
     {
-      title: "Target Menabung",
-      value: `${Math.round(calculateSavingsProgress())}%`,
-      change: "+15%",
-      trend: "up" as const,
+      title: "Dana Darurat",
+      value: user?.profile?.emergencyFundAmount
+        ? formatCurrency(user.profile.emergencyFundAmount)
+        : "Belum diatur",
+      change: user?.profile?.emergencyFundAmount ? "+15%" : "0%",
+      trend: user?.profile?.emergencyFundAmount
+        ? ("up" as const)
+        : ("down" as const),
       icon: Target,
       color: "purple" as const,
-      description: "Progress target tabungan",
+      description: user?.profile?.emergencyFundAmount
+        ? "Dana darurat tersedia"
+        : "Perlu menyiapkan dana darurat",
     },
   ];
 
@@ -370,7 +392,7 @@ const DashboardHome = () => {
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
             <div className="flex items-center space-x-2">
               <Orbit className="h-4 w-4 text-green-300" />
-              <span className="text-sm font-medium">AI Navigator</span>
+              <span className="text-sm font-medium">AI Copilot</span>
             </div>
             <p className="text-xs text-blue-100 mt-1">Aktif Orbit 24/7</p>
           </div>
@@ -431,6 +453,82 @@ const DashboardHome = () => {
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${profileStatus.completionPercentage}%` }}
             />
+          </div>
+        </motion.div>
+      )}
+
+      {/* Profile Summary Widget - Only show when profile is reasonably complete */}
+      {profileStatus.completionPercentage > 50 && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="bg-green-100 p-2 rounded-full">
+                <Sparkles className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-green-900">
+                  Profile Summary
+                </h3>
+                <p className="text-sm text-green-700">
+                  Data finansial Anda saat ini
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/profile"
+              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+            >
+              Edit Profile
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {user?.profile?.age && (
+              <div className="bg-white p-3 rounded-lg border border-green-200">
+                <div className="text-sm text-gray-600">Usia</div>
+                <div className="font-semibold text-green-800">
+                  {user.profile.age} tahun
+                </div>
+              </div>
+            )}
+            {user?.profile?.riskTolerance && (
+              <div className="bg-white p-3 rounded-lg border border-green-200">
+                <div className="text-sm text-gray-600">Risk Profile</div>
+                <div className="font-semibold text-green-800">
+                  {user.profile.riskTolerance === "low"
+                    ? "Konservatif"
+                    : user.profile.riskTolerance === "medium"
+                    ? "Moderat"
+                    : "Agresif"}
+                </div>
+              </div>
+            )}
+            {user?.profile?.maritalStatus && (
+              <div className="bg-white p-3 rounded-lg border border-green-200">
+                <div className="text-sm text-gray-600">Status</div>
+                <div className="font-semibold text-green-800">
+                  {user.profile.maritalStatus === "SINGLE"
+                    ? "Lajang"
+                    : user.profile.maritalStatus === "MARRIED"
+                    ? "Menikah"
+                    : user.profile.maritalStatus === "DIVORCED"
+                    ? "Cerai"
+                    : "Janda/Duda"}
+                </div>
+              </div>
+            )}
+            {user?.profile?.dependents !== undefined && (
+              <div className="bg-white p-3 rounded-lg border border-green-200">
+                <div className="text-sm text-gray-600">Tanggungan</div>
+                <div className="font-semibold text-green-800">
+                  {user.profile.dependents} orang
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
