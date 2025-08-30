@@ -3,6 +3,16 @@ import { ConfigService } from "@nestjs/config";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface FinancialContext {
+  userId?: string;
+  userProfile?: {
+    age?: number;
+    income?: number;
+    expenses?: number;
+    savings?: number;
+    riskTolerance?: string;
+    goals?: string[];
+    experience?: string;
+  };
   monthlyIncome?: number;
   monthlyExpenses?: number;
   currentSavings?: number;
@@ -11,6 +21,8 @@ export interface FinancialContext {
   age?: number;
   occupation?: string;
   dependents?: number;
+  requestType?: string;
+  additionalData?: any;
 }
 
 export interface AIResponse {
@@ -108,6 +120,15 @@ export class GeminiService {
         const isQuotaError =
           error.message?.includes("429") || error.message?.includes("quota");
         const isRateLimit = error.message?.includes("Too Many Requests");
+        const isNetworkError =
+          error.message?.includes("fetch failed") ||
+          error.message?.includes("ECONNREFUSED") ||
+          error.message?.includes("ENOTFOUND") ||
+          error.message?.includes("network");
+
+        this.logger.error(
+          `❌ Gemini API error (attempt ${attempt}): ${error.message}`
+        );
 
         if (isQuotaError || isRateLimit) {
           this.logger.warn(
@@ -129,8 +150,14 @@ export class GeminiService {
               `API quota exceeded. Please wait before making more requests. Error: ${error.message}`
             );
           }
+        } else if (isNetworkError && attempt < maxRetries) {
+          this.logger.warn(
+            `🌐 Network error on attempt ${attempt}, retrying in 2 seconds...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          continue;
         } else {
-          // For non-quota errors, throw immediately
+          // For non-recoverable errors, throw immediately
           throw error;
         }
       }
@@ -242,11 +269,10 @@ export class GeminiService {
     context?: FinancialContext
   ): Promise<AIResponse> {
     if (!this.isAvailable) {
-      throw new Error("Gemini AI is not available");
+      return this.getFallbackResponse(message);
     }
 
     const startTime = Date.now();
-
     const prompt = this.buildChatPrompt(message, context);
 
     try {
@@ -269,10 +295,129 @@ export class GeminiService {
       };
     } catch (error) {
       this.logger.error("Failed to process chat message:", error);
-      throw new Error(
-        `Chat processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
+
+      // Return fallback response instead of throwing error
+      this.logger.warn("🔄 Using fallback response due to AI service error");
+      return this.getFallbackResponse(message);
     }
+  }
+
+  private getFallbackResponse(message: string): AIResponse {
+    const startTime = Date.now();
+
+    // Generate contextual fallback based on message content
+    let fallbackContent = "";
+    const messageLower = message.toLowerCase();
+
+    if (messageLower.includes("investasi") || messageLower.includes("invest")) {
+      fallbackContent = `Terima kasih atas pertanyaan tentang investasi Anda. 
+
+Untuk investasi dengan modal kecil, berikut beberapa opsi yang bisa Anda pertimbangkan:
+
+1. **Reksa Dana**: Mulai dari Rp 10.000, diversifikasi otomatis
+2. **SBN (Surat Berharga Negara)**: Aman, dijamin pemerintah
+3. **Emas**: Mulai dari 0,5 gram, lindung nilai inflasi
+4. **Saham Blue Chip**: Untuk yang sudah paham analisis
+
+**Tips penting:**
+- Sisihkan 10-20% penghasilan untuk investasi
+- Pahami profil risiko Anda
+- Jangan investasi uang yang dibutuhkan dalam 1-2 tahun ke depan
+- Pelajari dulu sebelum berinvestasi
+
+Apakah ada aspek investasi tertentu yang ingin Anda pelajari lebih dalam?
+
+*Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk konsultasi lebih mendalam, Anda bisa menggunakan fitur konsultasi dengan expert.*`;
+    } else if (
+      messageLower.includes("budget") ||
+      messageLower.includes("anggaran")
+    ) {
+      fallbackContent = `Terima kasih atas pertanyaan tentang budgeting Anda.
+
+Berikut panduan dasar mengatur budget bulanan:
+
+**Aturan 50/30/20:**
+- 50% untuk kebutuhan pokok (makan, sewa, listrik)
+- 30% untuk keinginan (hiburan, makan di luar)
+- 20% untuk tabungan dan investasi
+
+**Langkah praktis:**
+1. Catat semua pemasukan dan pengeluaran
+2. Kategorikan pengeluaran (wajib vs opsional)
+3. Cari area yang bisa dipangkas
+4. Otomatisasi tabungan di awal bulan
+5. Review dan evaluasi setiap bulan
+
+**Tips hemat:**
+- Masak di rumah lebih sering
+- Bandingkan harga sebelum membeli
+- Gunakan aplikasi cashback/promo
+- Hindari impulse buying
+
+Apakah ada aspek budgeting tertentu yang ingin Anda tanyakan?
+
+*Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk analisis budget personal, silakan gunakan fitur konsultasi expert.*`;
+    } else if (
+      messageLower.includes("tabungan") ||
+      messageLower.includes("saving")
+    ) {
+      fallbackContent = `Terima kasih atas pertanyaan tentang tabungan Anda.
+
+**Strategi menabung efektif:**
+
+1. **Pay Yourself First**: Tabung dulu, baru belanja
+2. **Otomatisasi**: Set up auto transfer ke rekening tabungan
+3. **Tujuan jelas**: Tabung untuk apa? Kapan dibutuhkan?
+4. **Start small**: Mulai 10% penghasilan, naikkan bertahap
+
+**Jenis tabungan:**
+- **Dana darurat**: 3-6x pengeluaran bulanan
+- **Tabungan rencana**: Untuk tujuan spesifik (liburan, gadget)
+- **Tabungan jangka panjang**: Untuk masa depan (DP rumah, pensiun)
+
+**Tips praktis:**
+- Pilih tabungan dengan bunga kompetitif
+- Pisahkan rekening tabungan dari rekening harian
+- Manfaatkan promo dan cashback
+- Review dan tingkatkan nominal tabungan secara berkala
+
+Ada tujuan tabungan spesifik yang ingin Anda capai?
+
+*Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk rencana tabungan personal, silakan konsultasi dengan expert keuangan.*`;
+    } else {
+      fallbackContent = `Halo! Terima kasih atas pertanyaan keuangan Anda.
+
+Sebagai Fintar AI, saya siap membantu Anda dengan berbagai topik keuangan seperti:
+
+🏦 **Budgeting & Perencanaan Keuangan**
+- Mengatur anggaran bulanan
+- Cara menabung efektif
+- Perencanaan dana darurat
+
+💰 **Investasi**
+- Investasi untuk pemula
+- Reksa dana dan saham
+- Strategi investasi jangka panjang
+
+📊 **Analisis Keuangan**
+- Review kondisi keuangan personal
+- Tips mengelola utang
+- Optimalisasi pengeluaran
+
+Silakan ajukan pertanyaan spesifik tentang keuangan Anda, dan saya akan memberikan jawaban yang praktis dan mudah diterapkan.
+
+*Catatan: Layanan AI sedang mengalami gangguan sementara. Untuk konsultasi mendalam, Anda dapat menggunakan fitur konsultasi dengan expert keuangan kami.*`;
+    }
+
+    const processingTime = Date.now() - startTime;
+
+    return {
+      content: fallbackContent,
+      model: "fallback-response",
+      tokens: this.estimateTokens(fallbackContent),
+      processingTime,
+      confidence: 0.6, // Lower confidence for fallback
+    };
   }
 
   private buildFinancialAdvisorPrompt(

@@ -187,4 +187,33 @@ export class FinancialController {
   ) {
     return this.aiFinancialService.generateFinancialPlan(req.user.id, duration);
   }
+
+  @Get("investment/ai-recommendations")
+  @ApiOperation({ summary: "Get comprehensive AI investment recommendations" })
+  @ApiResponse({
+    status: 200,
+    description: "AI investment recommendations generated",
+  })
+  async getAIInvestmentRecommendations(@Request() req) {
+    return this.aiFinancialService.generateInvestmentRecommendations(
+      req.user.id
+    );
+  }
+
+  @Post("investment/ai-analyze")
+  @ApiOperation({ summary: "Analyze portfolio with AI" })
+  @ApiResponse({ status: 200, description: "Portfolio analysis completed" })
+  async analyzePortfolioWithAI(@Request() req, @Body() portfolioData?: any) {
+    return this.aiFinancialService.analyzePortfolioWithAI(
+      req.user.id,
+      portfolioData
+    );
+  }
+
+  @Get("investment/market-trends")
+  @ApiOperation({ summary: "Get AI market trend analysis" })
+  @ApiResponse({ status: 200, description: "Market trend analysis completed" })
+  async getMarketTrendAnalysis(@Request() req) {
+    return this.aiFinancialService.getMarketTrendAnalysis(req.user.id);
+  }
 }

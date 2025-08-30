@@ -65,7 +65,7 @@ export class AuthService {
         profile: {
           create: {},
         },
-      },
+      } as any,
       include: {
         profile: true,
       },
@@ -85,7 +85,8 @@ export class AuthService {
 
     // Don't generate tokens yet - user needs to verify email first
     return {
-      message: "Registrasi berhasil. Silakan periksa email Anda untuk verifikasi akun.",
+      message:
+        "Registrasi berhasil. Silakan periksa email Anda untuk verifikasi akun.",
       user: {
         id: user.id,
         email: user.email,
@@ -119,7 +120,9 @@ export class AuthService {
 
       // Check if email is verified
       if (!user.isVerified) {
-        throw new UnauthorizedException("Email belum diverifikasi. Silakan periksa email Anda.");
+        throw new UnauthorizedException(
+          "Email belum diverifikasi. Silakan periksa email Anda."
+        );
       }
 
       const tokens = await this.generateTokens(user.id, user.email);
@@ -222,11 +225,13 @@ export class AuthService {
         emailVerificationExpiry: {
           gt: new Date(),
         },
-      },
+      } as any,
     });
 
     if (!user) {
-      throw new BadRequestException("Token verifikasi email tidak valid atau sudah kedaluwarsa");
+      throw new BadRequestException(
+        "Token verifikasi email tidak valid atau sudah kedaluwarsa"
+      );
     }
 
     // Update user to verified and clear token
@@ -236,7 +241,7 @@ export class AuthService {
         isVerified: true,
         emailVerificationToken: null,
         emailVerificationExpiry: null,
-      },
+      } as any,
       include: {
         profile: true,
       },
@@ -284,7 +289,7 @@ export class AuthService {
       data: {
         emailVerificationToken,
         emailVerificationExpiry,
-      },
+      } as any,
     });
 
     // Send new verification email
@@ -296,7 +301,8 @@ export class AuthService {
       );
 
       return {
-        message: "Email verifikasi baru telah dikirim. Silakan periksa email Anda.",
+        message:
+          "Email verifikasi baru telah dikirim. Silakan periksa email Anda.",
       };
     } catch (error) {
       console.error("Failed to resend verification email:", error);

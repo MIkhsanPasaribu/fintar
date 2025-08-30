@@ -31,11 +31,20 @@ export class ChatService {
         createSessionDto.type || ChatType.GENERAL
       );
 
+      console.log("Creating chat session:", {
+        userId,
+        title: createSessionDto.title,
+        type: prismaType,
+        metadata: createSessionDto.metadata,
+      });
+
       const session = await this.analyticsService.storeChatSession(userId, {
         title: createSessionDto.title || "New Chat",
         type: prismaType,
         metadata: createSessionDto.metadata || {},
       });
+
+      console.log("Chat session created:", session);
 
       // Log analytics
       await this.analyticsService.logAIAnalytics({
@@ -46,8 +55,20 @@ export class ChatService {
         data: { title: session.title, type: session.type },
       });
 
-      return session;
+      // Return consistent response format with id field
+      return {
+        id: session.id,
+        sessionId: session.id, // For backward compatibility
+        title: session.title,
+        type: session.type,
+        status: session.status,
+        metadata: session.metadata,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt,
+        userId: session.userId,
+      };
     } catch (error) {
+      console.error("Failed to create chat session:", error);
       throw new Error("Failed to create chat session");
     }
   }

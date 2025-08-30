@@ -66,7 +66,12 @@ export class AnalyticsService {
   // Store chat session data
   async storeChatSession(userId: string, sessionData: any) {
     try {
-      return await this.prisma.chatSession.create({
+      console.log("Analytics: Creating chat session:", {
+        userId,
+        sessionData,
+      });
+
+      const session = await this.prisma.chatSession.create({
         data: {
           userId,
           title: sessionData.title || "New Chat",
@@ -74,8 +79,12 @@ export class AnalyticsService {
           metadata: sessionData.metadata || {},
         },
       });
+
+      console.log("Analytics: Chat session created successfully:", session);
+      return session;
     } catch (error) {
       this.logger.error("Failed to store chat session:", error);
+      console.error("Analytics: Error details:", error);
       throw error;
     }
   }
