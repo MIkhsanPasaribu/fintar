@@ -137,7 +137,14 @@ async function fetchFundamentalData(symbol: string) {
 // Get realistic estimates for Indonesian stocks based on market research
 function getIndonesianMarketEstimates(symbol: string) {
   // These are realistic estimates based on 2024-2025 Indonesian market data
-  const estimates: Record<string, any> = {
+  const estimates: Record<
+    string,
+    {
+      marketCap: number;
+      peRatio: number;
+      dividendYield: number;
+    }
+  > = {
     "BBCA.JK": {
       marketCap: 1200000000000000,
       peRatio: 12.8,
@@ -647,7 +654,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Use only successful stocks, fill missing with duplicate successful ones if needed
-        let stocks: StockData[] = [...successfulStocks];
+        const stocks: StockData[] = [...successfulStocks];
         while (
           stocks.length < INDONESIAN_STOCKS.length &&
           successfulStocks.length > 0

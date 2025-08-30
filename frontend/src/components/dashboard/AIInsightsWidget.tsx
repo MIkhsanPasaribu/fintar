@@ -88,7 +88,7 @@ const AIInsightsWidget = () => {
         },
       };
 
-      const response = await AIService.getFinancialAdvice();
+      const response = await AIService.getFinancialAdvice(request);
 
       if (response && response.analysis) {
         const aiInsights = parseAIResponseToInsights(response.analysis);

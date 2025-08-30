@@ -49,7 +49,27 @@ const FinancialPlanningPage = () => {
     setError(null);
 
     try {
-      const result = await AIService.getFinancialAdvice();
+      // Create a sample financial advice request for demo purposes
+      const adviceRequest = {
+        userId: user.id || "demo-user",
+        sessionId: `financial-session-${Date.now()}`,
+        question:
+          "Bagaimana saya bisa membuat rencana keuangan yang baik untuk masa depan?",
+        userProfile: {
+          age: 30,
+          income: 12000000, // 12 million IDR sample income
+          riskTolerance: "medium" as const,
+          financialGoals: [
+            "Dana darurat",
+            "Investasi jangka panjang",
+            "Tabungan pensiun",
+          ],
+          currentSavings: 50000000,
+          monthlyExpenses: 8000000,
+        },
+      };
+
+      const result = await AIService.getFinancialAdvice(adviceRequest);
       setPlan(result);
     } catch (error) {
       console.error("Error getting financial plan:", error);

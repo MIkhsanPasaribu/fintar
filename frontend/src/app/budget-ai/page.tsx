@@ -49,7 +49,26 @@ const BudgetAIPage = () => {
     setError(null);
 
     try {
-      const result = await AIService.getBudgetRecommendations();
+      // Create a sample budget request for demo purposes
+      const budgetRequest = {
+        userId: user.id || "demo-user",
+        sessionId: `budget-session-${Date.now()}`,
+        budgetData: {
+          income: 10000000, // 10 million IDR sample income
+          currentExpenses: {
+            "Kebutuhan Pokok": 4000000,
+            Transportasi: 1500000,
+            Hiburan: 1000000,
+            Makan: 2000000,
+          },
+          savingsGoal: 1500000,
+          debtPayments: {
+            "Cicilan KPR": 2000000,
+          },
+        },
+      };
+
+      const result = await AIService.getBudgetRecommendations(budgetRequest);
       setRecommendations(result);
     } catch (error) {
       console.error("Error getting budget recommendations:", error);
