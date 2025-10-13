@@ -99,6 +99,15 @@ export function ModernHomepage() {
                 Tentang
               </Link>
               <Link
+<<<<<<< HEAD
+=======
+                href="/team"
+                className="text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                Tim
+              </Link>
+              <Link
+>>>>>>> ryan
                 href="/help"
                 className="text-gray-700 hover:text-blue-600 transition-colors"
               >
@@ -160,6 +169,16 @@ export function ModernHomepage() {
                   Tentang
                 </Link>
                 <Link
+<<<<<<< HEAD
+=======
+                  href="/team"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  Tim
+                </Link>
+                <Link
+>>>>>>> ryan
                   href="/help"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
