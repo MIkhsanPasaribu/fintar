@@ -23,6 +23,7 @@
     "db:seed": "ts-node prisma/seed.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
+    "stats:analysis": "ts-node scripts/statistical-analysis.ts",
     "vercel-build": "prisma generate && nest build",
     "postinstall": "prisma generate"
   },

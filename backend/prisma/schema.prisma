@@ -43,6 +43,15 @@ model User {
   bookings        Booking[]
   reviews         Review[]
   notifications   Notification[]
+  arisanMemberships ArisanMember[]
+  investments     Investment[]
+  investmentVotes InvestmentVote[]
+  achievements    UserAchievement[]
+  rewards         RewardTransaction[]
+  nftCertificates NFTCertificate[]
+  transactionScans TransactionScan[]
+  forumPosts      ForumPost[]
+  forumReplies    ForumReply[]
 
   @@map("users")
 }
@@ -218,6 +227,167 @@ model AIAnalytics {
   @@map("ai_analytics")
 }
 
+// Quality Evaluation table for LLM-as-a-Judge evaluation results
+model QualityEvaluation {
+  id        String   @id @default(cuid())
+  messageId String   // ChatMessage ID being evaluated
+  userId    String   // User who received the response
+  sessionId String?  // Optional chat session ID
+  
+  // Quality Criteria Scores (0-100)
+  accuracy        Float  // Financial information correctness
+  relevance       Float  // Addresses user question
+  actionability   Float  // Provides concrete steps
+  clarity         Float  // Easy to understand language
+  completeness    Float  // Covers all aspects
+  personalization Float  // Tailored to user context
+  
+  // Overall Score (average of all criteria)
+  overallScore    Float
+  
+  // Evaluator Feedback & Metadata
+  evaluatorFeedback String  // LLM explanation/reasoning
+  evaluatorModel    String  // Model used for evaluation (e.g., 'gemini-2.0-flash-exp')
+  
+  // Status & Timestamps
+  status      EvaluationStatus @default(COMPLETED)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  
+  @@index([messageId])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([overallScore])
+  @@index([createdAt])
+  @@map("quality_evaluations")
+}
+
+// User Feedback Model (for thumbs up/down, star rating, issue reporting)
+model UserFeedback {
+  id               String       @id @default(cuid())
+  messageId        String       // ChatMessage being rated
+  userId           String
+  sessionId        String?
+  feedbackType     FeedbackType // THUMBS_UP, THUMBS_DOWN, STAR_RATING, REPORT_ISSUE
+  rating           Int?         // 1-5 stars (null if not star rating)
+  comment          String?      // Optional user comment
+  issueDescription String?      // Description if REPORT_ISSUE
+  metadata         Json?        // Additional context
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([messageId])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([feedbackType])
+  @@index([createdAt])
+  @@map("user_feedback")
+}
+
+// SUS (System Usability Scale) Response Model
+model SUSResponse {
+  id              String   @id @default(cuid())
+  userId          String
+  // 10 SUS questions (1-5 Likert scale)
+  q1_frequency    Int      // "I would like to use this system frequently"
+  q2_complexity   Int      // "I found the system unnecessarily complex"
+  q3_ease         Int      // "I thought the system was easy to use"
+  q4_support      Int      // "I think I would need support to use this system"
+  q5_integration  Int      // "I found the various functions well integrated"
+  q6_inconsistency Int     // "I thought there was too much inconsistency"
+  q7_learning     Int      // "I would imagine most people learn quickly"
+  q8_cumbersome   Int      // "I found the system very cumbersome to use"
+  q9_confidence   Int      // "I felt very confident using the system"
+  q10_learning_req Int     // "I needed to learn a lot before I could get going"
+  susScore        Float    // Calculated SUS score (0-100)
+  comments        String?  // Optional feedback
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([susScore])
+  @@index([createdAt])
+  @@map("sus_responses")
+}
+
+// Comparison Result Model (AI vs Baseline head-to-head comparison)
+model ComparisonResult {
+  id                String   @id @default(cuid())
+  userId            String   // User who initiated comparison
+  questionId        String   // Identifier for the test question
+  questionText      String   // The actual question asked to both systems
+  
+  // AI System Response
+  aiResponseId      String?  // ChatMessage ID (if stored)
+  aiResponseText    String   // AI generated response
+  aiSource          String   @default("gemini-2.0-flash") // AI model used
+  aiResponseTime    Float    // Response time in ms
+  
+  // Baseline System Response
+  baselineResponseText String // Rule-based response
+  baselineSource       String @default("rule-based") // Baseline system type
+  baselineResponseTime Float  // Response time in ms
+  
+  // Quality Scores (0-100 for each system)
+  aiAccuracy        Float
+  aiRelevance       Float
+  aiActionability   Float
+  aiClarity         Float
+  aiCompleteness    Float
+  
+  baselineAccuracy      Float
+  baselineRelevance     Float
+  baselineActionability Float
+  baselineClarity       Float
+  baselineCompleteness  Float
+  
+  // Overall Scores (average of criteria)
+  aiOverallScore       Float
+  baselineOverallScore Float
+  
+  // Comparison Result
+  winner            ComparisonWinner // AI_WINS, BASELINE_WINS, TIE
+  scoreDifference   Float            // AI score - Baseline score
+  
+  // Evaluator Metadata
+  evaluatorFeedback String  // LLM explanation of comparison
+  evaluatorModel    String  // Model used for comparison (e.g., 'gemini-2.0-flash-exp')
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([questionId])
+  @@index([winner])
+  @@index([aiOverallScore])
+  @@index([baselineOverallScore])
+  @@index([createdAt])
+  @@map("comparison_results")
+}
+
+// Comparison Winner Enum
+enum ComparisonWinner {
+  AI_WINS
+  BASELINE_WINS
+  TIE
+}
+
+// Feedback Type Enum
+enum FeedbackType {
+  THUMBS_UP
+  THUMBS_DOWN
+  STAR_RATING
+  REPORT_ISSUE
+}
+
+// Evaluation Status Enum
+enum EvaluationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 // @rls:enable
 // @rls:policy("booking_user_policy", "USING (auth.uid() = userId)", "WITH CHECK (auth.uid() = userId)")
 // @rls:policy("booking_consultant_policy", "USING (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))", "WITH CHECK (auth.uid() IN (SELECT id FROM consultants WHERE id = consultantId))")
@@ -370,4 +540,566 @@ enum NotificationType {
   NEW_MESSAGE
   SYSTEM_UPDATE
   PAYMENT_REMINDER
+}
+
+// ========================================
+// BLOCKCHAIN & ARISAN DIGITAL MODELS 🆕
+// ========================================
+
+model ArisanPool {
+  id                    String                  @id @default(cuid())
+  name                  String
+  description           String?
+  contributionAmount    Float
+  frequency             ContributionFrequency
+  totalMembers          Int
+  currentCycle          Int                     @default(1)
+  maxCycles             Int?
+  status                ArisanStatus            @default(ACTIVE)
+  smartContractAddress  String?
+  blockchainNetwork     String?                 @default("polygon")
+  createdBy             String
+  startDate             DateTime                @default(now())
+  endDate               DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  members               ArisanMember[]
+  contributions         ArisanContribution[]
+  payouts               ArisanPayout[]
+  votes                 ArisanVote[]
+
+  @@map("arisan_pools")
+}
+
+model ArisanMember {
+  id                String        @id @default(cuid())
+  poolId            String
+  userId            String
+  orderNumber       Int
+  payoutReceived    Boolean       @default(false)
+  joinedAt          DateTime      @default(now())
+  isActive          Boolean       @default(true)
+  walletAddress     String?
+
+  pool              ArisanPool    @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([poolId, userId])
+  @@map("arisan_members")
+}
+
+model ArisanContribution {
+  id                String        @id @default(cuid())
+  poolId            String
+  userId            String
+  amount            Float
+  cycleNumber       Int
+  transactionHash   String?
+  status            TransactionStatus @default(PENDING)
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+
+  pool              ArisanPool    @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@map("arisan_contributions")
+}
+
+model ArisanPayout {
+  id                String        @id @default(cuid())
+  poolId            String
+  recipientUserId   String
+  amount            Float
+  cycleNumber       Int
+  transactionHash   String?
+  status            TransactionStatus @default(PENDING)
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+
+  pool              ArisanPool    @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@map("arisan_payouts")
+}
+
+model ArisanVote {
+  id                String        @id @default(cuid())
+  poolId            String
+  userId            String
+  voteType          VoteType
+  reason            String?
+  targetCycle       Int?
+  createdAt         DateTime      @default(now())
+
+  pool              ArisanPool    @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@map("arisan_votes")
+}
+
+// ========================================
+// COMMUNITY INVESTMENT POOL MODELS 🆕
+// ========================================
+
+model CommunityInvestmentPool {
+  id                    String                  @id @default(cuid())
+  name                  String
+  description           String
+  targetAmount          Float
+  collectedAmount       Float                   @default(0)
+  minimumInvestment     Float
+  expectedROI           Float?
+  actualROI             Float?
+  lockPeriod            Int                     // in months
+  status                PoolStatus              @default(OPEN)
+  smartContractAddress  String?
+  blockchainNetwork     String?                 @default("polygon")
+  businessType          String?
+  location              String?
+  startDate             DateTime?
+  endDate               DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  investments           Investment[]
+  proposals             InvestmentProposal[]
+  progressUpdates       InvestmentProgress[]
+  roiDistributions      ROIDistribution[]
+
+  @@map("community_investment_pools")
+}
+
+model Investment {
+  id                String                    @id @default(cuid())
+  poolId            String
+  userId            String
+  amount            Float
+  shares            Float?
+  transactionHash   String?
+  status            TransactionStatus         @default(PENDING)
+  investedAt        DateTime                  @default(now())
+
+  pool              CommunityInvestmentPool   @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  user              User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("investments")
+}
+
+model InvestmentProposal {
+  id                String                    @id @default(cuid())
+  poolId            String
+  title             String
+  description       String
+  requestedAmount   Float
+  businessPlan      Json?
+  riskAssessment    Json?
+  aiDueDiligence    Json?                     // AI-generated risk score
+  status            ProposalStatus            @default(PENDING)
+  votesFor          Int                       @default(0)
+  votesAgainst      Int                       @default(0)
+  submittedBy       String?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  pool              CommunityInvestmentPool   @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  votes             InvestmentVote[]
+
+  @@map("investment_proposals")
+}
+
+model InvestmentVote {
+  id                String              @id @default(cuid())
+  proposalId        String
+  userId            String
+  vote              VoteDecision
+  comment           String?
+  createdAt         DateTime            @default(now())
+
+  proposal          InvestmentProposal  @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([proposalId, userId])
+  @@map("investment_votes")
+}
+
+model InvestmentProgress {
+  id                String                    @id @default(cuid())
+  poolId            String
+  title             String
+  description       String
+  photos            String[]                  @default([])
+  metrics           Json?
+  createdAt         DateTime                  @default(now())
+
+  pool              CommunityInvestmentPool   @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@map("investment_progress")
+}
+
+model ROIDistribution {
+  id                String                    @id @default(cuid())
+  poolId            String
+  totalAmount       Float
+  distributedAt     DateTime                  @default(now())
+  transactionHash   String?
+  details           Json?                     // Breakdown per investor
+
+  pool              CommunityInvestmentPool   @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@map("roi_distributions")
+}
+
+// ========================================
+// GAMIFICATION SYSTEM MODELS 🆕
+// ========================================
+
+model Achievement {
+  id                String              @id @default(cuid())
+  name              String
+  nameId            String              @unique // e.g., "first_budget", "savings_100k"
+  description       String
+  icon              String?
+  type              AchievementType
+  requirement       Json                // Criteria to unlock
+  points            Int
+  nftEnabled        Boolean             @default(false)
+  tier              AchievementTier
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  userAchievements  UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id                String        @id @default(cuid())
+  userId            String
+  achievementId     String
+  progress          Float?        @default(0) // 0-100%
+  unlockedAt        DateTime?
+  nftMinted         Boolean       @default(false)
+  nftTokenId        String?
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement       Achievement   @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model RewardTransaction {
+  id                String        @id @default(cuid())
+  userId            String
+  type              RewardType
+  points            Int
+  reason            String
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reward_transactions")
+}
+
+model Reward {
+  id                String        @id @default(cuid())
+  name              String
+  description       String
+  category          RewardCategory
+  pointsCost        Int
+  stockAvailable    Int?
+  imageUrl          String?
+  isActive          Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  redemptions       RewardRedemption[]
+
+  @@map("rewards")
+}
+
+model RewardRedemption {
+  id                String        @id @default(cuid())
+  userId            String
+  rewardId          String
+  pointsSpent       Int
+  status            RedemptionStatus @default(PENDING)
+  voucherCode       String?
+  redeemedAt        DateTime      @default(now())
+  fulfilledAt       DateTime?
+
+  reward            Reward        @relation(fields: [rewardId], references: [id])
+
+  @@map("reward_redemptions")
+}
+
+model DailyQuest {
+  id                String        @id @default(cuid())
+  userId            String?       // Null = global quest
+  title             String
+  description       String
+  type              QuestType
+  requirement       Json
+  reward            Int           // Points reward
+  expiresAt         DateTime
+  createdAt         DateTime      @default(now())
+
+  completions       QuestCompletion[]
+
+  @@map("daily_quests")
+}
+
+model QuestCompletion {
+  id                String        @id @default(cuid())
+  questId           String
+  userId            String
+  completedAt       DateTime      @default(now())
+
+  quest             DailyQuest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@unique([questId, userId])
+  @@map("quest_completions")
+}
+
+// ========================================
+// NFT CERTIFICATE MODELS 🆕
+// ========================================
+
+model NFTCertificate {
+  id                String        @id @default(cuid())
+  userId            String
+  achievementId     String?
+  tokenId           String        @unique
+  name              String
+  description       String
+  imageUrl          String
+  metadataUri       String
+  blockchainNetwork String        @default("polygon")
+  contractAddress   String
+  mintedAt          DateTime      @default(now())
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("nft_certificates")
+}
+
+// ========================================
+// TRANSACTION SCANNER MODELS 🆕
+// ========================================
+
+model TransactionScan {
+  id                String        @id @default(cuid())
+  userId            String
+  imageUrl          String?
+  smsText           String?
+  rawOCRText        String?
+  parsedData        Json?
+  bankType          String?
+  amount            Float?
+  merchant          String?
+  category          String?
+  date              DateTime?
+  confidence        Float?        // OCR confidence score 0-1
+  verified          Boolean       @default(false)
+  appliedToFinancial Boolean      @default(false)
+  createdAt         DateTime      @default(now())
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transaction_scans")
+}
+
+// ========================================
+// COMMUNITY FORUM MODELS 🆕
+// ========================================
+
+model ForumPost {
+  id                String        @id @default(cuid())
+  userId            String
+  title             String
+  content           String
+  category          ForumCategory
+  tags              String[]      @default([])
+  views             Int           @default(0)
+  likes             Int           @default(0)
+  isModerated       Boolean       @default(false)
+  isPinned          Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies           ForumReply[]
+
+  @@map("forum_posts")
+}
+
+model ForumReply {
+  id                String        @id @default(cuid())
+  postId            String
+  userId            String
+  content           String
+  likes             Int           @default(0)
+  isModerated       Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  post              ForumPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("forum_replies")
+}
+
+model CommunityChallenge {
+  id                String        @id @default(cuid())
+  title             String
+  description       String
+  type              ChallengeType
+  requirement       Json
+  reward            Int           // Points reward
+  startDate         DateTime
+  endDate           DateTime
+  maxParticipants   Int?
+  createdAt         DateTime      @default(now())
+
+  participants      ChallengeParticipant[]
+
+  @@map("community_challenges")
+}
+
+model ChallengeParticipant {
+  id                String              @id @default(cuid())
+  challengeId       String
+  userId            String
+  progress          Float               @default(0) // 0-100%
+  completed         Boolean             @default(false)
+  joinedAt          DateTime            @default(now())
+  completedAt       DateTime?
+
+  challenge         CommunityChallenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+  @@map("challenge_participants")
+}
+
+// ========================================
+// NEW ENUMS 🆕
+// ========================================
+
+enum ContributionFrequency {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+enum ArisanStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  PAUSED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum VoteType {
+  SKIP_CYCLE
+  EMERGENCY_PAYOUT
+  CHANGE_ORDER
+  TERMINATE_POOL
+}
+
+enum PoolStatus {
+  OPEN
+  FUNDED
+  ACTIVE
+  COMPLETED
+  CLOSED
+}
+
+enum ProposalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FUNDED
+  COMPLETED
+}
+
+enum VoteDecision {
+  FOR
+  AGAINST
+  ABSTAIN
+}
+
+enum AchievementType {
+  SAVINGS
+  BUDGETING
+  INVESTMENT
+  LEARNING
+  COMMUNITY
+  STREAK
+  DEBT_FREE
+  ARISAN
+}
+
+enum AchievementTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
+enum RewardType {
+  ACHIEVEMENT
+  DAILY_LOGIN
+  QUEST_COMPLETE
+  CHALLENGE_WIN
+  REFERRAL
+  STREAK_BONUS
+  COMMUNITY_HELP
+}
+
+enum RewardCategory {
+  VOUCHER_SHOPPING
+  VOUCHER_FOOD
+  DATA_PACKAGE
+  DISCOUNT_CONSULTATION
+  PREMIUM_FEATURE
+  CASH_EQUIVALENT
+}
+
+enum RedemptionStatus {
+  PENDING
+  APPROVED
+  FULFILLED
+  REJECTED
+}
+
+enum QuestType {
+  DAILY_LOGIN
+  TRACK_EXPENSE
+  COMPLETE_BUDGET
+  CHAT_AI
+  INVITE_FRIEND
+  COMPLETE_LEARNING
+}
+
+enum ForumCategory {
+  GENERAL_DISCUSSION
+  SUCCESS_STORY
+  QUESTION
+  TIP_SHARING
+  COMPLAINT
+  SUGGESTION
+}
+
+enum ChallengeType {
+  NO_UNNECESSARY_SPENDING
+  SAVINGS_CHALLENGE
+  INVESTMENT_CHALLENGE
+  LEARNING_CHALLENGE
+  COMMUNITY_CHALLENGE
 }
