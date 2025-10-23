@@ -70,7 +70,7 @@ fintar/
 
 ### AI & Analytics
 
-- **AI Models**: OpenAI GPT-4
+- **AI Models**: Gemini 2.0 Flash
 - **AI Framework**: Langchain.js
 - **Vector Database**: MongoDB with embeddings
 - **Market Data**: Real-time Indonesian financial APIs
