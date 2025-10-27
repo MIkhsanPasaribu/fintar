@@ -3,10 +3,11 @@ import { ChatController } from "./chat.controller";
 import { ChatService } from "./chat.service";
 import { AiChatService } from "./ai-chat.service";
 import { CommonModule } from "../common/common.module";
+import { EvaluationModule } from "../evaluation/evaluation.module";
 import { AnalyticsService } from "../common/analytics/analytics.service";
 
 @Module({
-  imports: [CommonModule],
+  imports: [CommonModule, EvaluationModule],
   controllers: [ChatController],
   providers: [ChatService, AiChatService, AnalyticsService],
   exports: [ChatService, AiChatService, AnalyticsService],
