@@ -7,6 +7,10 @@ import { FinancialModule } from "./financial/financial.module";
 import { ConsultantsModule } from "./consultants/consultants.module";
 import { CommonModule } from "./common/common.module";
 import { HealthModule } from "./health/health.module";
+import { EvaluationModule } from "./evaluation/evaluation.module";
+import { AnalyticsModule } from "./common/analytics/analytics.module";
+import { FeedbackModule } from "./feedback/feedback.module";
+import { BaselineModule } from "./baseline/baseline.module";
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { HealthModule } from "./health/health.module";
     ChatModule,
     FinancialModule,
     ConsultantsModule,
+    EvaluationModule,
+    AnalyticsModule,
+    FeedbackModule,
+    BaselineModule,
   ],
 })
 export class AppModule {}
