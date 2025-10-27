@@ -1,18 +1,27 @@
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { ChatService } from "./chat.service";
 import { GeminiService } from "../common/ai/gemini.service";
 import { PrismaService } from "../common/prisma/prisma.service";
+import { EvaluationService } from "../evaluation/evaluation.service";
 import { ChatMessageDto } from "./dto/chat-message.dto";
 
 @Injectable()
 export class AiChatService {
   private readonly logger = new Logger(AiChatService.name);
+  private readonly autoEvaluationEnabled: boolean;
 
   constructor(
     private readonly chatService: ChatService,
     private readonly geminiService: GeminiService,
-    private readonly prismaService: PrismaService
-  ) {}
+    private readonly prismaService: PrismaService,
+    private readonly evaluationService: EvaluationService,
+    private readonly configService: ConfigService
+  ) {
+    // Check if auto-evaluation is enabled via environment variable
+    this.autoEvaluationEnabled =
+      this.configService.get<string>("ENABLE_AUTO_EVALUATION") === "true";
+  }
 
   async processMessage(
     userId: string,
@@ -48,6 +57,16 @@ export class AiChatService {
         content: aiResponse.content,
         metadata: aiResponse.metadata,
       });
+
+      // ✅ TRIGGER QUALITY EVALUATION (Async, non-blocking)
+      if (this.autoEvaluationEnabled) {
+        this.triggerEvaluation(aiMessage.id, userId, sessionId).catch((err) =>
+          this.logger.warn(
+            `Background evaluation failed for message ${aiMessage.id}:`,
+            err
+          )
+        );
+      }
 
       // Log analytics
       const processingTime = Date.now() - startTime;
@@ -269,5 +288,35 @@ Siap membantu berbagai pertanyaan keuangan dengan pendekatan yang personal dan p
     }
 
     return context;
+  }
+
+  /**
+   * Trigger quality evaluation in background (non-blocking)
+   * This is called after AI response is saved to database
+   */
+  private async triggerEvaluation(
+    messageId: string,
+    userId: string,
+    sessionId: string
+  ): Promise<void> {
+    try {
+      this.logger.log(
+        `Triggering quality evaluation for message ${messageId}...`
+      );
+
+      await this.evaluationService.evaluateResponse({
+        messageId,
+        userId,
+        sessionId,
+      });
+
+      this.logger.log(`Quality evaluation completed for message ${messageId}`);
+    } catch (error) {
+      // Don't throw error - evaluation is non-critical
+      this.logger.error(
+        `Quality evaluation failed for message ${messageId}:`,
+        error
+      );
+    }
   }
 }
